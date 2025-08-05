@@ -1,36 +1,127 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📚 StoryBook Web App
 
-## Getting Started
+**An online-first, responsive web platform built with Next.js & Tailwind CSS.**
 
-First, run the development server:
+Users log in via phone number, browse and read stories, customize their theme, font, and text size, earn or purchase points, and save/favorite stories.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 🚀 Features
+
+- Phone number (OTP) authentication—no password needed
+- Responsive design: mobile-first, optimized for Android and desktop browsers
+- Theme options: Light, Dark, or System Default
+- Font customization: Sans or Serif
+- Adjustable font size: Small, Base, or Large
+- Browse by story categories or search
+- Unlock premium content with points (earn or subscribe)
+- Save favorites and continue reading where you left off
+- Rate and review stories
+
+---
+
+## 🧩 Built With
+
+- [Next.js](https://nextjs.org) (App Router)
+- [Tailwind CSS v4.1](https://tailwindcss.com) CSS-first styling
+- [next-themes](https://github.com/pacocoursey/next-themes) for theme mode handling
+- Custom hooks for `font` and `text size` user preferences
+
+---
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js (v18+)
+
+### Installation
+
+1. Clone the repo
+   ```bash
+   git clone https://github.com/EmmyKay0026/story-app.git
+   ```
+
+````
+
+2. Install dependencies
+
+   ```bash
+   cd storybook-webapp
+   npm install
+   ```
+3. Configure environment variables
+   Create `.env.local`:
+
+   ```
+   NEXT_PUBLIC_FIREBASE_API_KEY=...
+   NEXTAUTH_URL=https://your-domain.com
+   ```
+4. Run the dev server
+
+   ```bash
+   npm run dev
+   ```
+5. Visit [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🛠️ Usage
+
+* Login using phone number (and OTP optionally)
+* Access the homepage to browse or search stories
+* Navigate to story detail, then unlock or read episodes
+* Customize theme/font settings in the Preferences page
+* Track reading progress under **My Reads**, save favorites, and leave ratings
+* Manage points and subscriptions from **Profile**
+
+---
+
+## 📁 Project Structure
+
+```
+/app
+  /login
+  /home
+  /story/[id]
+  /read/[id]
+  /profile
+  /favorites
+  /my‑reads
+  /subscription
+  layout.tsx
+  page.tsx
+/components
+  /atoms
+  /molecules
+  /organisms
+  /templates
+  /styles
+  style.css
+/utils
+  usePreferences.ts
+/constants
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧪 Development
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Formatting & linting:** Prettier and ESLint configured
+* Mock data store and API: use `/constants` or `msw` to simulate endpoints
+* Hot reload enabled via Next.js dev server
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🤝 Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contributions are welcome!
 
-## Deploy on Vercel
+1. Fork the repo
+2. Create a feature branch
+3. Commit your changes
+4. Open a Pull Request
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Please ensure forks follow consistent code style and pass tests.
+````
