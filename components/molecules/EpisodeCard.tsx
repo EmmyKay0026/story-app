@@ -1,0 +1,138 @@
+import { Story } from "@/constants/stories";
+import { useUser } from "@/context/UserContext";
+import { formatReadTime } from "@/utils/storyUtils";
+import { Clock, Lock, Play } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import React, { SetStateAction, useState } from "react";
+
+const EpisodeCard = ({
+  story,
+  setSelectedEpisode,
+  setShowUnlockModal,
+}: {
+  story: Story;
+  setSelectedEpisode: (value: SetStateAction<string | null>) => void;
+  setShowUnlockModal: (value: SetStateAction<boolean>) => void;
+}) => {
+  const {
+    user,
+    isAuthenticated,
+    toggleFavorite,
+    isEpisodeUnlocked,
+    unlockEpisode,
+    getUserProgress,
+  } = useUser();
+  const router = useRouter();
+  //   const [showUnlockModal, setShowUnlockModal] = useState(false);
+  //   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
+  const handleEpisodeClick = (
+    episodeId: string,
+    isPremium: boolean,
+    pointsCost: number
+  ) => {
+    const isUnlocked = isEpisodeUnlocked(episodeId);
+
+    if (!isPremium || isUnlocked) {
+      router.push(`/read/${episodeId}`);
+    } else {
+      setSelectedEpisode(episodeId);
+      setShowUnlockModal(true);
+    }
+  };
+  return (
+    <div className="space-y-4">
+      {story.episodes.map((episode, index) => {
+        const isUnlocked = isEpisodeUnlocked(episode.id);
+        const progress = getUserProgress(story.id, episode.id);
+        const canRead = !episode.isPremium || isUnlocked;
+
+        return (
+          <div
+            key={episode.id}
+            className={`
+                    p-4 border border-gray-200 dark:border-gray-700 rounded-lg transition-colors
+                    ${
+                      canRead
+                        ? "hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                        : "opacity-60"
+                    }
+                  `}
+            onClick={() =>
+              handleEpisodeClick(
+                episode.id,
+                episode.isPremium,
+                episode.pointsCost
+              )
+            }
+          >
+            <div className="flex items-center gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 relative bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
+                  {canRead ? (
+                    <Image
+                      src={story.coverImage}
+                      alt={episode.title}
+                      width={48}
+                      height={48}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  ) : (
+                    <span className="">
+                      <Image
+                        src={story.coverImage}
+                        alt={episode.title}
+                        width={48}
+                        height={48}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                      <span className="absolute inset-0 flex items-center justify-center bg-[rgba(255,255,255,0.8)] dark:bg-[rgba(0,0,0,0.5)] rounded-lg">
+                        <Lock className="w-5 h-5 text-gray-400" />
+                      </span>
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                    Episode {episode.order}: {episode.title}
+                  </h4>
+                  {episode.isPremium && (
+                    <span className="inline-block px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 text-xs font-medium rounded">
+                      Premium - {episode.pointsCost} points
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {formatReadTime(episode.readTime)}
+                  </span>
+                  {progress && (
+                    <span className="text-primary dark:text-faded-primary">
+                      {Math.ceil(progress.progress)}% complete
+                    </span>
+                  )}
+                </div>
+
+                {progress && progress.progress > 0 && (
+                  <div className="mt-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+                    <div
+                      className="bg-primary h-1 rounded-full transition-all duration-300"
+                      style={{ width: `${progress.progress}%` }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export default EpisodeCard;

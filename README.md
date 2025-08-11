@@ -81,7 +81,7 @@ Users log in via phone number, browse and read stories, customize their theme, f
 
 ```
 /app
-  /login
+  /auth/login
   /home
   /story/[id]
   /read/[id]

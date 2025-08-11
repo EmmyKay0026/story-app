@@ -3,9 +3,11 @@
 import React from "react";
 import { BookOpen } from "lucide-react";
 import { ThemeToggle } from "@/components/atoms/ThemeToggle";
-import { stories } from "@/constants/stories";
-import { StoryCard } from "@/components/molecules/StoryCards";
+import { mockStories, stories } from "@/constants/stories";
+import { StoryCard } from "@//components/molecules/StoryCards";
+import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
 import { FontSizeControl } from "@/components/atoms/FontSizePreference";
+import Link from "next/link";
 
 export default function Home() {
   const handleReadStory = (storyId: number) => {
@@ -26,10 +28,7 @@ export default function Home() {
                 Storybook
               </h1>
             </div>
-            <div className="flex items-center gap-3">
-              <FontSizeControl />
-              <ThemeToggle />
-            </div>
+            <div className="flex items-center gap-3"></div>
           </div>
         </div>
       </header>
@@ -39,7 +38,7 @@ export default function Home() {
           <div className="text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
               Welcome to Your
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              <span className="text-transparent text-gradient ">
                 {" "}
                 Story Adventure
               </span>
@@ -63,7 +62,18 @@ export default function Home() {
 
         {/* Stories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {stories.map((story) => (
+          {mockStories.map((story) => (
+            <Link href={`/story/${story.id}`} key={story.id} className="group">
+              <StoryCardV2
+                key={story.id}
+                story={story}
+                showProgress={true}
+                variant={"continue"}
+              />
+            </Link>
+          ))}
+
+          {/* {stories.map((story) => (
             <StoryCard
               key={story.id}
               title={story.title}
@@ -71,7 +81,7 @@ export default function Home() {
               coverImage={story.coverImage}
               onRead={() => handleReadStory(story.id)}
             />
-          ))}
+          ))} */}
         </div>
       </main>
     </div>

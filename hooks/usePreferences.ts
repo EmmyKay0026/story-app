@@ -73,18 +73,18 @@ export const useTheme = () => {
     }
   }, [theme]);
 
-  const updateTheme = (newTheme: Theme) => {
-    setTheme(newTheme);
-    localStorage.setItem("theme", newTheme);
-  };
+  // const updateTheme = (newTheme: Theme) => {
+  //   setTheme(newTheme);
+  //   localStorage.setItem("theme", newTheme);
+  // };
   const updateFontSize = (newFontSize: FontSize) => {
     setFontSize(newFontSize);
     localStorage.setItem("fontSize", newFontSize);
   };
   return {
-    theme,
-    resolvedTheme,
-    setTheme: updateTheme,
+    // theme,
+    // resolvedTheme,
+    // setTheme: updateTheme,
     fontSize,
     setFontSize: updateFontSize,
   };

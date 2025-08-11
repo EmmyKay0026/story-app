@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/context/ThemeContext";
+// import { ThemeProvider } from "@/context/ThemeContext";
 import { HydrationGuard } from "@/components/templates/HydrationGuard";
+import { UserProvider } from "@/context/UserContext";
+import { ThemeProvider } from "next-themes";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,13 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={` ${inter.variable}`}>
       <body className="font-sans antialiased">
-        <ThemeProvider>
-          <HydrationGuard>
-            <div className="theme-transition">{children}</div>
-          </HydrationGuard>
-        </ThemeProvider>
+        <UserProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <HydrationGuard>
+              <div className="theme-transition">{children}</div>
+            </HydrationGuard>
+          </ThemeProvider>
+        </UserProvider>
       </body>
     </html>
   );

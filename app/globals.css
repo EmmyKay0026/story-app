@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* Fonts to be used 
@@ -17,6 +18,14 @@
   --font-lato: "Lato", sans-serif;
   --font-georgia: "Georgia", serif;
 
+  /* Colors */
+  --color-primary: #45b649;
+  --color-faded-primary: #8cff92c5;
+  --color-dark-primary: #021503;
+  --color-secondary: #f59e0b;
+  --color-accent: #ec4899;
+  --color-shaft: #313131;
+
   /* Light theme colors (default) */
   --color-bg: #fff;
   --color-fg: #000;
@@ -25,6 +34,11 @@
   --color-bg-dark: #000;
   --color-fg-dark: #fff;
 }
+.color {
+  color: #021503;
+  background-color: rgb(20, 71, 230);
+}
+
 @layer utilities {
   .theme-transition {
     transition: color 100ms ease-in-out, border-color 100ms ease-in-out;
@@ -49,8 +63,6 @@
   }
 }
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @layer base {
   html {
     color-scheme: light;
@@ -63,7 +75,7 @@
     @apply bg-[color:var(--color-bg)] text-[color:var(--color-fg)] transition-colors duration-200;
   }
   .dark body {
-    @apply bg-[color:var(--color-bg-dark)] text-[color:var(--color-fg-dark)];
+    @apply bg-[color:var(--color-dark-primary)] text-[color:var(--color-fg-dark)];
   }
 
   /* Font family classes */
@@ -95,7 +107,7 @@
   }
 
   .text-lg {
-    --font-size-base: 1.125rem;
+    --font-size-base: 1.25rem;
     --font-size-lg: 1.25rem;
     --font-size-xl: 1.5rem;
     --font-size-2xl: 1.875rem;
@@ -104,7 +116,7 @@
   }
 
   .text-xl {
-    --font-size-base: 1.25rem;
+    --font-size-base: 1.4rem;
     --font-size-lg: 1.5rem;
     --font-size-xl: 1.875rem;
     --font-size-2xl: 2.25rem;
@@ -120,5 +132,132 @@
   }
   .text-large {
     font-size: var(--text-large);
+  }
+}
+
+@layer components {
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Reading content styles */
+  /* .reading-content {
+    @apply leading-read;
+    hyphens: auto;
+    text-align: justify;
+    text-justify: inter-word;
+  } */
+
+  .reading-content p {
+    @apply mb-4;
+  }
+
+  .reading-content p:last-child {
+    @apply mb-0;
+  }
+
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+  }
+
+  /* Progress bar animations */
+  .progress-bar {
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700;
+  }
+
+  /* Button variants */
+  .btn-primary {
+    @apply bg-[primary] hover:bg-transparent text-primary  hover:text-primary dark:hover:text-white  border border-solid border-primary dark:hover:border-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-outline {
+    @apply border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  .btn-ghost {
+    @apply hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+  }
+
+  /* Focus styles */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900;
+  }
+
+  /* Modal overlay */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+  }
+
+  .modal-content {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all;
+  }
+}
+
+@layer utilities {
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-shaft bg-clip-text text-transparent;
+  }
+
+  .gradient-bg {
+    @apply bg-gradient-to-r from-primary to-shaft;
+  }
+
+  /* Glassmorphism effect */
+  .glass {
+    @apply backdrop-blur-md bg-white/70 dark:bg-gray-900/70;
+  }
+
+  /* Safe area padding for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
