@@ -58,7 +58,7 @@ export const ThemeToggle = () => {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-lg bg-gray-100 dark:bg-gray-800 p-1 theme-transition">
+    <div className="flex items-center gap-1 rounded-lg dark:bg-[170010] p-1 theme-transition">
       {themes.map(({ value, icon: Icon, label }) => (
         <button
           key={value}
@@ -68,7 +68,7 @@ export const ThemeToggle = () => {
             ${
               theme === value
                 ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-black/5 dark:ring-white/10"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-white/50 dark:hover:bg-gray-700/50"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:bg-[rgba(69,182,73,0.2)] hover:bg-[#45B64980] "
             }
           `}
           title={`Switch to ${label.toLowerCase()} theme`}

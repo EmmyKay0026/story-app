@@ -61,7 +61,45 @@
   .text-responsive-4xl {
     font-size: var(--font-size-4xl);
   }
+  .border-big {
+    border: 2px solid;
+    border: #45B649;
+  }
 }
+
+@keyframes float3D {
+  0%, 100% {
+    transform: translateY(0) rotateX(0deg) rotateY(0deg) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) rotateX(10deg) rotateY(15deg) scale(1.05);
+  }
+}
+
+.bubble-3d {
+  animation: float3D 6s ease-in-out infinite;
+}
+
+
+/* Works in Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a; /* dark track */
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #054625, #3aa13e, #45B649) 1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #45B649, #3aa13e, #054625) 1;
+}
+
 
 @layer base {
   html {
