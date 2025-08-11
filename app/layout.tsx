@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
+import NavBar from "@/components/molecules/NavBar";
 import { HydrationGuard } from "@/components/templates/HydrationGuard";
 
 const inter = Inter({
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <ThemeProvider>
           <HydrationGuard>
+            <NavBar/>
             <div className="theme-transition">{children}</div>
           </HydrationGuard>
         </ThemeProvider>
