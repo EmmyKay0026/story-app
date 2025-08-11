@@ -33,15 +33,14 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       {...rest}
-      className={`absolute top-[25%] left-1/2 rounded-xl border-big bg-white dark:bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
+      className={`absolute top-[25%] left-1/2 rounded-xl border-big bg-white dark:bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${
+        customClass ?? ""
+      } ${rest.className ?? ""}`.trim()}
     />
   )
 );
 
 Card.displayName = "Card";
-
-
-
 
 type CardRef = RefObject<HTMLDivElement>;
 interface Slot {

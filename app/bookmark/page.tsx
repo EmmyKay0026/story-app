@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark, Heart, Search } from "lucide-react";
@@ -8,10 +7,6 @@ import { mockStories } from "@/constants/stories";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
-// import { Navigation } from "../../components/Navigation";
-// import { StoryCard } from "../../components/StoryCard";
-// import { useUser } from "../../contexts/UserContext";
-// import { mockStories } from "../../lib/data/mockData";
 
 export default function FavoritesPage() {
   const { user, isAuthenticated } = useUser();

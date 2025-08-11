@@ -63,12 +63,13 @@
   }
   .border-big {
     border: 2px solid;
-    border: #45B649;
+    border: #45b649;
   }
 }
 
 @keyframes float3D {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) rotateX(0deg) rotateY(0deg) scale(1);
   }
   50% {
@@ -79,7 +80,6 @@
 .bubble-3d {
   animation: float3D 6s ease-in-out infinite;
 }
-
 
 /* Works in Chrome, Edge, Safari */
 ::-webkit-scrollbar {
@@ -92,14 +92,13 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #054625, #3aa13e, #45B649) 1;
+  background: linear-gradient(to bottom, #054625, #3aa13e, #45b649) 1;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #45B649, #3aa13e, #054625) 1;
+  background: linear-gradient(to bottom, #45b649, #3aa13e, #054625) 1;
 }
-
 
 @layer base {
   html {
