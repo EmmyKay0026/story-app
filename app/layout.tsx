@@ -25,7 +25,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <UserProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="theme-transition">{children}</div>
+            <div className="theme-transition ">{children}</div>
           </ThemeProvider>
         </UserProvider>
       </body>

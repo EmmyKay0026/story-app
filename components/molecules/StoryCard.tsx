@@ -174,7 +174,7 @@ export function StoryCard({
               </span>
               <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-primary h-2 rounded-full transition-all duration-300"
                   style={{ width: `${userProgress}%` }}
                 />
               </div>

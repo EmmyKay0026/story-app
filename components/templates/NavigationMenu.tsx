@@ -89,7 +89,7 @@ export function Navigation({ children }: NavigationProps) {
 
       <div className="flex">
         {/* Desktop Sidebar */}
-        <nav className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white dark:bg-[#224225] border-r border-gray-200 dark:border-gray-700">
+        <nav className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 p-6 border-b border-gray-200 dark:border-gray-700">
             <Book className="w-8 h-8 text-primary" />
             <span className="font-bold text-xl">StoryBook</span>
@@ -117,15 +117,15 @@ export function Navigation({ children }: NavigationProps) {
             </div>
 
             <div className="px-3 space-y-4">
-              <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                <Coins className="w-5 h-5 text-amber-600" />
+              <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-transparent rounded-lg">
+                <Coins className="w-5 h-5 text-amber-600 dark:text-yellow-400" />
                 <div>
-                  <div className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                  <div className="text-sm font-medium text-amber-700 dark:text-yellow-400">
                     {user.points} Points
                   </div>
                   <Link
                     href="/subscription"
-                    className="text-xs text-amber-600 hover:text-amber-700"
+                    className="text-xs text-amber-600 hover:text-amber-700 dark:text-yellow-400 dark:hover:text-yellow-300"
                   >
                     Get more points
                   </Link>
@@ -239,8 +239,10 @@ export function Navigation({ children }: NavigationProps) {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 lg:ml-64 dark:bg-dark-primary">
-          <div className="min-h-screen safe-bottom">{children}</div>
+        <main className="flex-1 lg:ml-64 dark:bg-dark-primary  bdark:bg-gray-800">
+          <div className="min-h-screen w-full safe-bottom main-container-">
+            {children}
+          </div>
         </main>
       </div>
     </div>

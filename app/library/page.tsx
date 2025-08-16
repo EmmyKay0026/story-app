@@ -1,10 +1,15 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import { Navigation } from "@/components/templates/NavigationMenu";
-import { CATEGORIES, mockStories } from "@/constants/stories";
+import {
+  ALLCATEGORIES,
+  CATEGORIES,
+  mockStories,
+  Story,
+} from "@/constants/stories";
 import { BookCopy, Box, Search } from "lucide-react";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
 
 const Library = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -12,10 +17,20 @@ const Library = () => {
   const [stories, setStories] = useState(mockStories);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tag = params.get("tag");
+    if (
+      tag &&
+      ALLCATEGORIES.map((category) => {
+        category.value.includes(tag);
+      })
+    ) {
+      setSelectedCategory(decodeURIComponent(tag));
+    }
+  }, []);
+
+  useEffect(() => {
     handleFilter(searchTerm, selectedCategory ? [selectedCategory] : []);
-    return () => {
-      // second
-    };
   }, [searchTerm, selectedCategory]);
 
   const handleFilter = (searchTerm: string, selectedCategories: string[]) => {
@@ -37,7 +52,7 @@ const Library = () => {
   };
   return (
     <Navigation>
-      <section className="max-w-4xl mx-auto p-4 lg:p-6">
+      <section className="max-w-4xl mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
           <BookCopy className="w-8 h-8 text-shaft dark:text-white fill-current" />
@@ -63,52 +78,96 @@ const Library = () => {
             />
           </div>
           <div className="flex flex-wrap gap-4">
-            {CATEGORIES.map((category) => (
-              <label key={category} className="" style={{ userSelect: "none" }}>
+            {ALLCATEGORIES.map((category, idx) => (
+              <label
+                key={idx + category.value}
+                className=""
+                style={{ userSelect: "none" }}
+              >
                 <input
                   type="checkbox"
-                  value={category}
+                  value={category.value}
                   className="mr-2 w-0 peer"
                   style={{ verticalAlign: "middle" }}
-                  checked={selectedCategory === category}
-                  onChange={() =>
-                    setSelectedCategory(
-                      selectedCategory === category ? null : category
-                    )
-                  }
+                  checked={selectedCategory === category.value}
+                  onChange={() => {
+                    const newCategory =
+                      selectedCategory === category.value ? null : category;
+                    setSelectedCategory(newCategory?.value!);
+
+                    const params = new URLSearchParams(window.location.search);
+                    if (newCategory) {
+                      params.set("tag", newCategory.value);
+                    } else {
+                      params.delete("tag");
+                    }
+                    window.history.replaceState(
+                      {},
+                      "",
+                      `${window.location.pathname}?${params.toString()}`
+                    );
+                  }}
                 />
                 <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full cursor-pointer transition-colors peer-checked:bg-faded-primary">
-                  {category}
+                  {category.label}
                 </span>
               </label>
             ))}
           </div>
         </article>
-        <div className="mb-8">
-          <h2 className="text-4xl font-bold mb-8">Featured stories</h2>
-          {stories.length > 0 ? (
-            <div className="flex flex-wrap">
-              {stories.map((story) => (
-                <Link
-                  href={`/story/${story.id}`}
-                  key={story.id}
-                  className="w-full sm:w-1/2 lg:w-1/4  p-4"
-                >
-                  <StoryCard
-                    story={story}
-                    showProgress={false}
-                    variant={"compact_v2"}
-                  />
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className=" flex flex-col justify-center items-center text-center text-gray-500 dark:text-gray-400">
-              No stories found for the selected filters.
-              <Box className="mt-4" />
-            </div>
-          )}
-        </div>
+        <article className="flex flex-col items-center justify-between gap-8  md:items-start min-h-[60vh] rounded-t-3xl lg:flex-row ">
+          <div className="mb-8">
+            <h2 className="text-4xl font-bold mb-8">
+              {ALLCATEGORIES.find(
+                (category) => category.value == selectedCategory
+              )?.label ?? "All stories"}
+            </h2>
+            {stories.length > 0 ? (
+              <div className="flex flex-wrap">
+                {stories.map((story) => (
+                  <Link
+                    href={`/story/${story.id}`}
+                    key={story.id}
+                    className="w-full sm:w-1/2 lg:w-1/2  p-4"
+                  >
+                    <StoryCard
+                      story={story}
+                      showProgress={false}
+                      variant={"compact_v2"}
+                    />
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className=" flex flex-col justify-center items-center text-center text-gray-500 dark:text-gray-400">
+                No stories found for the selected filters.
+                <Box className="mt-4" />
+              </div>
+            )}
+          </div>
+          {/* <div className=""> */}
+          <div className="sticky top-[50px] mb-8  w-full lg:max-w-[300px] lg:mt-20 ">
+            <h2 className="text-xl font-bold mb-2">Feature stories</h2>
+            {mockStories.length > 0 && (
+              <div className="flex flex-wrap">
+                {mockStories.slice(0, 2).map((story) => (
+                  <Link
+                    href={`/story/${story.id}`}
+                    key={story.id}
+                    className="w-full  lg:w-full  p-4"
+                  >
+                    <StoryCard
+                      story={story}
+                      showProgress={false}
+                      variant={"compact"}
+                    />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+          {/* </div> */}
+        </article>
       </section>
     </Navigation>
   );

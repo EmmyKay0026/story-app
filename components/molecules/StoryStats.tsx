@@ -16,6 +16,7 @@ const StoryStats = ({
         <div className="flex items-center justify-center gap-1 text-amber-500 mb-1">
           <Star className="w-4 h-4 fill-current" />
           <span className="font-semibold">{story.rating}</span>
+          
         </div>
         <p className="text-xs text-gray-600 dark:text-gray-400">Rating</p>
       </div>

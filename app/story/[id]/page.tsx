@@ -1,39 +1,26 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Heart,
-  Star,
-  Clock,
-  BookOpen,
-  Lock,
-  Play,
-  Bookmark,
-} from "lucide-react";
-import { useUser } from "@/context/UserContext";
+import React, { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { mockStories } from "@/constants/stories";
-import { calculateStoryProgress, formatReadTime } from "@/utils/storyUtils";
-import { Navigation } from "@/components/templates/NavigationMenu";
 import StoryStats from "@/components/molecules/StoryStats";
-import StoryTag from "@/components/molecules/StoryTag";
+import { Bookmark, Eye, Star } from "lucide-react";
+import { Navigation } from "@/components/templates/NavigationMenu";
 import EpisodeCard from "@/components/molecules/EpisodeCard";
-// import { Navigation } from "../../../components/Navigation";
-// import { useUser } from "../../../contexts/UserContext";
-// import { mockStories } from "../../../lib/data/mockData";
-// import {
-//   formatReadTime,
-//   calculateStoryProgress,
-// } from "../../../lib/utils/storyUtils";
+import Button from "@/components/atoms/Button";
+import StoryTag from "@/components/molecules/StoryTag";
+import ReviewCard from "@/components/molecules/ReviewCard";
+import { useUser } from "@/context/UserContext";
+import { useParams, useRouter } from "next/navigation";
+import { calculateStoryProgress } from "@/utils/storyUtils";
+
+// const story = mockStories[0]; // Replace with actual story data
 
 interface StoryDetailPageProps {
-  params: {
-    id: string;
-  };
+  params: Promise<{ id: string }>;
 }
 
-export default function StoryDetailPage({ params }: StoryDetailPageProps) {
+const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
+  const { id } = React.use(params);
   const {
     user,
     isAuthenticated,
@@ -43,8 +30,9 @@ export default function StoryDetailPage({ params }: StoryDetailPageProps) {
     getUserProgress,
   } = useUser();
   const router = useRouter();
-  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
+  const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -52,7 +40,7 @@ export default function StoryDetailPage({ params }: StoryDetailPageProps) {
     }
   }, [isAuthenticated, router]);
 
-  const story = mockStories.find((s) => s.id === params.id);
+  const story = mockStories.find((s) => s.id === id);
 
   if (!isAuthenticated || !user || !story) {
     return null;
@@ -91,147 +79,135 @@ export default function StoryDetailPage({ params }: StoryDetailPageProps) {
       alert("Not enough points to unlock this episode!");
     }
   };
+  const handleToggleTab = (tab: "episodes" | "details") => {
+    setIsEpisodesActive(tab === "episodes");
+  };
 
   return (
     <Navigation>
-      <div className="max-w-4xl mx-auto p-4 lg:p-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => router.back()}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Story Details
-          </h1>
-        </div>
-
-        {/* Story Info */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8">
-          <div className="md:flex">
-            <div className="md:w-1/3">
-              <img
-                src={story.coverImage}
-                alt={story.title}
-                className="w-full h-64 md:h-full object-cover"
-              />
-            </div>
-            <div className="md:w-2/3 p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {story.title}
-                  </h2>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-                    by {story.author}
-                  </p>
-                </div>
-                <button
-                  onClick={() => toggleFavorite(story.id)}
-                  className="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  aria-label={
-                    isFavorite ? "Remove from bookmark" : "Add to bookmark"
-                  }
-                >
-                  <Bookmark
-                    className={`w-6 h-6 ${
-                      isFavorite
-                        ? "fill-shaft text-shaft dark:text-white dark:fill-white"
-                        : "text-gray-400"
-                    }`}
-                  />
-                </button>
+      <section className="relative max-w-4xl -screen mx-auto">
+        <div
+          style={{
+            background: `linear-gradient(rgba(0,0,0,0.7), rgba(30,41,59,0.7)), url('${story.coverImage}') top/cover no-repeat`,
+          }}
+          className="h-screen inset-0 bg-cover bg-center fixed  top-0 z-[0] md:absolute"
+        />
+        <div className="relative pt-[29vh] w-full ">
+          <article className="relative px-4 sm:px-6 lg:px-8  text-fg-dark dark:text-fg z-10 mb-8">
+            <div className=" flex items-center mb-2 gap-5">
+              <div className="flex items-center gap-1 text-[#c3c3c3] ">
+                <Bookmark className="w-4 h-4 " />
+                <span className="font-thin ">{story.rating}k</span>
               </div>
+              <div className="flex items-center gap-1 text-[#c3c3c3] ">
+                <Star className="w-4 h-4 " />
+                <span className="font-thin ">{story.rating}k</span>
+              </div>
+              <div className="flex items-center gap-1 text-[#c3c3c3] ">
+                <Eye className="w-4 h-4 " />
+                <span className="font-thin ">{story.rating}k</span>
+              </div>
+            </div>
 
-              <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+            <h2 className="text-3xl font-semibold mb-2 dark:text-fg-dark">
+              {story.title}
+            </h2>
+            <div className="hidden md:block">
+              <p className="  line-clamp-3 text-[15px] mb-4 dark:text-fg-dark">
                 {story.description}
               </p>
-
-              <StoryStats story={story} storyProgress={storyProgress} />
-
               <StoryTag story={story} />
             </div>
-          </div>
-        </div>
+          </article>
 
-        {/* Episodes List */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
-            Episodes
-          </h3>
-          <EpisodeCard
-            story={story}
-            setShowUnlockModal={setShowUnlockModal}
-            setSelectedEpisode={setSelectedEpisode}
-          />
-        </div>
-      </div>
-
-      {/* Unlock Modal */}
-      {showUnlockModal && selectedEpisode && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Unlock Premium Episode
-            </h3>
-
-            <div className="mb-6">
-              {(() => {
-                const episode = story.episodes.find(
-                  (ep) => ep.id === selectedEpisode
-                );
-                return episode ? (
-                  <div>
-                    <p className="text-gray-700 dark:text-gray-300 mb-4">
-                      <strong>{episode.title}</strong>
-                    </p>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <span className="text-gray-700 dark:text-gray-300">
-                        Cost:
-                      </span>
-                      <span className="font-bold text-amber-600">
-                        {episode.pointsCost} points
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg mt-2">
-                      <span className="text-gray-700 dark:text-gray-300">
-                        Your balance:
-                      </span>
-                      <span className="font-bold text-gray-900 dark:text-white">
-                        {user.points} points
-                      </span>
-                    </div>
+          <article className="relative flex flex-col items-center md:items-start py-5 px-4 sm:px-6 lg:px-8 bg-white dark:bg-[#032004] e-[60vh] rounded-t-3xl">
+            <h4 className="text-[20px] font-semibold mb-5 hidden md:block">
+              Episodes
+            </h4>
+            <div className="  flex items-center justify-between w-full mb-5  md:hidden">
+              <button
+                onClick={() => handleToggleTab("episodes")}
+                className={` w-[48%] h-[60px] rounded-3xl text-[18px] ${
+                  isEpisodesActive ? "bg-primary" : "border border-primary"
+                } `}
+              >
+                Episodes
+              </button>
+              <button
+                onClick={() => handleToggleTab("details")}
+                className={` w-[48%] h-[60px] rounded-3xl text-[18px] ${
+                  !isEpisodesActive ? "bg-primary" : "border border-primary"
+                } `}
+              >
+                Details
+              </button>
+            </div>
+            {isEpisodesActive ? (
+              //   ? useMemo(
+              //       () => (
+              <>
+                <EpisodeCard
+                  story={story}
+                  //   setShowUnlockModal={setShowUnlockModal}
+                  //   setSelectedEpisode={setSelectedEpisode}
+                />
+                <article className="bg-[#f6f6f6f7] dark:bg-transparent p-4 hidden md:block rounded-lg my-8 md:px-0 md:bg-transparent">
+                  <h3 className="text-2xl font-semibold mb-2">Reviews</h3>
+                  <div className="space-y-6">
+                    {
+                      // story.reviews && story.reviews.length > 0
+                      true ? (
+                        [1, 2, 3].map((review: any, idx: number) => (
+                          <ReviewCard review={review} key={idx} />
+                        ))
+                      ) : (
+                        <p className="text-gray-500 text-center">
+                          No reviews yet. Be the first to review!
+                        </p>
+                      )
+                    }
                   </div>
-                ) : null;
-              })()}
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowUnlockModal(false)}
-                className="flex-1 py-2 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUnlockEpisode}
-                disabled={(() => {
-                  const episode = story.episodes.find(
-                    (ep) => ep.id === selectedEpisode
-                  );
-                  return !episode || user.points < episode.pointsCost;
-                })()}
-                className="flex-1 py-2 px-4 bg-primary hover:bg-primary disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
-              >
-                Unlock Episode
-              </button>
-            </div>
-          </div>
+                </article>
+              </>
+            ) : (
+              //   ),
+              //   [story, setShowUnlockModal, setSelectedEpisode]
+              // )
+              <div className="">
+                <article className="bg-[#f6f6f6f7] dark:bg-dark-primary p-4 block rounded-lg mb-4">
+                  <h3 className="text-2xl font-semibold mb-2">Description</h3>
+                  <p className=" text-[15px] text-shaft dark:text-[#f6f6f6f7]">
+                    {story.description}
+                  </p>
+                </article>
+                <article className="bg-[#f6f6f6f7] dark:bg-dark-primary p-4 block rounded-lg mb-4">
+                  <h3 className="text-2xl font-semibold mb-3">Tags</h3>
+                  <StoryTag story={story} />
+                </article>
+                <article className="bg-[#f6f6f6f7] dark:bg-transparent p-0 mt-10 block rounded-lg mb-4  ">
+                  <h3 className="text-2xl font-semibold mb-3">Reviews</h3>
+                  <div className="space-y-6">
+                    {
+                      // story.reviews && story.reviews.length > 0
+                      true ? (
+                        [1, 2, 3].map((review: any, idx: number) => (
+                          <ReviewCard review={review} key={idx} />
+                        ))
+                      ) : (
+                        <p className="text-gray-500 text-center">
+                          No reviews yet. Be the first to review!
+                        </p>
+                      )
+                    }
+                  </div>
+                </article>
+              </div>
+            )}
+          </article>
         </div>
-      )}
+      </section>
     </Navigation>
   );
-}
+};
+
+export default StoryDetailPage;

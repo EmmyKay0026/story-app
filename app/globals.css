@@ -21,7 +21,7 @@
   /* Colors */
   --color-primary: #45b649;
   --color-faded-primary: #8cff92c5;
-  --color-dark-primary: #021503;
+  --color-dark-primary: #101828;
   --color-secondary: #f59e0b;
   --color-accent: #ec4899;
   --color-shaft: #313131;
@@ -33,10 +33,6 @@
   /* Dark theme colors */
   --color-bg-dark: #000;
   --color-fg-dark: #fff;
-}
-.color {
-  color: #021503;
-  background-color: rgb(20, 71, 230);
 }
 
 @layer utilities {
@@ -112,7 +108,11 @@
     @apply bg-[color:var(--color-bg)] text-[color:var(--color-fg)] transition-colors duration-200;
   }
   .dark body {
-    @apply bg-[color:var(--color-dark-primary)] text-[color:var(--color-fg-dark)];
+    @apply bg-gray-900/90 text-[color:var(--color-fg-dark)];
+  }
+
+  .main-container {
+    @apply bg-gradient-to-r from-[#45b6492f] via-[#fff] dark:via-[shaft] to-[#45b6492f] bg-no-repeat bg-cover;
   }
 
   /* Font family classes */
@@ -163,12 +163,15 @@
 
   .text-small {
     font-size: var(--text-small);
+    line-height: calc(var(--text-small) * 1.7);
   }
   .text-base {
     font-size: var(--text-base);
+    line-height: calc(var(--text-small) * 1.7);
   }
   .text-large {
     font-size: var(--text-large);
+    line-height: calc(var(--text-small) * 1.7);
   }
 }
 
@@ -216,7 +219,7 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-800;
+    @apply bg-gray-100 dark:bg-dark-primary;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -247,11 +250,11 @@
   }
 
   .btn-outline {
-    @apply border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-dark-primary text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
 
   .btn-ghost {
-    @apply hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    @apply hover:bg-gray-100 dark:hover:bg-dark-primary text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
   }
 
   /* Card hover effects */
@@ -270,7 +273,7 @@
   }
 
   .modal-content {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow-xl transform transition-all;
+    @apply bg-white dark:bg-dark-primary rounded-lg shadow-xl transform transition-all;
   }
 }
 
