@@ -58,9 +58,9 @@ export function Navigation({ children }: NavigationProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="lg:min-h-screen top-0 pb-[10dvh] pt-[10dvh] md:pb-0 md:pt-[7dvh] lg:py-0 bg-gray-50 dark:bg-gray-900">
       {/* Mobile Header */}
-      <header className="lg:hidden bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top">
+      <header className="lg:hidden fixed w-[100dvw] top-0 z-[1000] bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top">
         <div className="flex items-center justify-between p-4">
           <Link href="/" className="flex items-center gap-2">
             <Book className="w-6 h-6 text-primary" />
@@ -158,85 +158,86 @@ export function Navigation({ children }: NavigationProps) {
         </nav>
 
         {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div
+        {/* {isMobileMenuOpen && ( */}
+          {/* <div
             className="lg:hidden fixed inset-0 z-50 bg-black/50"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <nav
-              className="w-64 h-full bg-white dark:bg-gray-800 safe-top"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center gap-2 p-6 border-b border-gray-200 dark:border-gray-700">
-                <Book className="w-8 h-8 text-blue-600" />
-                <span className="font-bold text-xl">StoryBook</span>
-              </div>
+            
+          </div> */}
+        <nav
+          className="flex bottom-0 rounded-[50px] mb-[2px] mx-[2px] justify-center items-center backdrop-blur-[40px] fixed z-10 lg:hidden w-[100dvw]"
+          // onClick={(e) => e.stopPropagation()}
+        >
+          {/* <div className="flex items-center gap-2 p-6 border-b border-gray-200 dark:border-gray-700">
+            <Book className="w-8 h-8 text-blue-600" />
+            <span className="font-bold text-xl">StoryBook</span>
+          </div> */}
 
-              <div className="flex-1 flex flex-col justify-between py-6 h-[calc(100%-5rem)]">
-                <div className="space-y-1 px-3">
-                  {navigationItems.map(({ href, label, icon: Icon }) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className={`
-                        flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                        ${
-                          isActive(href)
-                            ? "bg-blue-100 dark:bg-blue-900 text-primary dark:text-blue-300"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                        }
-                      `}
-                    >
-                      <Icon className="w-5 h-5" />
-                      {label}
-                    </Link>
-                  ))}
-                </div>
+          <div className="flex justify-center items-center inset-1">
+            <div className="space-y-1 justify-around z-[20] backdrop-blur-[40px] flex md:w-[60dvw] w-[100dvw]">
+              {navigationItems.map(({ href, label, icon: Icon }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`
+                    flex items-center px-5 py-5 not-[]:text-sm font-medium transition-colors
+                    ${
+                      isActive(href)
+                        ? "bg-blue-100 dark:bg-blue-300 rounded-[50%] backdrop-blur-[40px] text-primary dark:text-gray-900"
+                        : "text-gray-900 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    }
+                  `}
+                >
+                  <Icon className="w-5 h-5" />
+                  
+                </Link>
+              ))}
+            </div>
 
-                <div className="px-3 space-y-4">
-                  <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                    <Coins className="w-5 h-5 text-amber-600" />
-                    <div>
-                      <div className="text-sm font-medium text-amber-700 dark:text-amber-300">
-                        {user.points} Points
-                      </div>
-                      <Link
-                        href="/subscription"
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-xs text-amber-600 hover:text-amber-700"
-                      >
-                        Get more points
-                      </Link>
-                    </div>
+            {/* <div className="px-3 space-y-4">
+              <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                <Coins className="w-5 h-5 text-amber-600" />
+                <div>
+                  <div className="text-sm font-medium text-amber-700 dark:text-amber-300">
+                    {user.points} Points
                   </div>
-
-                  <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                    <div className="flex items-center gap-3 px-3 py-2 text-sm">
-                      <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium truncate">User</div>
-                        <div className="text-xs text-gray-500 truncate">
-                          {user.phoneNumber}
-                        </div>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-3 px-3 py-2 mt-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    >
-                      <LogOut className="w-5 h-5" />
-                      Sign Out
-                    </button>
-                  </div>
+                  <Link
+                    href="/subscription"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="text-xs text-amber-600 hover:text-amber-700"
+                  >
+                    Get more points
+                  </Link>
                 </div>
               </div>
-            </nav>
+
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+                <div className="flex items-center gap-3 px-3 py-2 text-sm">
+                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate">User</div>
+                    <div className="text-xs text-gray-500 truncate">
+                      {user.phoneNumber}
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-3 py-2 mt-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Sign Out
+                </button>
+              </div>
+            </div> */}
           </div>
-        )}
+        </nav>
+        {/* )} */}
 
         {/* Main Content */}
         <main className="flex-1 lg:ml-64 dark:bg-dark-primary">

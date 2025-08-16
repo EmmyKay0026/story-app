@@ -1,35 +1,33 @@
+import React from "react";
+import CardSwap, { Card } from "./cardswap";
+import { mockStories } from "@/constants/stories";
+import { StoryCard } from "@/components/molecules/StoryCard";
 
-import React from 'react'
-import CardSwap, { Card } from './cardswap'
-
-
-
-const Cards = () => {
+const Cards = ({ limit = 3 }) => {
   return (
-    <div style={{ height: '600px', position: 'relative' }}>
+    <div style={{ flexBasis: "50%", position: "relative" }}>
       <CardSwap
-        cardDistance={60}
-        verticalDistance={80}
+        width={350}
+        height={315}
+        cardDistance={40}
+        verticalDistance={40}
         delay={5000}
         pauseOnHover={false}
       >
-        <Card>
-          <h3>Card 1</h3>
-          <p>Your content here</p>
-        </Card>
-        <Card>
-          <h3>Card 2</h3>
-          <p>Your content here</p>
-        </Card>
-        <Card>
-          <h3>Card 3</h3>
-          <p>Your content here</p>
-        </Card>
+        {mockStories.slice(0, 3).map((story) => (
+          <Card key={story.id}>
+            <StoryCard
+              key={story.id}
+              story={story}
+              showProgress={false}
+              showDescription={false}
+              variant={"continue"}
+            />
+          </Card>
+        ))}
       </CardSwap>
     </div>
-  )
-}
+  );
+};
 
-export default Cards
-
-
+export default Cards;
