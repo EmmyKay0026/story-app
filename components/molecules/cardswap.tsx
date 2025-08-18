@@ -28,20 +28,17 @@ export interface CardSwapProps {
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   customClass?: string;
 }
+
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ customClass, ...rest }, ref) => (
     <div
       ref={ref}
       {...rest}
-      className={`absolute top-[25%] left-1/2 rounded-xl border-big bg-white dark:bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
+      className={`absolute left-[100%] md:top-0 lg:top-[100%] lg:left-1/2 rounded-xl border border-[#45B649] bg-white dark:bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
     />
   )
 );
-
 Card.displayName = "Card";
-
-
-
 
 type CardRef = RefObject<HTMLDivElement>;
 interface Slot {
@@ -237,7 +234,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
   return (
     <div
       ref={container}
-      className="absolute bottom-0 right-0 transform translate-x-[5%] translate-y-[20%] origin-bottom-right perspective-[900px] overflow-visible max-[768px]:translate-x-[25%] max-[768px]:translate-y-[25%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[25%] max-[480px]:translate-y-[25%] max-[480px]:scale-[0.55]"
+      className="absolute h-[auto] right-1/2 md:bottom-0 lg:right-[3rem] transform origin-bottom-right perspective-[900px] overflow-visible max-[768px]:scale-[0.75] max-[480px]:scale-[0.55]"
       style={{ width, height }}
     >
       {rendered}
