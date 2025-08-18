@@ -25,7 +25,18 @@ const Library = () => {
         category.value.includes(tag);
       })
     ) {
-      setSelectedCategory(decodeURIComponent(tag));
+      // console.log(
+      //   ALLCATEGORIES.map((category) => {
+      //     console.log(category);
+      //     category.value.includes(tag);
+      //   })
+      // );
+
+      const convertedCat = ALLCATEGORIES.find(
+        (category) => category.value == tag
+      );
+
+      setSelectedCategory(convertedCat?.label ?? "");
     }
   }, []);
 
@@ -37,14 +48,18 @@ const Library = () => {
     let filteredStories = mockStories;
 
     if (searchTerm) {
-      filteredStories = filteredStories.filter((story) =>
-        story.title.toLowerCase().includes(searchTerm.toLowerCase())
+      filteredStories = filteredStories.filter(
+        (story) =>
+          story.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          story.tags.some((tag: string) => searchTerm.includes(tag))
       );
     }
 
     if (selectedCategories.length > 0) {
-      filteredStories = filteredStories.filter((story) =>
-        selectedCategories.includes(story.category)
+      filteredStories = filteredStories.filter(
+        (story) =>
+          selectedCategories.includes(story.category) ||
+          story.tags.some((tag: string) => selectedCategories.includes(tag))
       );
     }
 
@@ -89,11 +104,11 @@ const Library = () => {
                   value={category.value}
                   className="mr-2 w-0 peer"
                   style={{ verticalAlign: "middle" }}
-                  checked={selectedCategory === category.value}
+                  checked={selectedCategory === category.label}
                   onChange={() => {
                     const newCategory =
-                      selectedCategory === category.value ? null : category;
-                    setSelectedCategory(newCategory?.value!);
+                      selectedCategory === category.label ? null : category;
+                    setSelectedCategory(newCategory?.label!);
 
                     const params = new URLSearchParams(window.location.search);
                     if (newCategory) {
@@ -115,11 +130,11 @@ const Library = () => {
             ))}
           </div>
         </article>
-        <article className="flex flex-col items-center justify-between gap-8  md:items-start min-h-[60vh] rounded-t-3xl lg:flex-row ">
-          <div className="mb-8">
+        <article className="flex flex-col items-center justify-between gap-8  md:items-start min-h-[60vh]  rounded-t-3xl lg:flex-row ">
+          <div className="mb-8 lg:w-[60%]">
             <h2 className="text-4xl font-bold mb-8">
               {ALLCATEGORIES.find(
-                (category) => category.value == selectedCategory
+                (category) => category.label == selectedCategory
               )?.label ?? "All stories"}
             </h2>
             {stories.length > 0 ? (
@@ -146,7 +161,7 @@ const Library = () => {
             )}
           </div>
           {/* <div className=""> */}
-          <div className="sticky top-[50px] mb-8  w-full lg:max-w-[300px] lg:mt-20 ">
+          <div className="sticky top-[50px] mb-8  w-full lg:w-[300px] lg:mt-20 ">
             <h2 className="text-xl font-bold mb-2">Feature stories</h2>
             {mockStories.length > 0 && (
               <div className="flex flex-wrap">

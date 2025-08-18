@@ -30,7 +30,7 @@ export default function ProfilePage() {
   } = useUser();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
-    "stories" | "favorites" | "activity"
+    "stories" | "bookmark" | "activity"
   >("stories");
 
   useEffect(() => {
@@ -169,7 +169,7 @@ export default function ProfilePage() {
         <div className="flex border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-[var(--nav-height,0)] z-10">
           {[
             { key: "stories", label: "My Stories" },
-            { key: "favorites", label: "Favorites" },
+            { key: "bookmark", label: "Bookmark" },
             { key: "activity", label: "Activity" },
           ].map((tab) => (
             <button
@@ -220,7 +220,7 @@ export default function ProfilePage() {
             </div>
           )}
 
-          {activeTab === "favorites" && (
+          {activeTab === "bookmark" && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {favoriteStories.map((item, index) => (
                 <StoryCard story={item} key={(item.id, index)} />

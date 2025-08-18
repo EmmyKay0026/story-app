@@ -195,7 +195,7 @@ export default function MyReadsPage() {
                 ) : (
                   <>
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Continue Your Journey
+                      Stories You are Reading
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                       {currentlyReading.map((story) => (
@@ -235,7 +235,7 @@ export default function MyReadsPage() {
                 ) : (
                   <>
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Stories You've Conquered
+                      Stories You've Completed
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                       {completedStories.map((story) => (
