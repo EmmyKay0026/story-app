@@ -1,7 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../atoms/Button";
 import { ThemeToggle } from "../atoms/ThemeToggle";
+import { FaBars, FaTimes } from "react-icons/fa";
+import NavLists from "../molecules/NavLists";
+// import { LoginModal } from "./LoginModal"
+// import Link from "next/link";
+// import CustomLink from "../atoms/CustomLink";
 
 const NavBar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

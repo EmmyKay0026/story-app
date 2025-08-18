@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { mockStories } from "@/constants/stories";
+import DetailsCard from "@/components/molecules/DetailsCard"
 import StoryStats from "@/components/molecules/StoryStats";
 import { Bookmark, Eye, Star } from "lucide-react";
 import { Navigation } from "@/components/templates/NavigationMenu";
@@ -119,6 +120,27 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
               <StoryTag story={story} />
             </div>
           </article>
+      <div className="max-w-4xl mx-auto p-4 lg:p-6">
+        {/* Header */}
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            onClick={() => router.back()}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Go back"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+            Story Details
+          </h1>
+        </div>
+        <div className="mb-8">
+          <DetailsCard 
+            story={story}
+            storyProgress={true}
+          />
+        </div>
+        
 
           <article className="relative flex flex-col items-center md:items-start py-5 px-4 sm:px-6 lg:px-8 bg-white dark:bg-[#032004] e-[60vh] rounded-t-3xl">
             <h4 className="text-[20px] font-semibold mb-5 hidden md:block">

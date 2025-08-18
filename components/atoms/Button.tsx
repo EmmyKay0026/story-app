@@ -10,7 +10,7 @@ const Button: React.FC<ButtonProps> = ( { label, onClick, className } ) => {
   return (
     <button
       onClick={onClick}
-      className={`bg-gradient-to-r from-[#085f33] via-[#3aa13e] to-[#45B649] shadow-lg cursor-pointer text-[#FFFFE0] rounded-[12px] ${className || ''}`}
+      className={`cursor-pointer text-[#FFFFFF] rounded-[12px] bg-primary hover:bg-primary py-4 px-10 text-lg glow ${className || ''}`}
     >
       {label}
     </button>

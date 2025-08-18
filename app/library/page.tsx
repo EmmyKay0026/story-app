@@ -10,6 +10,7 @@ import {
 } from "@/constants/stories";
 import { BookCopy, Box, Search } from "lucide-react";
 import Link from "next/link";
+import Mobile from "@/components/molecules/DashboardNav";
 
 const Library = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -67,7 +68,7 @@ const Library = () => {
   };
   return (
     <Navigation>
-      <section className="max-w-4xl mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
+      <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
           <BookCopy className="w-8 h-8 text-shaft dark:text-white fill-current" />
