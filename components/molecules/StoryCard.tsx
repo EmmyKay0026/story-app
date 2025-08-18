@@ -5,17 +5,12 @@ import { useUser } from "@/context/UserContext";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 import { Heart, Clock, Star, BookOpen, Bookmark } from "lucide-react";
 import Image from "next/image";
-// import { Story } from "../lib/data/mockData";
-// import { useUser } from "../contexts/UserContext";
-// import {
-//   formatReadTime,
-//   calculateStoryProgress,
-// } from "../lib/utils/storyUtils";
 
 interface StoryCardProps {
   story: Story;
   variant?: "default" | "continue" | "compact" | "compact_v2";
   showProgress?: boolean;
+  showDescription?: boolean;
   onClick?: () => void;
 }
 
@@ -23,6 +18,7 @@ export function StoryCard({
   story,
   variant = "default",
   showProgress = false,
+  showDescription = true,
   onClick,
 }: StoryCardProps) {
   const { user, toggleFavorite } = useUser();
@@ -38,9 +34,9 @@ export function StoryCard({
   };
 
   const cardClasses = `
-    group relative bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg 
+    group relative border border-prime rounded-lg shadow-md hover:shadow-lg 
     transition-all duration-200 cursor-pointer overflow-hidden
-    ${variant === "compact" ? "h-32" : "h-auto"}
+    ${variant === "compact" ? "h-32" : "h-600px"}
   `;
 
   const imageClasses = `
@@ -65,32 +61,37 @@ export function StoryCard({
               src={story.coverImage}
               alt={story.title}
               width={300}
-              height={300}
+              height={400}
               className={imageClasses}
             />
           </div>
           <div className="flex-1 p-3 flex flex-col justify-between">
             <div>
-              <h3 className="font-semibold text-sm text-gray-900 dark:text-white line-clamp-1">
+              <h3 className="font-semibold text-sm text-gray dark:text-white line-clamp-1">
                 {story.title}
               </h3>
-              <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
-                {story.description}
-              </p>
+              {showDescription && ( // 👈 Only show if true
+                <p className="text-xs text-gray-600 dark:text-white mt-1 line-clamp-2">
+                  {story.description}
+                </p>
+              )}
             </div>
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <Clock className="w-3 h-3" />
                 <span>{formatReadTime(story.totalReadTime)}</span>
               </div>
-              {showProgress && hasStarted && (
-                <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                  <div
-                    className="bg-primary h-1 rounded-full transition-all duration-300"
-                    style={{ width: `${userProgress}%` }}
-                  />
-                </div>
-              )}
+              {showProgress ? (
+                hasStarted && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
+                    <div
+                      className="bg-primary h-1 transition-all duration-300"
+                      style={{ width: `${userProgress}%` }}
+                    />
+                  </div>
+                )
+              ) : null}
+
             </div>
           </div>
         </div>
@@ -124,14 +125,17 @@ export function StoryCard({
             Featured
           </div>
         )}
-        {showProgress && hasStarted && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
-            <div
-              className="bg-primary h-1 transition-all duration-300"
-              style={{ width: `${userProgress}%` }}
-            />
-          </div>
-        )}
+        {showProgress ? (
+          hasStarted && (
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20">
+              <div
+                className="bg-primary h-1 transition-all duration-300"
+                style={{ width: `${userProgress}%` }}
+              />
+            </div>
+          )
+        ) : null}
+
       </div>
 
       <div className="p-4">
@@ -145,18 +149,20 @@ export function StoryCard({
           </div>
         </div>
 
-        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
-          {story.description}
-        </p>
+        {showDescription && ( // 👈 Only show if true
+          <p className="text-sm text-gray=900 dark:text-gray-100 mb-3 line-clamp-2">
+            {story.description}
+          </p>
+        )}
 
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <span className="font-medium">{story.author}</span>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <BookOpen className="w-3 h-3" />
-              <span>{story.totalEpisodes} episodes</span>
+              <span>{story.totalEpisodes} Ep</span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="md:flex hidden items-center gap-1">
               <Clock className="w-3 h-3" />
               <span>{formatReadTime(story.totalReadTime)}</span>
             </div>
@@ -164,22 +170,23 @@ export function StoryCard({
         </div>
 
         <div className="flex items-center justify-between mt-3">
-          <span className="inline-block px-2 py-1 bg-gray-100 dark:bg-gray-700 text-xs font-medium text-gray-700 dark:text-gray-300 rounded">
+          <span className="inline-block px-2 py-1 bg-[#45B649] text-xs font-medium text-gray-700 dark:text-gray-300 rounded">
             {story.category}
           </span>
-          {variant === "continue" && hasStarted && (
+          {variant === "continue" && hasStarted && showProgress && (
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">
                 {userProgress}% complete
               </span>
               <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div
-                  className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                  className="bg-[#45B649] h-2 rounded-full transition-all duration-300"
                   style={{ width: `${userProgress}%` }}
                 />
               </div>
             </div>
           )}
+
         </div>
       </div>
     </div>

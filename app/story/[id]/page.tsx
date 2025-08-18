@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
+import DetailsCard from "@/components/molecules/DetailsCard"
 import { calculateStoryProgress, formatReadTime } from "@/utils/storyUtils";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import StoryStats from "@/components/molecules/StoryStats";
@@ -108,54 +109,13 @@ export default function StoryDetailPage({ params }: StoryDetailPageProps) {
             Story Details
           </h1>
         </div>
-
-        {/* Story Info */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden mb-8">
-          <div className="md:flex">
-            <div className="md:w-1/3">
-              <img
-                src={story.coverImage}
-                alt={story.title}
-                className="w-full h-64 md:h-full object-cover"
-              />
-            </div>
-            <div className="md:w-2/3 p-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    {story.title}
-                  </h2>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-                    by {story.author}
-                  </p>
-                </div>
-                <button
-                  onClick={() => toggleFavorite(story.id)}
-                  className="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  aria-label={
-                    isFavorite ? "Remove from bookmark" : "Add to bookmark"
-                  }
-                >
-                  <Bookmark
-                    className={`w-6 h-6 ${
-                      isFavorite
-                        ? "fill-shaft text-shaft dark:text-white dark:fill-white"
-                        : "text-gray-400"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
-                {story.description}
-              </p>
-
-              <StoryStats story={story} storyProgress={storyProgress} />
-
-              <StoryTag story={story} />
-            </div>
-          </div>
+        <div className="mb-8">
+          <DetailsCard 
+            story={story}
+            storyProgress={true}
+          />
         </div>
+        
 
         {/* Episodes List */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
