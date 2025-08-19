@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -22,7 +21,7 @@ interface NavigationProps {
 }
 
 export function Navigation({ children }: NavigationProps) {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, logout } = useUser();
   // const { resolvedTheme } = useTheme();
   const pathname = usePathname();
@@ -45,7 +44,7 @@ export function Navigation({ children }: NavigationProps) {
   const handleLogout = () => {
     logout();
     router.push("/auth/login");
-    setIsMobileMenuOpen(false);
+    // setIsMobileMenuOpen(false);
   };
 
   if (!user) {
@@ -184,7 +183,7 @@ export function Navigation({ children }: NavigationProps) {
                 <Link
                   key={href}
                   href={href}
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  // onClick={() => setIsMobileMenuOpen(false)}
                   className={`
                     flex items-center px-5 py-5 not-[]:text-sm font-medium transition-colors
                     ${

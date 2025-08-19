@@ -17,16 +17,6 @@ const Library = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
-
-  if (!isAuthenticated || !user) {
-    return null;
-  }
-
-  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tag = params.get("tag");
     if (
@@ -35,13 +25,6 @@ const Library = () => {
         category.value.includes(tag);
       })
     ) {
-      // console.log(
-      //   ALLCATEGORIES.map((category) => {
-      //     console.log(category);
-      //     category.value.includes(tag);
-      //   })
-      // );
-
       const convertedCat = ALLCATEGORIES.find(
         (category) => category.value == tag
       );
@@ -53,7 +36,15 @@ const Library = () => {
   useEffect(() => {
     handleFilter(searchTerm, selectedCategory ? [selectedCategory] : []);
   }, [searchTerm, selectedCategory]);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, router]);
 
+  if (!isAuthenticated || !user) {
+    return null;
+  }
   const handleFilter = (searchTerm: string, selectedCategories: string[]) => {
     let filteredStories = mockStories;
 
