@@ -7,8 +7,6 @@ import {
   User,
   Book,
   LogOut,
-  Menu,
-  X,
   Coins,
   BookOpen,
   BookCopy,
@@ -69,7 +67,13 @@ export function Navigation({ children }: NavigationProps) {
               <Coins className="w-4 h-4" />
               <span>{user.points}</span>
             </div>
-            <button
+            <Link
+              href={"/profile"}
+              className="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
+            >
+              <User className="w-4 h-4 text-white" />
+            </Link>
+            {/* <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
               aria-label="Toggle menu"
@@ -79,7 +83,7 @@ export function Navigation({ children }: NavigationProps) {
               ) : (
                 <Menu className="w-5 h-5" />
               )}
-            </button>
+            </button> */}
           </div>
         </div>
       </header>
@@ -87,10 +91,13 @@ export function Navigation({ children }: NavigationProps) {
       <div className="flex">
         {/* Desktop Sidebar */}
         <nav className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-2 p-6 border-b border-gray-200 dark:border-gray-700">
+          <Link
+            href={"/"}
+            className="flex items-center cursor-pointer gap-2 p-6 border-b border-gray-200 dark:border-gray-700"
+          >
             <Book className="w-8 h-8 text-primary" />
             <span className="font-bold text-xl">StoryBook</span>
-          </div>
+          </Link>
 
           <div className="flex-1 flex flex-col justify-between py-6">
             <div className="space-y-1 px-3">

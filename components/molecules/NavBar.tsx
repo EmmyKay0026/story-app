@@ -3,16 +3,7 @@ import React, { useState } from "react";
 import Button from "../atoms/Button";
 import { ThemeToggle } from "../atoms/ThemeToggle";
 import Link from "next/link";
-import {
-  BookCopy,
-  Bookmark,
-  BookOpen,
-
-  Home,
-
-  Menu,
-  X,
-} from "lucide-react";
+import { BookCopy, Bookmark, BookOpen, Home, Menu, X } from "lucide-react";
 // import { Hamburger } from "lucide-react";
 // import { LoginModal } from "./LoginModal"
 // import Link from "next/link";
@@ -37,7 +28,7 @@ const NavBar = () => {
 
   return (
     <>
-      <div className="flex w-[100%] justify-between z-[20] text-black dark:text-white py-[10px] dark:bg-black bg-white top-0 px-[20px] md:px-[55px] items-center sticky shadow-[0px_0px_6px_8px_rgba(219,218,218,0.123)]  dark:shadow-[0px_0px_6px_8px_rgba(65,55,55,0.16)] bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)]dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)] ">
+      <div className="flex w-[100%] justify-between z-[20] text-black dark:text-white py-[10px] dark:bg-black bg-white top-0 px-[20px] md:px-[55px] items-center sticky shadow-[0px_0px_6px_8px_rgba(219,218,218,0.123)]  dark:shadow-[0px_0px_6px_8px_rgba(65,55,55,0.16)] bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)] dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)] ">
         <div>LOGO</div>
 
         <ul className="hidden md:flex gap-[10px] child: items-center">
@@ -76,7 +67,7 @@ const NavBar = () => {
           onClick={() => {
             setOpenMenu(!openMenu);
           }}
-          className=""
+          className="md:hidden"
         >
           {openMenu ? <X /> : <Menu />}
         </div>
@@ -84,8 +75,8 @@ const NavBar = () => {
 
       {/* Mobile menu */}
       {openMenu && (
-        <article className="relative h-screen">
-          <ul className="fixed z-10 w-screen h-screen  glass md:hidden gap-[10px] child: items-center">
+        <article className="relative h-screen block md:hidden">
+          <ul className="fixed z-10 w-screen h-screen  glass  gap-[10px] child: items-center">
             {navigationItems.map(({ href, icon: Icon, label }) => (
               <Link
                 key={href}

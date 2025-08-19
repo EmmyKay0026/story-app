@@ -162,7 +162,7 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
                   //   setShowUnlockModal={setShowUnlockModal}
                   //   setSelectedEpisode={setSelectedEpisode}
                 />
-                <article className="bg-[#f6f6f6f7] dark:bg-transparent p-4 hidden md:block rounded-lg my-8 md:px-0 md:bg-transparent">
+                <article className="bg-[#f6f6f6f7] dark:bg-transparent p-4 hidden md:block rounded-lg my-8 md:px-0 md:bg-transparent  w-full">
                   <h3 className="text-2xl font-semibold mb-2">Reviews</h3>
                   <div className="space-y-6">
                     {

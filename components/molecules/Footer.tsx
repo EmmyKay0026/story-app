@@ -1,12 +1,12 @@
 "use client";
 import { ALLCATEGORIES } from "@/constants/stories";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 
 const Footer = () => {
-  // const [name, setName] = useState("");
+  const [name, setName] = useState("");
   return (
-    <footer className="dark:bg-gray-900 dark:text-gray-500 py-12 px-8 pb-0 w-full bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)] dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)]">
+    <footer className="dark:bg-gray-900 dark:text-gray-500 py-12 px-12  pb-0 w-full bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)] dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)]">
       <div className=" max-w-6xl w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div>
@@ -71,7 +71,7 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          {/* <div>
+          <div>
             <h4 className="text-[#45B649] w-auto text-lg font-semibold mb-4">
               Stay Updated
             </h4>
@@ -79,19 +79,19 @@ const Footer = () => {
               Subscribe to our newsletter for new releases and exclusive
               content.
             </p>
-            <div className="flex mt-4">
+            <div className="flex flex-col mt-4">
               <input
                 type="email"
                 placeholder="Your Email"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="py-2 px-4 bg-gray-700 text-white rounded-l-md border-none focus:outline-none focus:ring-2 focus:ring-[#45B649]"
+                className="py-2 px-4 bg-gray-200 dark:bg-gray-700 text-shaft dark:text-white rounded-md border-none focus:outline-none focus:ring-2 focus:ring-[#45B649]"
               />
-              <button className="bg-gradient-to-r from-[#45B649] to-[#38a03c] text-white py-2 px-4 rounded-r-md font-semibold hover:from-[#3a9b3d] hover:to-[#2e8b31] transition-colors duration-300">
+              <button className="bg-gradient-to-r from-[#45B649] to-[#38a03c] mt-4 text-white py-2 px-4 rounded-md font-semibold hover:from-[#3a9b3d] hover:to-[#2e8b31] transition-colors duration-300">
                 Subscribe
               </button>
             </div>
-          </div> */}
+          </div>
         </div>
         <div className="border-t border-gray-700 pt-8 text-center flex justify-between flex-wrap">
           <p className="text-gray-500 text-left text-[14px] md:text-[1rem]">
@@ -104,7 +104,7 @@ const Footer = () => {
       </div>
       {/* <span className=""> */}
 
-      <h2 className="text-transparent text-center text-[3rem] md:text-[5rem] font-bold opacity-50 my-0 mt-8 bg-clip-text bg-gradient-to-r from-faded-primary to-primary dark:from-dark-primary dark:to-primary">
+      <h2 className="text-transparent text-center text-[3rem] md:text-[8rem] font-semibold opacity-50 my-0 mt-8 bg-clip-text bg-gradient-to-r from-faded-primary to-primary dark:from-dark-primary dark:to-primary">
         Story App
       </h2>
     </footer>

@@ -5,12 +5,26 @@ import { Navigation } from "@/components/templates/NavigationMenu";
 import { ALLCATEGORIES, mockStories } from "@/constants/stories";
 import { BookCopy, Box, Search } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 // import Mobile from "@/components/molecules/DashboardNav";
 
 const Library = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [stories, setStories] = useState(mockStories);
+  const { user, isAuthenticated } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

@@ -28,7 +28,7 @@ export default function Home() {
   // };
 
   return (
-    <section className=" bg-white dark:bg-[#000000]">
+    <section className=" bg-white dark:bg-[#141414]">
       <NavBar />
 
       <div className="min-h-screen relative theme-transition ">
@@ -166,7 +166,7 @@ export default function Home() {
           </div>
         </section>
         {/* Tags */}
-        <section className="pb-[7rem] px-[1rem] md:px-[3rem]">
+        <section className="pb-[7rem] pt-[3rem] px-[1rem] md:px-[3rem]">
           <div className="w-full flex flex-col text-center text-3xl items-center justify-center md:text-3xl font-bold text-black dark:text-white mb-[2rem]">
             <p className="mb-4">Popular Tags</p>
             <div className="h-1 w-20  mt-[-6] bg-gradient-to-r from-[#085f33] via-[#3aa13e] to-[#45B649] rounded-full"></div>
