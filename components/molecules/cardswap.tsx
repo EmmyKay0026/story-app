@@ -34,13 +34,15 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     <div
       ref={ref}
       {...rest}
-      className={`absolute left-[100%] md:top-0 lg:top-[100%] lg:left-1/2 rounded-xl border border-[#45B649] bg-white dark:bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${customClass ?? ""} ${rest.className ?? ""}`.trim()}
+      className={`absolute left-[100%] md:top-0 lg:top-[100%] lg:left-1/2 rounded-xl border border-[#45B649] bg-white dark:bg-black [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] ${
+        customClass ?? ""
+      } ${rest.className ?? ""}`.trim()}
     />
   )
 );
 Card.displayName = "Card";
 
-type CardRef = RefObject<HTMLDivElement>;
+type CardRef = RefObject<HTMLDivElement | null>;
 interface Slot {
   x: number;
   y: number;
@@ -110,7 +112,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
   );
   const refs = useMemo<CardRef[]>(
     () => childArr.map(() => React.createRef<HTMLDivElement>()),
-    [childArr.length]
+    [childArr]
   );
 
   const order = useRef<number[]>(
@@ -118,7 +120,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
   );
 
   const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const intervalRef = useRef<number>();
+  const intervalRef = useRef<number | null>(null);
   const container = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -200,7 +202,9 @@ const CardSwap: React.FC<CardSwapProps> = ({
       const node = container.current!;
       const pause = () => {
         tlRef.current?.pause();
-        clearInterval(intervalRef.current);
+        if (intervalRef.current !== null) {
+          clearInterval(intervalRef.current);
+        }
       };
       const resume = () => {
         tlRef.current?.play();
@@ -211,11 +215,31 @@ const CardSwap: React.FC<CardSwapProps> = ({
       return () => {
         node.removeEventListener("mouseenter", pause);
         node.removeEventListener("mouseleave", resume);
-        clearInterval(intervalRef.current);
+        if (intervalRef.current !== null) {
+          clearInterval(intervalRef.current);
+        }
       };
     }
-    return () => clearInterval(intervalRef.current);
-  }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+    return () => {
+      if (intervalRef.current !== null) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [
+    cardDistance,
+    verticalDistance,
+    delay,
+    pauseOnHover,
+    skewAmount,
+    easing,
+    config.durDrop,
+    config.durMove,
+    config.durReturn,
+    config.ease,
+    config.promoteOverlap,
+    config.returnDelay,
+    refs,
+  ]);
 
   const rendered = childArr.map((child, i) =>
     isValidElement<CardProps>(child)

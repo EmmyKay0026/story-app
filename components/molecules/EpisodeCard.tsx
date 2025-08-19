@@ -1,10 +1,10 @@
+import React, { useState } from "react";
 import { Story } from "@/constants/stories";
 import { useUser } from "@/context/UserContext";
 import { formatReadTime } from "@/utils/storyUtils";
-import { Clock, Lock, Play } from "lucide-react";
+import { Clock, Lock } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { SetStateAction, useState } from "react";
 
 const EpisodeCard = ({
   story,
@@ -15,21 +15,14 @@ const EpisodeCard = ({
   // setSelectedEpisode: (value: SetStateAction<string | null>) => void;
   // setShowUnlockModal: (value: SetStateAction<boolean>) => void;
 }) => {
-  const {
-    user,
-    isAuthenticated,
-    toggleFavorite,
-    isEpisodeUnlocked,
-    unlockEpisode,
-    getUserProgress,
-  } = useUser();
+  const { user, isEpisodeUnlocked, unlockEpisode, getUserProgress } = useUser();
   const router = useRouter();
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
   const handleEpisodeClick = (
     episodeId: string,
-    isPremium: boolean,
-    pointsCost: number
+    isPremium: boolean
+    // pointsCost: number
   ) => {
     const isUnlocked = isEpisodeUnlocked(episodeId);
 
@@ -58,7 +51,7 @@ const EpisodeCard = ({
   return (
     <>
       <div className="space-y-4 md:w-full">
-        {story.episodes.map((episode, index) => {
+        {story.episodes.map((episode) => {
           const isUnlocked = isEpisodeUnlocked(episode.id);
           const progress = getUserProgress(story.id, episode.id);
           const canRead = !episode.isPremium || isUnlocked;
@@ -77,8 +70,8 @@ const EpisodeCard = ({
               onClick={() =>
                 handleEpisodeClick(
                   episode.id,
-                  episode.isPremium,
-                  episode.pointsCost
+                  episode.isPremium
+                  // episode.pointsCost
                 )
               }
             >
@@ -201,7 +194,7 @@ const EpisodeCard = ({
                   const episode = story.episodes.find(
                     (ep) => ep.id === selectedEpisode
                   );
-                  return !episode || user?.points! < episode.pointsCost;
+                  return !episode || (user?.points ?? 0) < episode.pointsCost;
                 })()}
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >

@@ -3,7 +3,7 @@
 import { Story } from "@/constants/stories";
 import { useUser } from "@/context/UserContext";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
-import { Heart, Clock, Star, BookOpen, Bookmark } from "lucide-react";
+import { Clock, Star, BookOpen, Bookmark } from "lucide-react";
 import Image from "next/image";
 
 interface StoryCardProps {
@@ -101,7 +101,9 @@ export function StoryCard({
   return (
     <div className={cardClasses} onClick={onClick}>
       <div className="relative">
-        <img
+        <Image
+          width={500}
+          height={350}
           src={story.coverImage}
           alt={story.title}
           className={imageClasses}
@@ -168,7 +170,7 @@ export function StoryCard({
         </div>
 
         <div className="flex items-center justify-between mt-3">
-          <span className="inline-block px-2 py-1 bg-[#45B649] text-xs font-medium text-gray-700 dark:text-gray-300 rounded">
+          <span className="inline-block px-2 py-1 bg-[#45B649] text-xs font-medium text-white dark:text-gray-300 rounded">
             {story.category}
           </span>
           {variant === "continue" && hasStarted && showProgress && (

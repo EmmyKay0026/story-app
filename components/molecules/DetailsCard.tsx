@@ -1,25 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Heart,
-  Star,
-  Clock,
-  BookOpen,
-  Lock,
-  Play,
-  Bookmark,
-} from "lucide-react";
+import React from "react";
+import { Bookmark } from "lucide-react";
 import { useUser } from "@/context/UserContext";
-import { mockStories } from "@/constants/stories";
-import { calculateStoryProgress, formatReadTime } from "@/utils/storyUtils";
+import { calculateStoryProgress } from "@/utils/storyUtils";
 // import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
 import { Story } from "@/constants/stories";
+import Image from "next/image";
 // import EpisodeCard from "@/components/molecules/EpisodeCard";
 // import { Navigation } from "../../../components/Navigation";
 // import { useUser } from "../../../contexts/UserContext";
@@ -29,7 +19,6 @@ import { Story } from "@/constants/stories";
 //   calculateStoryProgress,
 // } from "../../../lib/utils/storyUtils";
 
-
 interface StoryCardProps {
   story: Story;
   storyProgress?: boolean;
@@ -37,25 +26,21 @@ interface StoryCardProps {
 }
 
 export default function DetailsCard({
-    story,
-    // storyProgress = false,
-    onClick,
-  }: StoryCardProps) {
-    const { user, toggleFavorite } = useUser();
+  story,
+}: // storyProgress = false,
+// onClick,
+StoryCardProps) {
+  const { user, toggleFavorite } = useUser();
 
-  
-  
-  
-  
   const isFavorite = user?.favorites.includes(story.id) || false;
   // const userProgress = user ? calculateStoryProgress(story, user.progress) : 0;
-  const hasStarted =
-    user?.progress.some((p) => p.storyId === story.id) || false;
+  // const hasStarted =
+  //   user?.progress.some((p) => p.storyId === story.id) || false;
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleFavorite(story.id);
-  };
+  // const handleFavoriteClick = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   toggleFavorite(story.id);
+  // };
 
   // const {
   //   user,
@@ -112,11 +97,12 @@ export default function DetailsCard({
   // };
 
   return (
-
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
       <div className="md:flex">
         <div className="md:w-1/3">
-          <img
+          <Image
+            width={400}
+            height={400}
             src={story.coverImage}
             alt={story.title}
             className="w-full h-64 md:h-full object-cover"

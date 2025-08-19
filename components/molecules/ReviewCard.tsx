@@ -1,14 +1,21 @@
 import { Star } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 
-const ReviewCard = (review: any) => {
+const ReviewCard = (review: {
+  userAvatar: string;
+  rating: number;
+  comment: string;
+}) => {
   return (
     <div
       //   key={idx}
-      className="flex flex-col sm:flex-row items-start gap-4 bg-white dark:bg-dark-primary rounded-xl shadow p-4 md:dark:bg-shaft"
+      className="flex flex-col sm:flex-row items-start gap-4 bg-white dark:bg-dark-primary rounded-xl shadow p-4 md:dark:bg-shaft w-full"
     >
       <div className="flex-shrink-0">
-        <img
+        <Image
+          width={300}
+          height={300}
           src={review.userAvatar || "/no-avatar.jpg"}
           alt={"name"}
           className="w-10 h-10 rounded-full object-cover border saturate-0"

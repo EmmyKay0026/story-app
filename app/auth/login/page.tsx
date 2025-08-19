@@ -14,7 +14,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/");
+      router.push("/library");
     }
   }, [isAuthenticated, router]);
 
@@ -28,7 +28,7 @@ export default function LoginPage() {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     login(phoneNumber);
-    router.push("/");
+    router.push("/library");
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -164,7 +164,7 @@ export default function LoginPage() {
             </h3>
             <ul className="text-xs text-primary dark:text-white space-y-1">
               <li>• Enter any phone number to continue</li>
-              <li>• You'll start with 100 points</li>
+              <li>• You&apos;ll start with 100 points</li>
               <li>• Premium episodes cost 6-12 points</li>
               <li>• All preferences are saved locally</li>
             </ul>

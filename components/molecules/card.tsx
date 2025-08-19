@@ -14,7 +14,7 @@ const Cards = ({ limit = 3 }) => {
         delay={5000}
         pauseOnHover={false}
       >
-        {mockStories.slice(0, 3).map((story) => (
+        {mockStories.slice(0, limit).map((story) => (
           <Card key={story.id}>
             <StoryCard
               key={story.id}

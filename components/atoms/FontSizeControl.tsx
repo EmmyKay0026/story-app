@@ -1,8 +1,7 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React from "react";
 import { Minus, Plus, Type } from "lucide-react";
 import { useFontSizeStore } from "@/hooks/store";
-import { fontSizes } from "@/constants/fonts";
 
 const FontSizeControl = () => {
   //   const [fontSize, setFontSize] = useState<string>("medium");

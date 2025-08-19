@@ -5,7 +5,6 @@ import { StoryCard } from "@/components/molecules/StoryCard";
 import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
 import { mockStories } from "@/constants/stories";
-import { calculateStoryProgress, formatReadTime } from "@/utils/storyUtils";
 import React from "react";
 
 const Components = () => {

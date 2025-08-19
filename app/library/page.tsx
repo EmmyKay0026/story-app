@@ -2,15 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import { Navigation } from "@/components/templates/NavigationMenu";
-import {
-  ALLCATEGORIES,
-  CATEGORIES,
-  mockStories,
-  Story,
-} from "@/constants/stories";
+import { ALLCATEGORIES, mockStories } from "@/constants/stories";
 import { BookCopy, Box, Search } from "lucide-react";
 import Link from "next/link";
-import Mobile from "@/components/molecules/DashboardNav";
+// import Mobile from "@/components/molecules/DashboardNav";
 
 const Library = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -109,7 +104,7 @@ const Library = () => {
                   onChange={() => {
                     const newCategory =
                       selectedCategory === category.label ? null : category;
-                    setSelectedCategory(newCategory?.label!);
+                    setSelectedCategory(newCategory?.label ?? "");
 
                     const params = new URLSearchParams(window.location.search);
                     if (newCategory) {

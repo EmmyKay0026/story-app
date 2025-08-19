@@ -16,7 +16,6 @@ const StoryStats = ({
         <div className="flex items-center justify-center gap-1 text-amber-500 mb-1">
           <Star className="w-4 h-4 fill-current" />
           <span className="font-semibold">{story.rating}</span>
-          
         </div>
         <p className="text-xs text-gray-600 dark:text-gray-400">Rating</p>
       </div>
@@ -38,14 +37,16 @@ const StoryStats = ({
         </div>
         <p className="text-xs text-gray-600 dark:text-gray-400">Total Time</p>
       </div>
-      <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-        <div className="flex items-center justify-center gap-1 mb-1">
-          <span className="font-semibold text-gray-900 dark:text-white">
-            {storyProgress}%
-          </span>
+      {storyProgress > 0 && (
+        <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <span className="font-semibold text-gray-900 dark:text-white">
+              {storyProgress}%
+            </span>
+          </div>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Progress</p>
         </div>
-        <p className="text-xs text-gray-600 dark:text-gray-400">Progress</p>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,18 +1,15 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
+
 import { mockStories } from "@/constants/stories";
-import DetailsCard from "@/components/molecules/DetailsCard"
-import StoryStats from "@/components/molecules/StoryStats";
 import { Bookmark, Eye, Star } from "lucide-react";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import EpisodeCard from "@/components/molecules/EpisodeCard";
-import Button from "@/components/atoms/Button";
 import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
 import { useUser } from "@/context/UserContext";
-import { useParams, useRouter } from "next/navigation";
-import { calculateStoryProgress } from "@/utils/storyUtils";
+import { useRouter } from "next/navigation";
+// import { calculateStoryProgress } from "@/utils/storyUtils";
 
 // const story = mockStories[0]; // Replace with actual story data
 
@@ -22,17 +19,9 @@ interface StoryDetailPageProps {
 
 const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
   const { id } = React.use(params);
-  const {
-    user,
-    isAuthenticated,
-    toggleFavorite,
-    isEpisodeUnlocked,
-    unlockEpisode,
-    getUserProgress,
-  } = useUser();
+  const { user, isAuthenticated } = useUser();
   const router = useRouter();
-  const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
-  const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
+
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
 
   useEffect(() => {
@@ -47,39 +36,39 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
     return null;
   }
 
-  const isFavorite = user.favorites.includes(story.id);
-  const storyProgress = calculateStoryProgress(story, user.progress);
+  // const isFavorite = user.favorites.includes(story.id);
+  // const storyProgress = calculateStoryProgress(story, user.progress);
 
-  const handleEpisodeClick = (
-    episodeId: string,
-    isPremium: boolean,
-    pointsCost: number
-  ) => {
-    const isUnlocked = isEpisodeUnlocked(episodeId);
+  // const handleEpisodeClick = (
+  //   episodeId: string,
+  //   isPremium: boolean,
+  //   pointsCost: number
+  // ) => {
+  //   const isUnlocked = isEpisodeUnlocked(episodeId);
 
-    if (!isPremium || isUnlocked) {
-      router.push(`/read/${episodeId}`);
-    } else {
-      setSelectedEpisode(episodeId);
-      setShowUnlockModal(true);
-    }
-  };
+  //   if (!isPremium || isUnlocked) {
+  //     router.push(`/read/${episodeId}`);
+  //   } else {
+  //     setSelectedEpisode(episodeId);
+  //     setShowUnlockModal(true);
+  //   }
+  // };
 
-  const handleUnlockEpisode = () => {
-    if (!selectedEpisode) return;
+  // const handleUnlockEpisode = () => {
+  //   if (!selectedEpisode) return;
 
-    const episode = story.episodes.find((ep) => ep.id === selectedEpisode);
-    if (!episode) return;
+  //   const episode = story.episodes.find((ep) => ep.id === selectedEpisode);
+  //   if (!episode) return;
 
-    const success = unlockEpisode(selectedEpisode, episode.pointsCost);
-    if (success) {
-      setShowUnlockModal(false);
-      router.push(`/read/${selectedEpisode}`);
-    } else {
-      // Show error - not enough points
-      alert("Not enough points to unlock this episode!");
-    }
-  };
+  //   const success = unlockEpisode(selectedEpisode, episode.pointsCost);
+  //   if (success) {
+  //     setShowUnlockModal(false);
+  //     router.push(`/read/${selectedEpisode}`);
+  //   } else {
+  //     // Show error - not enough points
+  //     alert("Not enough points to unlock this episode!");
+  //   }
+  // };
   const handleToggleTab = (tab: "episodes" | "details") => {
     setIsEpisodesActive(tab === "episodes");
   };
@@ -120,29 +109,29 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
               <StoryTag story={story} />
             </div>
           </article>
-      <div className="max-w-4xl mx-auto p-4 lg:p-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => router.back()}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Go back"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Story Details
-          </h1>
         </div>
-        <div className="mb-8">
+        <div className="max-w-4xl mx-auto ">
+          {/* Header */}
+          {/* <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={() => router.back()}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              aria-label="Go back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Story Details
+            </h1>
+          </div> */}
+          {/* <div className="mb-8">
           <DetailsCard 
             story={story}
             storyProgress={true}
           />
-        </div>
-        
+        </div> */}
 
-          <article className="relative flex flex-col items-center md:items-start py-5 px-4 sm:px-6 lg:px-8 bg-white dark:bg-[#032004] e-[60vh] rounded-t-3xl">
+          <article className="relative flex flex-col items-center md:items-start py-5 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-800  rounded-t-3xl">
             <h4 className="text-[20px] font-semibold mb-5 hidden md:block">
               Episodes
             </h4>
@@ -179,8 +168,13 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
                     {
                       // story.reviews && story.reviews.length > 0
                       true ? (
-                        [1, 2, 3].map((review: any, idx: number) => (
-                          <ReviewCard review={review} key={idx} />
+                        [1, 2, 3].map((idx: number) => (
+                          <ReviewCard
+                            key={idx}
+                            userAvatar="/no-avatar.jpg"
+                            rating={5}
+                            comment="This is a sample review."
+                          />
                         ))
                       ) : (
                         <p className="text-gray-500 text-center">
@@ -212,8 +206,13 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
                     {
                       // story.reviews && story.reviews.length > 0
                       true ? (
-                        [1, 2, 3].map((review: any, idx: number) => (
-                          <ReviewCard review={review} key={idx} />
+                        [1, 2, 3].map((idx: number) => (
+                          <ReviewCard
+                            key={idx}
+                            userAvatar="/no-avatar.jpg"
+                            rating={5}
+                            comment="This is a sample review."
+                          />
                         ))
                       ) : (
                         <p className="text-gray-500 text-center">

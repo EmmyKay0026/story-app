@@ -3,31 +3,16 @@
 
 import { useEffect, useState } from "react";
 import { Navigation } from "@/components/templates/NavigationMenu";
-import {
-  Edit3,
-  BookOpen,
-  Heart,
-  Star,
-  Users,
-  Bookmark,
-  Coins,
-  SunMoon,
-} from "lucide-react";
+import { Edit3, BookOpen, Bookmark, Coins, SunMoon } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
 import { useRouter } from "next/navigation";
 import { StoryCard } from "@/components/molecules/StoryCard";
+import Image from "next/image";
 
 export default function ProfilePage() {
-  const {
-    user,
-    isAuthenticated,
-    toggleFavorite,
-    isEpisodeUnlocked,
-    unlockEpisode,
-    getUserProgress,
-  } = useUser();
+  const { user, isAuthenticated } = useUser();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
     "stories" | "bookmark" | "activity"
@@ -61,7 +46,7 @@ export default function ProfilePage() {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
 
-    const preference = localStorage.getItem("theme");
+    // const preference = localStorage.getItem("theme");
 
     localStorage.setItem("theme", newTheme);
     if (newTheme === "dark") {
@@ -79,8 +64,8 @@ export default function ProfilePage() {
     .filter((story) => user?.progress.some((p) => p.storyId === story.id))
     .map((story) => ({
       ...story,
-      progress: calculateStoryProgress(story, user?.progress!),
-      isCompleted: isStoryCompleted(story, user?.progress!),
+      progress: calculateStoryProgress(story, user?.progress),
+      isCompleted: isStoryCompleted(story, user?.progress),
       lastRead: user?.progress
         .filter((p) => p.storyId === story.id)
         .sort((a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime())[0]
@@ -113,7 +98,9 @@ export default function ProfilePage() {
           <div className="absolute bottom-0 left-0 w-full flex items-end justify-between px-4 sm:px-6 lg:px-8 pb-4">
             <div className="flex items-end gap-4">
               <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-white dark:border-gray-900 overflow-hidden">
-                <img
+                <Image
+                  width={400}
+                  height={400}
                   src="/no-avatar.jpg"
                   alt="User avatar"
                   className="w-full h-full object-cover"
@@ -174,7 +161,9 @@ export default function ProfilePage() {
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key as any)}
+              onClick={() =>
+                setActiveTab(tab.key as "stories" | "bookmark" | "activity")
+              }
               className={`flex-1 py-3 text-sm font-medium transition ${
                 activeTab === tab.key
                   ? "border-b-2 border-primary text-primary"

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Bookmark, Heart, Search } from "lucide-react";
+import { Bookmark } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
 import { Navigation } from "@/components/templates/NavigationMenu";
@@ -41,7 +41,7 @@ export default function FavoritesPage() {
               Your Bookmarks
             </h1>
             <p className="text-gray-600 dark:text-gray-300">
-              Stories you've saved for later
+              Stories you&apos;ve saved for later
             </p>
           </div>
         </div>

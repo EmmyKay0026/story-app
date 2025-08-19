@@ -1,6 +1,5 @@
-'use client'
+"use client";
 import React from "react";
-import Image from "next/image";
 import { mockStories } from "@/constants/stories";
 
 interface MobileStoryCardProps {
@@ -12,9 +11,8 @@ interface MobileStoryCardProps {
 const MobileStoryCard: React.FC<MobileStoryCardProps> = () => {
   return (
     <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-      {mockStories.map((story) => (
-        <div>
-          key={story.id}
+      {mockStories.map((story, index) => (
+        <div key={story.id + index}>
           image={story.coverImage}
           title={story.title}
         </div>
@@ -24,4 +22,3 @@ const MobileStoryCard: React.FC<MobileStoryCardProps> = () => {
 };
 
 export default MobileStoryCard;
-

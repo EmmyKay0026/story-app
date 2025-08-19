@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Clock, CheckCircle, PlayCircle } from "lucide-react";
+import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
 import {
@@ -80,7 +80,7 @@ export default function MyReadsPage() {
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
-          <BookOpen className="w-8 h-8 text-blue-600" />
+          <BookOpen className="w-8 h-8 text-primary" />
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               My Reads
@@ -100,7 +100,7 @@ export default function MyReadsPage() {
               Start reading to see your progress
             </h3>
             <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Once you begin reading stories, you'll see your progress and
+              Once you begin reading stories, you&apos;ll see your progress and
               completed reads here.
             </p>
             <button onClick={() => router.push("/")} className="btn-primary">
@@ -235,7 +235,7 @@ export default function MyReadsPage() {
                 ) : (
                   <>
                     <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                      Stories You've Completed
+                      Stories You&apos;ve Completed
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                       {completedStories.map((story) => (

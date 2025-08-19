@@ -1,6 +1,5 @@
 import React from "react";
 import { ListData } from "@/constants/constant";
-import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import CustomLink from "../atoms/CustomLink";

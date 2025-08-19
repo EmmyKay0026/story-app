@@ -127,6 +127,9 @@ export const ALLCATEGORIES = [
   { label: "Thriller", value: "thriller" },
   { label: "Drama", value: "drama" },
   { label: "Adventure", value: "adventure" },
+  { label: "Post-apocalyptic", value: "post-apocalyptic" },
+  { label: "Enemies to lovers", value: "enemies-to-lovers" },
+  { label: "Small town", value: "small-town" },
 ];
 
 export const mockStories: Story[] = [

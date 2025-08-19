@@ -1,6 +1,5 @@
 "use client";
-
-import { useThemeContext } from "@/context/ThemeContext";
+import Image from "next/image";
 import React from "react";
 // import { useThemeContext } from "./ThemeProvider";
 
@@ -17,13 +16,15 @@ export const StoryCard = ({
   coverImage,
   onRead,
 }: StoryCardProps) => {
-  const { resolvedTheme } = useThemeContext();
+  // const { resolvedTheme } = useThemeContext();
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-md ring-1 ring-black/5 dark:ring-white/10 theme-transition overflow-hidden group">
       {coverImage && (
         <div className="h-48 bg-gray-100 dark:bg-gray-700 overflow-hidden">
-          <img
+          <Image
+            width={500}
+            height={350}
             src={coverImage}
             alt={title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

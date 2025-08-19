@@ -4,11 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Home,
-  Heart,
   User,
   Book,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -18,7 +15,7 @@ import {
   Bookmark,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
-import { useTheme } from "@/hooks/usePreferences";
+// import { useTheme } from "@/hooks/usePreferences";
 // import { useUser } from "../contexts/UserContext";
 // import { useTheme } from "../contexts/ThemeContext";
 
@@ -159,7 +156,7 @@ export function Navigation({ children }: NavigationProps) {
 
         {/* Mobile Menu */}
         {/* {isMobileMenuOpen && ( */}
-          {/* <div
+        {/* <div
             className="lg:hidden fixed inset-0 z-50 bg-black/50"
             onClick={() => setIsMobileMenuOpen(false)}
           >
@@ -176,7 +173,7 @@ export function Navigation({ children }: NavigationProps) {
 
           <div className="flex justify-center items-center inset-1">
             <div className="space-y-1 justify-around z-[20] backdrop-blur-[40px] flex md:w-[60dvw] w-[100dvw]">
-              {navigationItems.map(({ href, label, icon: Icon }) => (
+              {navigationItems.map(({ href, icon: Icon }) => (
                 <Link
                   key={href}
                   href={href}
@@ -191,7 +188,6 @@ export function Navigation({ children }: NavigationProps) {
                   `}
                 >
                   <Icon className="w-5 h-5" />
-                  
                 </Link>
               ))}
             </div>

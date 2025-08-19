@@ -2,14 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-  Star,
-  RotateCcw,
-} from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { mockStories } from "@/constants/stories";
 import {
   estimateTimeRemaining,
@@ -96,8 +89,13 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
       setTimeRemaining(estimateTimeRemaining(remainingContent, 0));
 
       // Update progress in context (debounced)
-      clearTimeout((window as any).progressTimeout);
-      (window as any).progressTimeout = setTimeout(() => {
+      clearTimeout(
+        (window as unknown as { progressTimeout?: NodeJS.Timeout })
+          .progressTimeout
+      );
+      (
+        window as unknown as { progressTimeout?: NodeJS.Timeout }
+      ).progressTimeout = setTimeout(() => {
         updateProgress(story.id, episode.id, Math.ceil(progress));
       }, 1000);
     };
@@ -264,7 +262,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 ) : (
                   <div className="text-center">
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      You've finished this story! 🎉
+                      You&apos;ve finished this story! 🎉
                     </p>
                     <button
                       onClick={() => router.push(`/story/${story.id}`)}
@@ -439,7 +437,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   const episode = story.episodes.find(
                     (ep) => ep.id === nextEpisode?.id
                   );
-                  return !episode || user?.points! < episode.pointsCost;
+                  return !episode || user?.points < episode.pointsCost;
                 })()}
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >
