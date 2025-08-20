@@ -4,15 +4,17 @@
 import { useEffect, useState } from "react";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { Edit3, BookOpen, Bookmark, Coins, SunMoon } from "lucide-react";
-import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
 import { useRouter } from "next/navigation";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Image from "next/image";
+import { useUserStore } from "@/hooks/userStore";
 
 export default function ProfilePage() {
-  const { user, isAuthenticated } = useUser();
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<
     "stories" | "bookmark" | "activity"
@@ -81,8 +83,8 @@ export default function ProfilePage() {
   );
 
   const totalReads = completedStories.length + currentlyReading.length;
-  const favoriteStories = mockStories.filter((story) =>
-    user.favorites.includes(story.id)
+  const bookmarkStories = mockStories.filter((story) =>
+    user.bookmarks.includes(story.id)
   );
   return (
     <Navigation>
@@ -127,7 +129,7 @@ export default function ProfilePage() {
             {
               icon: Bookmark,
               label: "Bookmark",
-              value: favoriteStories.length,
+              value: bookmarkStories.length,
             },
             { icon: Coins, label: "Points", value: user.points },
             {
@@ -211,25 +213,8 @@ export default function ProfilePage() {
 
           {activeTab === "bookmark" && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {favoriteStories.map((item, index) => (
+              {bookmarkStories.map((item, index) => (
                 <StoryCard story={item} key={(item.id, index)} />
-                // <div
-                //   key={item.id + index}
-                //   className="bg-white dark:bg-dark-primary rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer"
-                // >
-                //   <div className="h-32 bg-gray-200 dark:bg-gray-700">
-                //     <img
-                //       src={item.coverImage}
-                //       alt="Favorite story"
-                //       className="w-full h-full object-cover"
-                //     />
-                //   </div>
-                //   <div className="p-4">
-                //     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                //       {item.title}
-                //     </h3>
-                //   </div>
-                // </div>
               ))}
             </div>
           )}

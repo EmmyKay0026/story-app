@@ -7,8 +7,8 @@ import { Navigation } from "@/components/templates/NavigationMenu";
 import EpisodeCard from "@/components/molecules/EpisodeCard";
 import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
-import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/hooks/userStore";
 // import { calculateStoryProgress } from "@/utils/storyUtils";
 
 // const story = mockStories[0]; // Replace with actual story data
@@ -19,7 +19,9 @@ interface StoryDetailPageProps {
 
 const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
   const { id } = React.use(params);
-  const { user, isAuthenticated } = useUser();
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+
   const router = useRouter();
 
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
@@ -36,39 +38,6 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
     return null;
   }
 
-  // const isFavorite = user.favorites.includes(story.id);
-  // const storyProgress = calculateStoryProgress(story, user.progress);
-
-  // const handleEpisodeClick = (
-  //   episodeId: string,
-  //   isPremium: boolean,
-  //   pointsCost: number
-  // ) => {
-  //   const isUnlocked = isEpisodeUnlocked(episodeId);
-
-  //   if (!isPremium || isUnlocked) {
-  //     router.push(`/read/${episodeId}`);
-  //   } else {
-  //     setSelectedEpisode(episodeId);
-  //     setShowUnlockModal(true);
-  //   }
-  // };
-
-  // const handleUnlockEpisode = () => {
-  //   if (!selectedEpisode) return;
-
-  //   const episode = story.episodes.find((ep) => ep.id === selectedEpisode);
-  //   if (!episode) return;
-
-  //   const success = unlockEpisode(selectedEpisode, episode.pointsCost);
-  //   if (success) {
-  //     setShowUnlockModal(false);
-  //     router.push(`/read/${selectedEpisode}`);
-  //   } else {
-  //     // Show error - not enough points
-  //     alert("Not enough points to unlock this episode!");
-  //   }
-  // };
   const handleToggleTab = (tab: "episodes" | "details") => {
     setIsEpisodesActive(tab === "episodes");
   };

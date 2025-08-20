@@ -12,6 +12,7 @@ import {
   Bookmark,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import { useUserStore } from "@/hooks/userStore";
 // import { useTheme } from "@/hooks/usePreferences";
 // import { useUser } from "../contexts/UserContext";
 // import { useTheme } from "../contexts/ThemeContext";
@@ -22,7 +23,9 @@ interface NavigationProps {
 
 export function Navigation({ children }: NavigationProps) {
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, logout } = useUser();
+  const user = useUserStore((state) => state.user);
+  const logout = useUserStore((state) => state.logout);
+
   // const { resolvedTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -72,17 +75,6 @@ export function Navigation({ children }: NavigationProps) {
             >
               <User className="w-4 h-4 text-white" />
             </Link>
-            {/* <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button> */}
           </div>
         </div>
       </header>

@@ -2,14 +2,15 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
-import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
+import { useUserStore } from "@/hooks/userStore";
 
-export default function FavoritesPage() {
-  const { user, isAuthenticated } = useUser();
+export default function BookmarksPage() {
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const router = useRouter();
 
   useEffect(() => {
@@ -22,8 +23,8 @@ export default function FavoritesPage() {
     return null;
   }
 
-  const favoriteStories = mockStories.filter((story) =>
-    user.favorites.includes(story.id)
+  const bookmarkStories = mockStories.filter((story) =>
+    user.bookmarks.includes(story.id)
   );
 
   const handleStoryClick = (storyId: string) => {
@@ -46,7 +47,7 @@ export default function FavoritesPage() {
           </div>
         </div>
 
-        {favoriteStories.length === 0 ? (
+        {bookmarkStories.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
               <Bookmark className="w-12 h-12 text-gray-400" />
@@ -71,7 +72,7 @@ export default function FavoritesPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                 <div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {favoriteStories.length}
+                    {bookmarkStories.length}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     Bookmark Stories
@@ -79,7 +80,7 @@ export default function FavoritesPage() {
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {favoriteStories.reduce(
+                    {bookmarkStories.reduce(
                       (sum, story) => sum + story.totalEpisodes,
                       0
                     )}
@@ -91,11 +92,11 @@ export default function FavoritesPage() {
                 <div>
                   <div className="text-2xl font-bold text-gray-900 dark:text-white">
                     {Math.round(
-                      (favoriteStories.reduce(
+                      (bookmarkStories.reduce(
                         (sum, story) => sum + story.rating,
                         0
                       ) /
-                        favoriteStories.length) *
+                        bookmarkStories.length) *
                         10
                     ) / 10}
                   </div>
@@ -108,7 +109,7 @@ export default function FavoritesPage() {
 
             {/* Stories Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {favoriteStories.map((story) => (
+              {bookmarkStories.map((story) => (
                 <StoryCard
                   key={story.id}
                   story={story}

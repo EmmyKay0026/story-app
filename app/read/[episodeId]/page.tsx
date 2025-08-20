@@ -10,9 +10,9 @@ import {
   getNextEpisode,
   getPreviousEpisode,
 } from "@/utils/storyUtils";
-import { useUser } from "@/context/UserContext";
 import { useFontSizeStore } from "@/hooks/store";
 import PreferencesSetting from "@/components/molecules/PreferencesSetting";
+import { useUserStore } from "@/hooks/userStore";
 
 interface EpisodeReaderProps {
   params: Promise<{ episodeId: string }>;
@@ -20,13 +20,20 @@ interface EpisodeReaderProps {
 
 export default function EpisodeReader({ params }: EpisodeReaderProps) {
   const { episodeId } = React.use(params);
-  const {
-    user,
-    isAuthenticated,
-    updateProgress,
-    isEpisodeUnlocked,
-    unlockEpisode,
-  } = useUser();
+  // const {
+  //   user,
+  //   isAuthenticated,
+  //   updateProgress,
+  //   isEpisodeUnlocked,
+  //   unlockEpisode,
+  // } = useUser();
+
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const updateProgress = useUserStore((state) => state.updateProgress);
+  const isEpisodeUnlocked = useUserStore((state) => state.isEpisodeUnlocked);
+  const unlockEpisode = useUserStore((state) => state.unlockEpisode);
+
   const { fontSize } = useFontSizeStore();
   const router = useRouter();
   const contentRef = useRef<HTMLDivElement>(null);

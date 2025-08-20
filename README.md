@@ -15,7 +15,7 @@ Users log in via phone number, browse and read stories, customize their theme, f
 - Adjustable font size: Small, Base, or Large
 - Browse by story categories or search
 - Unlock premium content with points (earn or subscribe)
-- Save favorites and continue reading where you left off
+- Save bookmarks and continue reading where you left off
 - Rate and review stories
 
 ---
@@ -86,7 +86,7 @@ Users log in via phone number, browse and read stories, customize their theme, f
   /story/[id]
   /read/[id]
   /profile
-  /favorites
+  /bookmarks
   /my‑reads
   /subscription
   layout.tsx
@@ -125,3 +125,28 @@ Contributions are welcome!
 
 Please ensure forks follow consistent code style and pass tests.
 ````
+
+PUT /user/preferences
+
+Updates user preferences (theme, fontSize).
+
+Request body (partial update allowed):
+
+{
+"preferences": {
+"theme": "dark",
+"fontSize": "medium",
+}
+}
+Response: User (as described in the Data model section above)
+
+PUT /user/:userId/progress
+Request{
+episodeId: episodeId,
+storyId: storyId
+updatedProgess (updatedProgess of type UserProgress as described in the Data model section above)
+}
+
+Returns a detailed story, including episodes.
+
+Response: Story (as described in the Data model section above)

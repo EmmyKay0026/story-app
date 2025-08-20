@@ -20,7 +20,7 @@ interface UserContextType {
     episodeId: string,
     progress: number
   ) => void;
-  toggleFavorite: (storyId: string) => void;
+  toggleBookmark: (storyId: string) => void;
   unlockEpisode: (episodeId: string, cost: number) => boolean;
   getUserProgress: (
     storyId: string,
@@ -108,17 +108,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const toggleFavorite = (storyId: string) => {
+  const toggleBookmark = (storyId: string) => {
     if (!user) return;
 
-    const isFavorite = user.favorites.includes(storyId);
-    const updatedFavorites = isFavorite
-      ? user.favorites.filter((id) => id !== storyId)
-      : [...user.favorites, storyId];
+    const isBookmark = user.bookmarks.includes(storyId);
+    const updatedBookmarks = isBookmark
+      ? user.bookmarks.filter((id) => id !== storyId)
+      : [...user.bookmarks, storyId];
 
     setUser({
       ...user,
-      favorites: updatedFavorites,
+      bookmarks: updatedBookmarks,
     });
   };
 
@@ -202,7 +202,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         updateProgress,
-        toggleFavorite,
+        toggleBookmark,
         unlockEpisode,
         getUserProgress,
         getStoryProgress,

@@ -3,13 +3,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Book, Phone, ArrowRight } from "lucide-react";
-import { useUser } from "@/context/UserContext";
+import { useUserStore } from "@/hooks/userStore";
+
 // import { useUser } from "../../contexts/UserContext";
 
 export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { login, isAuthenticated } = useUser();
+
+  const login = useUserStore((state) => state.login);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+
   const router = useRouter();
 
   useEffect(() => {

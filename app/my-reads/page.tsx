@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
-import { useUser } from "@/context/UserContext";
 import { mockStories } from "@/constants/stories";
 import {
   calculateStoryProgress,
@@ -12,18 +11,12 @@ import {
 } from "@/utils/storyUtils";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
-// import { Navigation } from "../../components/Navigation";
-// import { StoryCard } from "../../components/StoryCard";
-// import { useUser } from "../../contexts/UserContext";
-// import { mockStories } from "../../lib/data/mockData";
-// import {
-//   calculateStoryProgress,
-//   isStoryCompleted,
-//   formatReadTime,
-// } from "@lib/utils/storyUtils";
+import { useUserStore } from "@/hooks/userStore";
 
 export default function MyReadsPage() {
-  const { user, isAuthenticated } = useUser();
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"reading" | "completed">(
     "reading"

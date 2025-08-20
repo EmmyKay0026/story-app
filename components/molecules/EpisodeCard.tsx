@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import { Story } from "@/constants/stories";
 import { useUser } from "@/context/UserContext";
@@ -5,6 +6,7 @@ import { formatReadTime } from "@/utils/storyUtils";
 import { Clock, Lock } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/hooks/userStore";
 
 const EpisodeCard = ({
   story,
@@ -15,7 +17,11 @@ const EpisodeCard = ({
   // setSelectedEpisode: (value: SetStateAction<string | null>) => void;
   // setShowUnlockModal: (value: SetStateAction<boolean>) => void;
 }) => {
-  const { user, isEpisodeUnlocked, unlockEpisode, getUserProgress } = useUser();
+  const user = useUserStore((state) => state.user);
+  const isEpisodeUnlocked = useUserStore((state) => state.isEpisodeUnlocked);
+  const unlockEpisode = useUserStore((state) => state.unlockEpisode);
+  const getUserProgress = useUserStore((state) => state.getUserProgress);
+
   const router = useRouter();
   const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);

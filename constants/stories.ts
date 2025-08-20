@@ -83,10 +83,9 @@ export interface User {
   preferences: {
     theme: "light" | "dark" | "system";
     fontSize: "small" | "medium" | "large" | "extra-large";
-    fontFamily: "sans" | "serif";
   };
   progress: UserProgress[];
-  favorites: string[]; // story IDs
+  bookmarks: string[]; // story IDs
   unlockedEpisodes: string[]; // episode IDs
 }
 export const mockUser: User = {
@@ -96,7 +95,6 @@ export const mockUser: User = {
   preferences: {
     theme: "light",
     fontSize: "small",
-    fontFamily: "sans",
   },
   progress: [
     {
@@ -107,7 +105,7 @@ export const mockUser: User = {
       isCompleted: false,
     },
   ],
-  favorites: ["2"],
+  bookmarks: ["2"],
   unlockedEpisodes: ["1-2", "1-3"], // episode IDs
 };
 export const CATEGORIES = [
@@ -119,6 +117,9 @@ export const CATEGORIES = [
   "Drama",
   "Adventure",
 ];
+
+
+ 
 export const ALLCATEGORIES = [
   { label: "Romance", value: "romance" },
   { label: "Mystery", value: "mystery" },

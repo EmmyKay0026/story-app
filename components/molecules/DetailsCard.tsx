@@ -10,6 +10,7 @@ import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
 import { Story } from "@/constants/stories";
 import Image from "next/image";
+import { useUserStore } from "@/hooks/userStore";
 // import EpisodeCard from "@/components/molecules/EpisodeCard";
 // import { Navigation } from "../../../components/Navigation";
 // import { useUser } from "../../../contexts/UserContext";
@@ -30,71 +31,14 @@ export default function DetailsCard({
 }: // storyProgress = false,
 // onClick,
 StoryCardProps) {
-  const { user, toggleFavorite } = useUser();
+  // const { user, toggleBookmark } = useUser();
 
-  const isFavorite = user?.favorites.includes(story.id) || false;
-  // const userProgress = user ? calculateStoryProgress(story, user.progress) : 0;
-  // const hasStarted =
-  //   user?.progress.some((p) => p.storyId === story.id) || false;
+  const user = useUserStore((state) => state.user);
+  const toggleBookmark = useUserStore((state) => state.toggleBookmark);
 
-  // const handleFavoriteClick = (e: React.MouseEvent) => {
-  //   e.stopPropagation();
-  //   toggleFavorite(story.id);
-  // };
+  const isBookmark = user?.bookmarks.includes(story.id) || false;
 
-  // const {
-  //   user,
-  //   isAuthenticated,
-  //   toggleFavorite,
-  //   isEpisodeUnlocked,
-  //   unlockEpisode,
-  //   getUserProgress,
-  // } = useUser();
-  // const router = useRouter();
-  // const [showUnlockModal, setShowUnlockModal] = useState(false);
-  // const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
-
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     router.push("/auth/login");
-  //   }
-  // }, [isAuthenticated, router]);
-
-  // const story = mockStories.find((s) => s.id === params.id);
-
-  // const isFavorite = user.favorites.includes(story.id);
   const storyProgress = user ? calculateStoryProgress(story, user.progress) : 0;
-
-  // const handleEpisodeClick = (
-  //   episodeId: string,
-  //   isPremium: boolean,
-  //   pointsCost: number
-  // ) => {
-  //   const isUnlocked = isEpisodeUnlocked(episodeId);
-
-  //   if (!isPremium || isUnlocked) {
-  //     router.push(`/read/${episodeId}`);
-  //   } else {
-  //     setSelectedEpisode(episodeId);
-  //     setShowUnlockModal(true);
-  //   }
-  // };
-
-  // const handleUnlockEpisode = () => {
-  //   if (!selectedEpisode) return;
-
-  //   const episode = story.episodes.find((ep) => ep.id === selectedEpisode);
-  //   if (!episode) return;
-
-  //   const success = unlockEpisode(selectedEpisode, episode.pointsCost);
-  //   if (success) {
-  //     setShowUnlockModal(false);
-  //     router.push(`/read/${selectedEpisode}`);
-  //   } else {
-  //     // Show error - not enough points
-  //     alert("Not enough points to unlock this episode!");
-  //   }
-  // };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
@@ -119,15 +63,15 @@ StoryCardProps) {
               </p>
             </div>
             <button
-              onClick={() => toggleFavorite(story.id)}
+              onClick={() => toggleBookmark(story.id)}
               className="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label={
-                isFavorite ? "Remove from bookmark" : "Add to bookmark"
+                isBookmark ? "Remove from bookmark" : "Add to bookmark"
               }
             >
               <Bookmark
                 className={`w-6 h-6 ${
-                  isFavorite
+                  isBookmark
                     ? "fill-shaft text-shaft dark:text-white dark:fill-white"
                     : "text-gray-400"
                 }`}

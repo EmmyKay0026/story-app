@@ -2,6 +2,7 @@
 
 import { Story } from "@/constants/stories";
 import { useUser } from "@/context/UserContext";
+import { useUserStore } from "@/hooks/userStore";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 import { Clock, Star, BookOpen, Bookmark } from "lucide-react";
 import Image from "next/image";
@@ -21,16 +22,17 @@ export function StoryCard({
   showDescription = true,
   onClick,
 }: StoryCardProps) {
-  const { user, toggleFavorite } = useUser();
+  const user = useUserStore((state) => state.user);
+  const toggleBookmark = useUserStore((state) => state.toggleBookmark);
 
-  const isFavorite = user?.favorites.includes(story.id) || false;
+  const isBookmark = user?.bookmarks.includes(story.id) || false;
   const userProgress = user ? calculateStoryProgress(story, user.progress) : 0;
   const hasStarted =
     user?.progress.some((p) => p.storyId === story.id) || false;
 
-  const handleFavoriteClick = (e: React.MouseEvent) => {
+  const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleFavorite(story.id);
+    toggleBookmark(story.id);
   };
 
   const cardClasses = `
@@ -109,13 +111,13 @@ export function StoryCard({
           className={imageClasses}
         />
         <button
-          onClick={handleFavoriteClick}
+          onClick={handleBookmarkClick}
           className="absolute top-2 right-2 p-2 rounded-full bg-gray-300   dark:bg-gray-800/90 hover:bg-white dark:hover:bg-gray-800 transition-colors"
-          aria-label={isFavorite ? "Remove from bookmark" : "Add to bookmark"}
+          aria-label={isBookmark ? "Remove from bookmark" : "Add to bookmark"}
         >
           <Bookmark
             className={`w-4 h-4 ${
-              isFavorite
+              isBookmark
                 ? "fill-shaft text-shaft dark:text-white dark:fill-white"
                 : "text-gray-600 dark:text-gray-300"
             }`}

@@ -6,14 +6,16 @@ import { ALLCATEGORIES, mockStories } from "@/constants/stories";
 import { BookCopy, Box, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/context/UserContext";
-// import Mobile from "@/components/molecules/DashboardNav";
+import { useUserStore } from "@/hooks/userStore";
 
 const Library = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [stories, setStories] = useState(mockStories);
-  const { user, isAuthenticated } = useUser();
+
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -33,18 +35,6 @@ const Library = () => {
     }
   }, []);
 
-  useEffect(() => {
-    handleFilter(searchTerm, selectedCategory ? [selectedCategory] : []);
-  }, [searchTerm, selectedCategory]);
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
-
-  if (!isAuthenticated || !user) {
-    return null;
-  }
   const handleFilter = (searchTerm: string, selectedCategories: string[]) => {
     let filteredStories = mockStories;
 
@@ -66,6 +56,20 @@ const Library = () => {
 
     setStories(filteredStories);
   };
+
+  useEffect(() => {
+    handleFilter(searchTerm, selectedCategory ? [selectedCategory] : []);
+  }, [searchTerm, selectedCategory]);
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/auth/login");
+    }
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated || !user) {
+    return null;
+  }
+
   return (
     <Navigation>
       <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">

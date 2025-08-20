@@ -9,24 +9,8 @@ import Link from "next/link";
 import DetailsCard from "@/components/molecules/DetailsCard";
 import NavBar from "@/components/molecules/NavBar";
 import Footer from "@/components/molecules/Footer";
-// import StoryTag from "@/components/molecules/StoryTag";
-// import MobileStoryCard from "@/components/molecules/HomeCard";
 
 export default function Home() {
-  // const [ isModalOpen, setIsModalOpen ] = useState(false);
-
-  // const openModal = () => setIsModalOpen(true)
-  // const closeModal = () => setIsModalOpen(false)
-
-  // const handleLoginSuccess = () => {
-  //   alert("Successful!");
-  //   closeModal();
-  // };
-
-  // const handleReadStory = (storyId: number) => {
-  //   console.log(`Reading story ${storyId}`);
-  // };
-
   return (
     <section className=" bg-white dark:bg-[#141414]">
       <NavBar />
@@ -61,18 +45,10 @@ export default function Home() {
                 </p>
                 <Link href={"/library"}>
                   <Button
-                    // onClick={openModal}
                     label="Start Reading"
                     className="py-[5px] w-[150px] mt-[2rem] px-[10px]"
                   />
                 </Link>
-                {/* {isModalOpen && (
-                  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md">
-                      <LoginPage onSuccess={handleLoginSuccess} onClose={closeModal} />
-                    </div>
-                  </div>
-                )} */}
               </div>
               <Cards />
             </div>
