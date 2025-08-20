@@ -1,4 +1,3 @@
-// app/profile/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Image from "next/image";
 import { useUserStore } from "@/hooks/userStore";
+import NoIndex from "@/components/atoms/NoIndex";
 
 export default function ProfilePage() {
   const user = useUserStore((state) => state.user);
@@ -20,48 +20,43 @@ export default function ProfilePage() {
     "stories" | "bookmark" | "activity"
   >("stories");
 
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  // Redirect if not logged in
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/auth/login");
     }
   }, [isAuthenticated, router]);
 
-  const [theme, setTheme] = useState("light");
-
+  // Load theme on mount
   useEffect(() => {
-    const preferences = localStorage.getItem("theme");
-    if (!preferences) {
-      localStorage.setItem("theme", "light");
-      return;
-    }
-
-    const storedTheme = preferences || "light";
-    setTheme(storedTheme);
-    if (storedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    if (typeof window !== "undefined") {
+      const storedTheme =
+        (localStorage.getItem("theme") as "light" | "dark") || "light";
+      setTheme(storedTheme);
+      document.documentElement.classList.toggle("dark", storedTheme === "dark");
     }
   }, []);
 
+  // Toggle theme
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
 
-    // const preference = localStorage.getItem("theme");
-
-    localStorage.setItem("theme", newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", newTheme);
+      if (newTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     }
   };
 
-  if (!isAuthenticated || !user) {
-    return null;
-  }
+  if (!isAuthenticated || !user) return null;
 
+  // Story progress logic
   const storiesWithProgress = mockStories
     .filter((story) => user?.progress.some((p) => p.storyId === story.id))
     .map((story) => ({
@@ -75,12 +70,8 @@ export default function ProfilePage() {
     }))
     .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime());
 
-  const currentlyReading = storiesWithProgress.filter(
-    (story) => !story.isCompleted
-  );
-  const completedStories = storiesWithProgress.filter(
-    (story) => story.isCompleted
-  );
+  const currentlyReading = storiesWithProgress.filter((s) => !s.isCompleted);
+  const completedStories = storiesWithProgress.filter((s) => s.isCompleted);
 
   const totalReads = completedStories.length + currentlyReading.length;
   const bookmarkStories = mockStories.filter((story) =>
@@ -88,6 +79,7 @@ export default function ProfilePage() {
   );
   return (
     <Navigation>
+      <NoIndex />
       <section className="relative max-w-4xl mx-auto min-h-screen">
         {/* Cover Banner */}
         <div
@@ -140,7 +132,7 @@ export default function ProfilePage() {
           ].map((stat, idx) => (
             <div
               key={idx}
-              onClick={stat.label === "Mode" ? () => toggleTheme() : () => {}}
+              onClick={stat.label === "Mode" ? toggleTheme : undefined}
               className={`p-4 ${stat.label === "Mode" ? "cursor-pointer" : ""}`}
             >
               <stat.icon className="w-5 h-5 mx-auto text-primary mb-1" />
@@ -184,7 +176,7 @@ export default function ProfilePage() {
               {currentlyReading.map((item, index) => (
                 <StoryCard
                   story={item}
-                  key={(item.id, index)}
+                  key={`${item.id}-${index}`}
                   variant="continue"
                 />
                 // <div

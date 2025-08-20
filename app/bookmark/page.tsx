@@ -7,6 +7,7 @@ import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
 import { useUserStore } from "@/hooks/userStore";
+import NoIndex from "@/components/atoms/NoIndex";
 
 export default function BookmarksPage() {
   const user = useUserStore((state) => state.user);
@@ -34,6 +35,7 @@ export default function BookmarksPage() {
   return (
     <Navigation>
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
+        <NoIndex />
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
           <Bookmark className="w-8 h-8 text-shaft dark:text-white fill-current" />

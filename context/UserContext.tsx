@@ -72,7 +72,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem(STORAGE_KEY);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(STORAGE_KEY);
+    }
   };
 
   const updateProgress = (
