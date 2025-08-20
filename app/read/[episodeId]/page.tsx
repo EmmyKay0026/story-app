@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { mockStories } from "@/constants/stories";
+import NoIndex from "@/components/atoms/NoIndex";
 import {
   estimateTimeRemaining,
   formatReadTime,
@@ -162,6 +163,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
   return (
     <>
+      <NoIndex/>
       <div className="min-h-screen bg-white dark:bg-gray-900">
         {/* <FontSizeControl /> */}
         {/* Header */}

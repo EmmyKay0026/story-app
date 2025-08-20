@@ -1,4 +1,3 @@
-// app/profile/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,56 +9,50 @@ import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
 import { useRouter } from "next/navigation";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Image from "next/image";
+import NoIndex from "@/components/atoms/NoIndex";
 
 export default function ProfilePage() {
   const { user, isAuthenticated } = useUser();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<
-    "stories" | "bookmark" | "activity"
-  >("stories");
+  const [activeTab, setActiveTab] = useState<"stories" | "bookmark" | "activity">("stories");
 
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+
+  // Redirect if not logged in
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/auth/login");
     }
   }, [isAuthenticated, router]);
 
-  const [theme, setTheme] = useState("light");
-
+  // Load theme on mount
   useEffect(() => {
-    const preferences = localStorage.getItem("theme");
-    if (!preferences) {
-      localStorage.setItem("theme", "light");
-      return;
-    }
-
-    const storedTheme = preferences || "light";
-    setTheme(storedTheme);
-    if (storedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    if (typeof window !== "undefined") {
+      const storedTheme = (localStorage.getItem("theme") as "light" | "dark") || "light";
+      setTheme(storedTheme);
+      document.documentElement.classList.toggle("dark", storedTheme === "dark");
     }
   }, []);
 
+  // Toggle theme
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
 
-    // const preference = localStorage.getItem("theme");
+    if (typeof window !== "undefined") {
+      localStorage.setItem("theme", newTheme);
+      if (newTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
 
-    localStorage.setItem("theme", newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
     }
   };
 
-  if (!isAuthenticated || !user) {
-    return null;
-  }
+  if (!isAuthenticated || !user) return null;
 
+  // Story progress logic
   const storiesWithProgress = mockStories
     .filter((story) => user?.progress.some((p) => p.storyId === story.id))
     .map((story) => ({
@@ -68,24 +61,27 @@ export default function ProfilePage() {
       isCompleted: isStoryCompleted(story, user?.progress),
       lastRead: user?.progress
         .filter((p) => p.storyId === story.id)
-        .sort((a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime())[0]
-        ?.lastReadAt,
+        .sort((a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime())[0]?.lastReadAt,
     }))
     .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime());
 
-  const currentlyReading = storiesWithProgress.filter(
-    (story) => !story.isCompleted
-  );
-  const completedStories = storiesWithProgress.filter(
-    (story) => story.isCompleted
-  );
+  const currentlyReading = storiesWithProgress.filter((s) => !s.isCompleted);
+  const completedStories = storiesWithProgress.filter((s) => s.isCompleted);
 
   const totalReads = completedStories.length + currentlyReading.length;
-  const favoriteStories = mockStories.filter((story) =>
-    user.favorites.includes(story.id)
-  );
+  const favoriteStories = mockStories.filter((s) => user.favorites.includes(s.id));
+
+  // Stats array
+  const stats = [
+    { icon: BookOpen, label: "Read", value: totalReads },
+    { icon: Bookmark, label: "Bookmark", value: favoriteStories.length },
+    { icon: Coins, label: "Points", value: user.points },
+    { icon: SunMoon, label: "Mode", value: theme },
+  ];
+
   return (
     <Navigation>
+      <NoIndex />
       <section className="relative max-w-4xl mx-auto min-h-screen">
         {/* Cover Banner */}
         <div
@@ -107,9 +103,7 @@ export default function ProfilePage() {
                 />
               </div>
               <div className="text-white">
-                <h2 className="text-lg sm:text-xl font-semibold">
-                  {user?.phoneNumber}
-                </h2>
+                <h2 className="text-lg sm:text-xl font-semibold">{user?.phoneNumber}</h2>
                 <p className="text-sm text-gray-300">{user?.phoneNumber}</p>
               </div>
             </div>
@@ -122,32 +116,17 @@ export default function ProfilePage() {
 
         {/* Stats */}
         <div className="bg-white dark:bg-gray-900 grid grid-cols-4 text-center border-b border-gray-200 dark:border-gray-700">
-          {[
-            { icon: BookOpen, label: "Read", value: totalReads },
-            {
-              icon: Bookmark,
-              label: "Bookmark",
-              value: favoriteStories.length,
-            },
-            { icon: Coins, label: "Points", value: user.points },
-            {
-              icon: SunMoon,
-              label: "Mode",
-              value: localStorage.getItem("theme") || "Light",
-            },
-          ].map((stat, idx) => (
+          {stats.map((stat, idx) => (
             <div
               key={idx}
-              onClick={stat.label === "Mode" ? () => toggleTheme() : () => {}}
+              onClick={stat.label === "Mode" ? toggleTheme : undefined}
               className={`p-4 ${stat.label === "Mode" ? "cursor-pointer" : ""}`}
             >
               <stat.icon className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-lg font-semibold text-gray-900 dark:text-white capitalize">
                 {stat.value}
               </p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                {stat.label}
-              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -182,7 +161,7 @@ export default function ProfilePage() {
               {currentlyReading.map((item, index) => (
                 <StoryCard
                   story={item}
-                  key={(item.id, index)}
+                  key={`${item.id}-${index}`}
                   variant="continue"
                 />
                 // <div
