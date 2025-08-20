@@ -1,7 +1,17 @@
 import { fontSizes } from "@/constants/fonts";
 import { create } from "zustand";
 
-const preLoadedFontSizeValue = localStorage.getItem("fontSize") || "medium";
+const defaultFontSizeValue = "medium";
+
+const getPreloadedFontSize = () => {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("fontSize") || defaultFontSizeValue;
+  }
+  return defaultFontSizeValue; // fallback for SSR
+};
+
+const preLoadedFontSizeValue = getPreloadedFontSize();
+
 const preLoadedFontSize = fontSizes.find(
   (fs) => fs.value === preLoadedFontSizeValue
 );
@@ -38,7 +48,11 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
             state.currentIndex + 1,
             fontSizes.length - 1
           );
-          localStorage.setItem("fontSize", fontSizes[nextIndex].value);
+
+          if (typeof window !== "undefined") {
+            localStorage.setItem("fontSize", fontSizes[nextIndex].value);
+          }
+
           return {
             fontSize: fontSizes[nextIndex].size,
             fontSizeLabel: fontSizes[nextIndex].label,
@@ -47,10 +61,15 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
             canDecrease: nextIndex > 0,
           };
         }),
+
       decreaseFontSize: () =>
         set((state) => {
           const prevIndex = Math.max(state.currentIndex - 1, 0);
-          localStorage.setItem("fontSize", fontSizes[prevIndex].value);
+
+          if (typeof window !== "undefined") {
+            localStorage.setItem("fontSize", fontSizes[prevIndex].value);
+          }
+
           return {
             fontSize: fontSizes[prevIndex].size,
             fontSizeLabel: fontSizes[prevIndex].label,
@@ -59,6 +78,7 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
             canDecrease: prevIndex > 0,
           };
         }),
+
     };
   }
 );

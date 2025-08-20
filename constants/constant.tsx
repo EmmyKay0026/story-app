@@ -1,3 +1,7 @@
+// lib/constants.ts
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://story-app-chi.vercel.app";
+
+
 export const ListData = [
   {
     id: "1",

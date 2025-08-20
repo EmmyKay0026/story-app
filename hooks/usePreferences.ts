@@ -15,20 +15,21 @@ export const useTheme = () => {
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
   const [fontSize, setFontSize] = useState<FontSize>("medium");
 
+  // Load saved preferences safely on client
   useEffect(() => {
-    // Get theme from localStorage on mount
-    const savedTheme = localStorage.getItem("theme") as Theme;
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
+    if (typeof window === "undefined") return;
 
-    const savedFontSize = localStorage.getItem("fontSize") as FontSize;
-    if (savedFontSize) {
-      setFontSize(savedFontSize);
-    }
+    const savedTheme = (localStorage.getItem("theme") as Theme) || "system";
+    setTheme(savedTheme);
+
+    const savedFontSize = (localStorage.getItem("fontSize") as FontSize) || "medium";
+    setFontSize(savedFontSize);
   }, []);
 
+  // Apply font size
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const root = window.document.documentElement;
 
     // Remove existing font size classes
@@ -38,25 +39,24 @@ export const useTheme = () => {
 
     // Apply current font size
     root.classList.add(FONT_SIZES[fontSize]);
+    localStorage.setItem("fontSize", fontSize);
   }, [fontSize]);
 
+  // Apply theme
   useEffect(() => {
-    const root = window.document.documentElement;
+    if (typeof window === "undefined") return;
 
-    // Remove existing theme classes
+    const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
-      // Use system preference
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
 
       root.classList.add(systemTheme);
       setResolvedTheme(systemTheme);
 
-      // Listen for system theme changes
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       const handleChange = (e: MediaQueryListEvent) => {
         const newSystemTheme = e.matches ? "dark" : "light";
@@ -71,20 +71,17 @@ export const useTheme = () => {
       root.classList.add(theme);
       setResolvedTheme(theme);
     }
+
+    localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // const updateTheme = (newTheme: Theme) => {
-  //   setTheme(newTheme);
-  //   localStorage.setItem("theme", newTheme);
-  // };
-  const updateFontSize = (newFontSize: FontSize) => {
-    setFontSize(newFontSize);
-    localStorage.setItem("fontSize", newFontSize);
-  };
+  const updateTheme = (newTheme: Theme) => setTheme(newTheme);
+  const updateFontSize = (newFontSize: FontSize) => setFontSize(newFontSize);
+
   return {
-    // theme,
-    // resolvedTheme,
-    // setTheme: updateTheme,
+    theme,
+    resolvedTheme,
+    setTheme: updateTheme,
     fontSize,
     setFontSize: updateFontSize,
   };

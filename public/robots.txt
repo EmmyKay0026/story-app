@@ -1,0 +1,19 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /login
+Disallow: /signup
+Disallow: /bookmark
+Disallow: /my-reads
+Disallow: /profile
+Disallow: /api
+Disallow: /api/*
+
+# Host
+Host: https://story-app-chi.vercel.app
+
+# Sitemaps
+Sitemap: https://story-app-chi.vercel.app/sitemap.xml

@@ -7,6 +7,7 @@ import { mockStories } from "@/constants/stories";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
+import NoIndex from "@/components/atoms/NoIndex";
 
 export default function FavoritesPage() {
   const { user, isAuthenticated } = useUser();
@@ -33,6 +34,7 @@ export default function FavoritesPage() {
   return (
     <Navigation>
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
+        <NoIndex />
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
           <Bookmark className="w-8 h-8 text-shaft dark:text-white fill-current" />

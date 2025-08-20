@@ -9,6 +9,7 @@ import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
+import NoIndex from "@/components/atoms/NoIndex";
 // import { calculateStoryProgress } from "@/utils/storyUtils";
 
 // const story = mockStories[0]; // Replace with actual story data
@@ -75,6 +76,7 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
 
   return (
     <Navigation>
+      <NoIndex/>
       <section className="relative max-w-4xl -screen mx-auto">
         <div
           style={{
