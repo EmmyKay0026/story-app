@@ -1,0 +1,80 @@
+{
+  "stories": [
+    {
+      "id": "1",
+      "title": "The Lost Kingdom",
+      "description": "An epic fantasy adventure set in a forgotten land.",
+      "author": "Jane Doe",
+      "coverImage": "https://picsum.photos/400/250?random=1",
+      "category": "Fantasy",
+      "tags": ["magic", "kingdom", "quest"],
+      "rating": 4.8,
+      "totalEpisodes": 20,
+      "totalReadTime": 1200,
+      "episodes": [
+        {
+          "id": "e1",
+          "title": "The Prophecy",
+          "content": "Once upon a time..."
+        }
+      ],
+      "isFeatured": true,
+      "reviews": [
+        { "id": "r1", "user": "Sam", "comment": "Loved it!", "rating": 5 }
+      ]
+    },
+    {
+      "id": "2",
+      "title": "Shadows of Lagos",
+      "description": "A thrilling crime drama set in modern-day Lagos.",
+      "author": "Emeka Johnson",
+      "coverImage": "https://picsum.photos/400/250?random=2",
+      "category": "Thriller",
+      "tags": ["crime", "mystery", "drama"],
+      "rating": 4.6,
+      "totalEpisodes": 15,
+      "totalReadTime": 800,
+      "episodes": [
+        {
+          "id": "e1",
+          "title": "The Call",
+          "content": "It all started one rainy night..."
+        }
+      ],
+      "isFeatured": false,
+      "reviews": [
+        { "id": "r1", "user": "Amina", "comment": "Very engaging!", "rating": 4 }
+      ]
+    },
+    {
+      "id": "3",
+      "title": "Startup Dreams",
+      "description": "The struggles and triumphs of a young Nigerian entrepreneur.",
+      "author": "Daniel Praise",
+      "coverImage": "https://picsum.photos/400/250?random=3",
+      "category": "Drama",
+      "tags": ["business", "inspiration", "youth"],
+      "rating": 4.9,
+      "totalEpisodes": 10,
+      "totalReadTime": 500,
+      "episodes": [
+        {
+          "id": "e1",
+          "title": "First Pitch",
+          "content": "Standing in front of investors..."
+        }
+      ],
+      "isFeatured": false,
+      "reviews": [
+        { "id": "r1", "user": "Chinedu", "comment": "Motivating!", "rating": 5 }
+      ]
+    }
+  ],
+  "weeklySpotlight": [
+    {
+      "storyId": "3",
+      "startDate": "2025-08-17",
+      "endDate": "2025-08-24"
+    }
+  ]
+}

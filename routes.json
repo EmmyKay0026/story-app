@@ -1,0 +1,5 @@
+{
+  "/stories/top-rated": "/stories?_sort=rating&_order=desc&_limit=6",
+  "/stories/featured": "/stories?isFeatured=true&_limit=6",
+  "/stories/weeklySpotlight": "/weeklySpotlight"
+}
