@@ -1,7 +1,6 @@
 import React from "react";
 import CardSwap, { Card } from "./cardswap";
 import { mockStories } from "@/constants/stories";
-import { StoryCard } from "@/components/molecules/StoryCard";
 import HeroCard from "@/components/molecules/HeroCard";
 
 const Cards = ({ limit = 3 }) => {
