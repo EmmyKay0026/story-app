@@ -118,8 +118,6 @@ export const CATEGORIES = [
   "Adventure",
 ];
 
-
- 
 export const ALLCATEGORIES = [
   { label: "Romance", value: "romance" },
   { label: "Mystery", value: "mystery" },
