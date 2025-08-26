@@ -3,6 +3,7 @@
 import React from "react";
 import { Bookmark } from "lucide-react";
 import { useUser } from "@/context/UserContext";
+import { getCoverImageUrl } from "@/services/story/storyActions";
 import { calculateStoryProgress } from "@/utils/storyUtils";
 // import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 // import { Navigation } from "@/components/templates/NavigationMenu";
@@ -47,8 +48,8 @@ StoryCardProps) {
           <Image
             width={400}
             height={400}
-            src={story.coverImage}
-            alt={story.title}
+            src={getCoverImageUrl(story.coverImage)}
+            alt={story.title || "Story cover image"}
             className="w-full h-64 md:h-full object-cover"
           />
         </div>

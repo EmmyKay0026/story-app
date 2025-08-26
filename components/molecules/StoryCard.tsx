@@ -3,6 +3,7 @@
 import { Story } from "@/constants/stories";
 import { useUser } from "@/context/UserContext";
 import { useUserStore } from "@/hooks/userStore";
+import { getCoverImageUrl } from "@/services/story/storyActions";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 import { Clock, Star, BookOpen, Bookmark } from "lucide-react";
 import Image from "next/image";
@@ -60,7 +61,7 @@ export function StoryCard({
             }`}
           >
             <Image
-              src={story.coverImage}
+              src={getCoverImageUrl(story.coverImage)}
               alt={story.title}
               width={300}
               height={400}
@@ -106,7 +107,7 @@ export function StoryCard({
         <Image
           width={500}
           height={350}
-          src={story.coverImage}
+          src={getCoverImageUrl(story.coverImage)}
           alt={story.title}
           className={imageClasses}
         />

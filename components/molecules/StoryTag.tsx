@@ -9,15 +9,16 @@ const StoryTag = ({ story }: { story: Story }) => {
       <span className="inline-block px-3 py-1 bg-[#ccffd0c5] dark:bg-faded-primary text-primary dark:text-dark-primary text-sm font-medium rounded-full">
         {story.category}
       </span>
-      {story.tags.map((tag) => (
+      {story.tags?.map((tag) => (
         <Link
-          href={"/library/?tag=" + tag.toLocaleLowerCase()}
+          href={`/library/?tag=${tag.toLowerCase()}`}
           key={tag}
           className="inline-block px-3 py-1 bg-gray-100 dark:bg-shaft text-gray-700 dark:text-gray-300 text-sm rounded-full"
         >
           {tag}
         </Link>
       ))}
+
     </div>
   );
 };

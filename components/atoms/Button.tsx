@@ -20,3 +20,12 @@ const Button: React.FC<ButtonProps> = ({ label, onClick, className }) => {
 };
 
 export default Button;
+
+import Link from "next/link"
+
+export const ButtonNew = () => (
+  <Link href="/library">
+    <Button label="See more" className="py-[8px] px-[15px]" />
+  </Link>
+)
+

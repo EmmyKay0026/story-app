@@ -12,11 +12,7 @@
       "totalEpisodes": 20,
       "totalReadTime": 1200,
       "episodes": [
-        {
-          "id": "e1",
-          "title": "The Prophecy",
-          "content": "Once upon a time..."
-        }
+        { "id": "e1", "title": "The Prophecy", "content": "Once upon a time..." }
       ],
       "isFeatured": true,
       "reviews": [
@@ -35,11 +31,7 @@
       "totalEpisodes": 15,
       "totalReadTime": 800,
       "episodes": [
-        {
-          "id": "e1",
-          "title": "The Call",
-          "content": "It all started one rainy night..."
-        }
+        { "id": "e1", "title": "The Call", "content": "It all started one rainy night..." }
       ],
       "isFeatured": false,
       "reviews": [
@@ -58,23 +50,110 @@
       "totalEpisodes": 10,
       "totalReadTime": 500,
       "episodes": [
-        {
-          "id": "e1",
-          "title": "First Pitch",
-          "content": "Standing in front of investors..."
-        }
+        { "id": "e1", "title": "First Pitch", "content": "Standing in front of investors..." }
       ],
       "isFeatured": false,
       "reviews": [
         { "id": "r1", "user": "Chinedu", "comment": "Motivating!", "rating": 5 }
       ]
+    },
+    {
+      "id": "4",
+      "title": "Whispers of the Sahara",
+      "description": "An archaeologist discovers secrets buried in the desert sands.",
+      "author": "Fatima Bello",
+      "coverImage": "https://picsum.photos/400/250?random=4",
+      "category": "Adventure",
+      "tags": ["desert", "history", "mystery"],
+      "rating": 4.7,
+      "totalEpisodes": 12,
+      "totalReadTime": 700,
+      "episodes": [
+        { "id": "e1", "title": "The Map", "content": "It began with an old, faded map..." }
+      ],
+      "isFeatured": true,
+      "reviews": [
+        { "id": "r1", "user": "Omar", "comment": "Fascinating read!", "rating": 5 }
+      ]
+    },
+    {
+      "id": "5",
+      "title": "Code and Chaos",
+      "description": "A cyberpunk hacker fights against a corrupt mega-corporation.",
+      "author": "Kelechi Nwosu",
+      "coverImage": "https://picsum.photos/400/250?random=5",
+      "category": "Sci-Fi",
+      "tags": ["technology", "hackers", "future"],
+      "rating": 4.5,
+      "totalEpisodes": 18,
+      "totalReadTime": 1000,
+      "episodes": [
+        { "id": "e1", "title": "The Breach", "content": "The firewall wasn’t enough..." }
+      ],
+      "isFeatured": false,
+      "reviews": [
+        { "id": "r1", "user": "Ifeanyi", "comment": "Intense and smart!", "rating": 4 }
+      ]
+    },
+    {
+      "id": "6",
+      "title": "Echoes of Biafra",
+      "description": "A historical fiction following a family during the Nigerian Civil War.",
+      "author": "Ngozi Okafor",
+      "coverImage": "https://picsum.photos/400/250?random=6",
+      "category": "Historical",
+      "tags": ["war", "family", "survival"],
+      "rating": 4.9,
+      "totalEpisodes": 14,
+      "totalReadTime": 950,
+      "episodes": [
+        { "id": "e1", "title": "Before the Storm", "content": "Peaceful days that soon changed..." }
+      ],
+      "isFeatured": true,
+      "reviews": [
+        { "id": "r1", "user": "Ada", "comment": "Emotional and powerful!", "rating": 5 }
+      ]
+    },
+    {
+      "id": "7",
+      "title": "The AI Prophet",
+      "description": "In a world ruled by machines, one human dares to change destiny.",
+      "author": "Tomi Adeyemi",
+      "coverImage": "https://picsum.photos/400/250?random=7",
+      "category": "Sci-Fi",
+      "tags": ["AI", "rebellion", "future"],
+      "rating": 4.4,
+      "totalEpisodes": 16,
+      "totalReadTime": 1100,
+      "episodes": [
+        { "id": "e1", "title": "Awakening", "content": "The machine spoke, for the first time..." }
+      ],
+      "isFeatured": false,
+      "reviews": [
+        { "id": "r1", "user": "Tunde", "comment": "Chilling and thought-provoking!", "rating": 4 }
+      ]
+    },
+    {
+      "id": "8",
+      "title": "Love Across Borders",
+      "description": "A romance between two people from different cultures.",
+      "author": "Aisha Musa",
+      "coverImage": "https://picsum.photos/400/250?random=8",
+      "category": "Romance",
+      "tags": ["love", "culture", "drama"],
+      "rating": 4.3,
+      "totalEpisodes": 9,
+      "totalReadTime": 450,
+      "episodes": [
+        { "id": "e1", "title": "The Meeting", "content": "It started with a smile..." }
+      ],
+      "isFeatured": false,
+      "reviews": [
+        { "id": "r1", "user": "Joy", "comment": "So sweet and emotional!", "rating": 4 }
+      ]
     }
   ],
   "weeklySpotlight": [
-    {
-      "storyId": "3",
-      "startDate": "2025-08-17",
-      "endDate": "2025-08-24"
-    }
+    { "storyId": "3", "startDate": "2025-08-17", "endDate": "2025-08-24" }
   ]
 }
