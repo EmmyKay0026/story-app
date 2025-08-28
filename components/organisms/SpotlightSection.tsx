@@ -1,18 +1,19 @@
 import React from "react";
 import DetailsCard from "../molecules/DetailsCard";
 import { Story } from "@/constants/stories";
-import { fetchSpotlightStory } from "@/services/story/storyActions";
+import { fetchHomeData } from "@/services/story/storyActions";
 
 const SpotlightSection = async () => {
   let spotlightStory: Story | null = null;
   let error: string | null = null;
 
   try {
-    const response = await fetchSpotlightStory();
+    const response = await fetchHomeData();
 
-    if ("data" in response) {
-      spotlightStory = response.data ?? null;
-    } else if ("error" in response) {
+    if ("data" in response && response.data) {
+      // Pick the first featured story as spotlight
+      spotlightStory = response.data.featured?.[0] ?? null;
+    } else if ("error" in response && response.error) {
       console.error(
         "API error:",
         response.error.error,
@@ -27,7 +28,7 @@ const SpotlightSection = async () => {
   }
 
   return (
-    <section className="flex flex-col px-[1rem] py-[3rem] md:px-[3rem] lg:px-0 justify-center w-[100%] mb-[4rem] items-center bg-gray-200 dark:bg-gray-900">
+    <section className="flex flex-col px-[1rem] py-[3rem] md:px-[3rem] lg:px-0 justify-center w-full mb-[4rem] items-center bg-gray-200 dark:bg-gray-900">
       <div className="w-full flex flex-col text-center text-3xl items-center justify-center md:text-3xl font-bold text-black dark:text-white mb-[2rem]">
         <p className="mb-3">Weekly Spotlight</p>
         <div className="h-1 w-20 mt-[-6] bg-gradient-to-r from-[#085f33] via-[#3aa13e] to-[#45B649] rounded-full"></div>
