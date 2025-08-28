@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Story } from "@/constants/stories";
+import { getCoverImageUrl } from "@/services/story/storyActions";
 
 interface StoryCardProps {
   story: Story;
@@ -14,7 +15,7 @@ export default function HeroCard({ story }: StoryCardProps) {
     >
       {/* Background Image */}
       <Image
-        src={story.coverImage}
+        src={getCoverImageUrl(story.coverImage)}
         alt={story.title}
         fill
         priority

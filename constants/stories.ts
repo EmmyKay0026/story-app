@@ -1,47 +1,47 @@
-export const stories = [
-  {
-    id: 1,
-    title: "The Magical Forest",
-    description:
-      "A young adventurer discovers a hidden forest where trees whisper ancient secrets and magical creatures roam freely through moonlit paths.",
-    coverImage: "/api/placeholder/300/200",
-  },
-  {
-    id: 2,
-    title: "Journey to the Stars",
-    description:
-      "Follow Luna as she builds a rocket ship in her backyard and embarks on an incredible journey through space, meeting aliens and exploring distant planets.",
-    coverImage: "/api/placeholder/300/200",
-  },
-  {
-    id: 3,
-    title: "The Dragon's Library",
-    description:
-      "In a castle high above the clouds, a friendly dragon collects books from around the world and shares them with curious visitors seeking knowledge.",
-    coverImage: "/api/placeholder/300/200",
-  },
-  {
-    id: 4,
-    title: "Ocean of Dreams",
-    description:
-      "Dive into an underwater adventure where mermaids sing lullabies and seahorses carry messages between coral kingdoms.",
-    coverImage: "/api/placeholder/300/200",
-  },
-  {
-    id: 5,
-    title: "The Time Keeper's Clock",
-    description:
-      "When all the clocks in town stop working, a clever young inventor must find the Time Keeper to restore the flow of time itself.",
-    coverImage: "/api/placeholder/300/200",
-  },
-  {
-    id: 6,
-    title: "Garden of Wonders",
-    description:
-      "In a secret garden, flowers bloom in impossible colors and plants grow backwards, creating a world where anything can happen.",
-    coverImage: "/api/placeholder/300/200",
-  },
-];
+// export const stories = [
+//   {
+//     id: 1,
+//     title: "The Magical Forest",
+//     description:
+//       "A young adventurer discovers a hidden forest where trees whisper ancient secrets and magical creatures roam freely through moonlit paths.",
+//     coverImage: "/api/placeholder/300/200",
+//   },
+//   {
+//     id: 2,
+//     title: "Journey to the Stars",
+//     description:
+//       "Follow Luna as she builds a rocket ship in her backyard and embarks on an incredible journey through space, meeting aliens and exploring distant planets.",
+//     coverImage: "/api/placeholder/300/200",
+//   },
+//   {
+//     id: 3,
+//     title: "The Dragon's Library",
+//     description:
+//       "In a castle high above the clouds, a friendly dragon collects books from around the world and shares them with curious visitors seeking knowledge.",
+//     coverImage: "/api/placeholder/300/200",
+//   },
+//   {
+//     id: 4,
+//     title: "Ocean of Dreams",
+//     description:
+//       "Dive into an underwater adventure where mermaids sing lullabies and seahorses carry messages between coral kingdoms.",
+//     coverImage: "/api/placeholder/300/200",
+//   },
+//   {
+//     id: 5,
+//     title: "The Time Keeper's Clock",
+//     description:
+//       "When all the clocks in town stop working, a clever young inventor must find the Time Keeper to restore the flow of time itself.",
+//     coverImage: "/api/placeholder/300/200",
+//   },
+//   {
+//     id: 6,
+//     title: "Garden of Wonders",
+//     description:
+//       "In a secret garden, flowers bloom in impossible colors and plants grow backwards, creating a world where anything can happen.",
+//     coverImage: "/api/placeholder/300/200",
+//   },
+// ];
 
 export interface Episode {
   id: string;
@@ -53,19 +53,35 @@ export interface Episode {
   order: number;
 }
 
+export interface Review {
+  id: string;
+  userId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export type Category = {
+  id: string
+  label: string
+  value: string
+}
+
 export interface Story {
   id: string;
   title: string;
   description: string;
   author: string;
-  coverImage: string;
-  category: string;
-  tags: string[];
+  coverImage?: string | { url: string };
+  category: Category;
+  tags?: string[];
   rating: number;
   totalEpisodes: number;
   totalReadTime: number; // in minutes
   episodes: Episode[];
   isFeatured: boolean;
+  reviews?: Review[];
 }
 
 export interface UserProgress {
@@ -78,7 +94,7 @@ export interface UserProgress {
 
 export interface User {
   id: string;
-  phoneNumber: string;
+  phoneNumber: string | null;
   points: number;
   preferences: {
     theme: "light" | "dark" | "system";
@@ -88,6 +104,12 @@ export interface User {
   bookmarks: string[]; // story IDs
   unlockedEpisodes: string[]; // episode IDs
 }
+
+export interface ApiError {
+  error: string;
+  code: number;
+}
+
 export const mockUser: User = {
   id: "string",
   phoneNumber: "234567890456789",
@@ -140,7 +162,7 @@ export const mockStories: Story[] = [
     author: "Elena Rodriguez",
     coverImage:
       "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg",
-    category: "Adventure",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Post-apocalyptic", "Sci-Fi", "Mystery"],
     rating: 4.8,
     totalEpisodes: 5,
@@ -344,7 +366,7 @@ She sent the message out into the vast, open world, and for the first time in he
     author: "Maria Santos",
     coverImage:
       "https://img.freepik.com/free-photo/open-book-concept-fairy-tale-fiction-storytelling_23-2150793737.jpg",
-    category: "Contemporary",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Romance", "Enemies to lovers", "Small town"],
     rating: 4.6,
     totalEpisodes: 4,
@@ -678,7 +700,7 @@ Sarah pulled out her phone and started typing. "We crash a city council meeting.
     author: "Elena Rodriguez",
     coverImage:
       "https://img.freepik.com/free-vector/flat-vertical-poster-template-world-book-day-celebration_23-2150216808.jpg",
-    category: "Sci-Fi",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Post-apocalyptic", "Adventure", "Mystery"],
     rating: 4.9,
     totalEpisodes: 5,
@@ -882,7 +904,7 @@ She sent the message out into the vast, open world, and for the first time in he
     author: "Maria Santos",
     coverImage:
       "https://img.freepik.com/free-vector/book-with-scene-sugar-gliders-forest_1308-103484.jpg?t=st=1754491420~exp=1754495020~hmac=4475a88f6ac2c9e6565eee765c1f579ff5558188c116dcb0d6114e6475f4493a&w=2000",
-    category: "Romance",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Contemporary", "Enemies to lovers", "Small town"],
     rating: 5.0,
     totalEpisodes: 3,

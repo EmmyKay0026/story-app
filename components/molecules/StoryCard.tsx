@@ -1,8 +1,9 @@
 "use client";
 
 import { Story } from "@/constants/stories";
-import { useUser } from "@/context/UserContext";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
+import { getCoverImageUrl } from "@/services/story/storyActions";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 import { Clock, Star, BookOpen, Bookmark } from "lucide-react";
 import Image from "next/image";
@@ -25,10 +26,13 @@ export function StoryCard({
   const user = useUserStore((state) => state.user);
   const toggleBookmark = useUserStore((state) => state.toggleBookmark);
 
-  const isBookmark = user?.bookmarks.includes(story.id) || false;
-  const userProgress = user ? calculateStoryProgress(story, user.progress) : 0;
-  const hasStarted =
-    user?.progress.some((p) => p.storyId === story.id) || false;
+  const isBookmark = (user?.bookmarks ?? []).includes(story.id) || false;
+  const userProgress = Array.isArray(user?.progress)
+    ? calculateStoryProgress(story, user.progress)
+    : 0;
+  const hasStarted = Array.isArray(user?.progress)
+    ? user?.progress.some((p) => p.storyId === story.id)
+    : false;
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -60,7 +64,7 @@ export function StoryCard({
             }`}
           >
             <Image
-              src={story.coverImage}
+              src={getCoverImageUrl(story.coverImage)}
               alt={story.title}
               width={300}
               height={400}
@@ -106,7 +110,7 @@ export function StoryCard({
         <Image
           width={500}
           height={350}
-          src={story.coverImage}
+          src={getCoverImageUrl(story.coverImage)}
           alt={story.title}
           className={imageClasses}
         />
@@ -173,7 +177,7 @@ export function StoryCard({
 
         <div className="flex items-center justify-between mt-3">
           <span className="inline-block px-2 py-1 bg-[#45B649] text-xs font-medium text-white dark:text-gray-300 rounded">
-            {story.category}
+            {story.category.label}
           </span>
           {variant === "continue" && hasStarted && showProgress && (
             <div className="flex items-center gap-2">

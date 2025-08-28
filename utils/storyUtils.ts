@@ -23,7 +23,9 @@ export function calculateStoryProgress(
   story: Story,
   userProgress: UserProgress[]
 ): number {
-  const storyProgress = userProgress.filter((p) => p.storyId === story.id);
+  const storyProgress = (userProgress ?? []).filter(
+    (p) => p.storyId === story.id
+  );
   if (storyProgress.length === 0) return 0;
 
   const totalProgress = storyProgress.reduce((sum, p) => sum + p.progress, 0);
@@ -57,7 +59,9 @@ export function isStoryCompleted(
   story: Story,
   userProgress: UserProgress[]
 ): boolean {
-  const storyProgress = userProgress.filter((p) => p.storyId === story.id);
+  const storyProgress = (userProgress ?? []).filter(
+    (p) => p.storyId === story.id
+  );
   return (
     storyProgress.length === story.totalEpisodes &&
     storyProgress.every((p) => p.isCompleted)
@@ -95,8 +99,8 @@ export function searchStories(stories: Story[], query: string): Story[] {
       story.title.toLowerCase().includes(lowercaseQuery) ||
       story.description.toLowerCase().includes(lowercaseQuery) ||
       story.author.toLowerCase().includes(lowercaseQuery) ||
-      story.category.toLowerCase().includes(lowercaseQuery) ||
-      story.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+      story.category.label.toLowerCase().includes(lowercaseQuery) ||
+      story.tags?.some((tag) => tag?.toLowerCase().includes(lowercaseQuery))
   );
 }
 
@@ -105,7 +109,7 @@ export function filterStoriesByCategory(
   category: string
 ): Story[] {
   if (!category || category === "All") return stories;
-  return stories.filter((story) => story.category === category);
+  return stories.filter((story) => story.category.value === category);
 }
 
 export function sortStories(

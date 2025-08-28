@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import { Story } from "@/constants/stories";
-import { useUser } from "@/context/UserContext";
 import { formatReadTime } from "@/utils/storyUtils";
 import { Clock, Lock } from "lucide-react";
+import { getCoverImageUrl } from "@/services/story/storyActions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 
 const EpisodeCard = ({
   story,
@@ -86,7 +87,7 @@ const EpisodeCard = ({
                   <div className="w-12 h-12 relative bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                     {canRead ? (
                       <Image
-                        src={story.coverImage}
+                        src={getCoverImageUrl(story.coverImage)}
                         alt={episode.title}
                         width={48}
                         height={48}
@@ -95,7 +96,7 @@ const EpisodeCard = ({
                     ) : (
                       <span className="">
                         <Image
-                          src={story.coverImage}
+                          src={getCoverImageUrl(story.coverImage)}
                           alt={episode.title}
                           width={48}
                           height={48}

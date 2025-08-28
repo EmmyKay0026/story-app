@@ -13,7 +13,8 @@ import {
 } from "@/utils/storyUtils";
 import { useFontSizeStore } from "@/hooks/store";
 import PreferencesSetting from "@/components/molecules/PreferencesSetting";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 
 interface EpisodeReaderProps {
   params: Promise<{ episodeId: string }>;
@@ -170,7 +171,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
   return (
     <>
-      <NoIndex/>
+      <NoIndex />
       <div className="min-h-screen bg-white dark:bg-gray-900">
         {/* <FontSizeControl /> */}
         {/* Header */}

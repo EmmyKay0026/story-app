@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Bookmark } from "lucide-react";
-import { useUser } from "@/context/UserContext";
+// import { Bookmark } from "lucide-react";
+// import { useUser } from "@/context/UserContext";
+import { getCoverImageUrl } from "@/services/story/storyActions";
 import { calculateStoryProgress } from "@/utils/storyUtils";
 // import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 // import { Navigation } from "@/components/templates/NavigationMenu";
@@ -10,7 +11,8 @@ import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
 import { Story } from "@/constants/stories";
 import Image from "next/image";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 // import EpisodeCard from "@/components/molecules/EpisodeCard";
 // import { Navigation } from "../../../components/Navigation";
 // import { useUser } from "../../../contexts/UserContext";
@@ -34,9 +36,9 @@ StoryCardProps) {
   // const { user, toggleBookmark } = useUser();
 
   const user = useUserStore((state) => state.user);
-  const toggleBookmark = useUserStore((state) => state.toggleBookmark);
+  // const toggleBookmark = useUserStore((state) => state.toggleBookmark);
 
-  const isBookmark = user?.bookmarks.includes(story.id) || false;
+  // const isBookmark = user?.bookmarks.includes(story.id) || false;
 
   const storyProgress = user ? calculateStoryProgress(story, user.progress) : 0;
 
@@ -47,8 +49,8 @@ StoryCardProps) {
           <Image
             width={400}
             height={400}
-            src={story.coverImage}
-            alt={story.title}
+            src={getCoverImageUrl(story.coverImage)}
+            alt={story.title || "Story cover image"}
             className="w-full h-64 md:h-full object-cover"
           />
         </div>
@@ -62,7 +64,7 @@ StoryCardProps) {
                 by {story.author}
               </p>
             </div>
-            <button
+            {/* <button
               onClick={() => toggleBookmark(story.id)}
               className="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label={
@@ -76,7 +78,7 @@ StoryCardProps) {
                     : "text-gray-400"
                 }`}
               />
-            </button>
+            </button> */}
           </div>
 
           <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
