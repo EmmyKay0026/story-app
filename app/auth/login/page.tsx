@@ -3,14 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Book, Phone, ArrowRight } from "lucide-react";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/stores/user/userStore";
 
 // import { useUser } from "../../contexts/UserContext";
-
 export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState("");
   const login = useUserStore((state) => state.login);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
@@ -26,13 +25,22 @@ export default function LoginPage() {
     e.preventDefault();
     if (!phoneNumber.trim()) return;
 
-    setIsLoading(true);
+    // setIsLoading(true);
 
     // Simulate loading delay for better UX
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    login(phoneNumber);
-    router.push("/library");
+    const res = await login(phoneNumber.trim());
+
+    if (res.success == true) {
+      const params = new URLSearchParams(window.location.search);
+      const redirectTo = params.get("to") || "/library";
+      router.push(redirectTo);
+    } else {
+      setErrorMsg(res.message || "Login failed. Please try again.");
+    }
+    setIsLoading(false);
+    // router.push("/library");
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -40,43 +48,35 @@ export default function LoginPage() {
     const digits = value.replace(/\D/g, "");
 
     // Nigerian numbers: +234 XXX XXX XXXX
-    if (digits.startsWith("234")) {
-      if (digits.length >= 13) {
-        return `+234 ${digits.slice(3, 6)} ${digits.slice(6, 9)} ${digits.slice(
-          9,
-          13
-        )}`;
-      } else if (digits.length >= 9) {
-        return `+234 ${digits.slice(3, 6)} ${digits.slice(6, 9)} ${digits.slice(
-          9
-        )}`;
-      } else if (digits.length >= 6) {
-        return `+234 ${digits.slice(3, 6)} ${digits.slice(6)}`;
-      } else if (digits.length > 3) {
-        return `+234 ${digits.slice(3)}`;
-      }
-      return "+234 ";
-    }
+    // if (digits.startsWith("234")) {
+    //   if (digits.length >= 13) {
+    //     return `+234${digits}`;
+    //   } else if (digits.length >= 9) {
+    //     return `+234${digits}`;
+    //   } else if (digits.length >= 6) {
+    //     return `+234 ${digits.slice(3, 6)} ${digits.slice(6)}`;
+    //   } else if (digits.length > 3) {
+    //     return `+234 ${digits.slice(3)}`;
+    //   }
+    //   return "+234 ";
+    // }
 
     // If starts with 0, convert to +234
     if (digits.startsWith("0")) {
       const rest = digits.slice(1);
-      if (rest.length >= 10) {
-        return `+234 ${rest.slice(0, 3)} ${rest.slice(3, 6)} ${rest.slice(
-          6,
-          10
-        )}`;
-      } else if (rest.length >= 6) {
-        return `+234 ${rest.slice(0, 3)} ${rest.slice(3, 6)} ${rest.slice(6)}`;
-      } else if (rest.length >= 3) {
-        return `+234 ${rest.slice(0, 3)} ${rest.slice(3)}`;
-      } else if (rest.length > 0) {
-        return `+234 ${rest}`;
-      }
-      return "+234 ";
+      // if (rest.length >= 0) {
+      return `234${rest}`;
+      // }
+      // else if (rest.length >= 6) {
+      //   return `+234 ${rest.slice(0, 3)} ${rest.slice(3, 6)} ${rest.slice(6)}`;
+      // } else if (rest.length >= 3) {
+      //   return `+234 ${rest.slice(0, 3)} ${rest.slice(3)}`;
+      // } else if (rest.length > 0) {
+      //   return `+234 ${rest}`;
+      // }
+      // return "+234 ";
     }
 
-    // Default: just show digits
     return digits;
   };
 
@@ -142,6 +142,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
+              onClick={handleSubmit}
               disabled={isLoading || !phoneNumber.trim()}
               className="
                 w-full flex items-center justify-center gap-2 py-3 px-4 
@@ -161,13 +162,22 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Error Messages */}
+          {errorMsg && (
+            <div className="mt-8 p-4 bg-[#ffe4e4c5] dark:bg-red-900/2 rounded-lg">
+              <h3 className="text-sm font-medium text-red-500 dark:text-red-400 mb-2">
+                {errorMsg || "Please enter a valid phone number"}
+              </h3>
+            </div>
+          )}
+
           {/* Demo Info */}
           <div className="mt-8 p-4 bg-[#e4ffe6c5] dark:bg-blue-900/20 rounded-lg">
             <h3 className="text-sm font-medium text-primary dark:text-white mb-2">
               Demo Information
             </h3>
             <ul className="text-xs text-primary dark:text-white space-y-1">
-              <li>• Enter any phone number to continue</li>
+              <li>• Enter any phone number to econtinue</li>
               <li>• You&apos;ll start with 100 points</li>
               <li>• Premium episodes cost 6-12 points</li>
               <li>• All preferences are saved locally</li>

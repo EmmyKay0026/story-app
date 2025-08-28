@@ -13,7 +13,12 @@ const SpotlightSection = async () => {
     if ("data" in response) {
       spotlightStory = response.data ?? null;
     } else if ("error" in response) {
-      console.error("API error:", response.error.error, "Code:", response.error.code);
+      console.error(
+        "API error:",
+        response.error.error,
+        "Code:",
+        response.error.code
+      );
       error = response.error.error;
     }
   } catch (err) {
@@ -30,9 +35,7 @@ const SpotlightSection = async () => {
 
       <div className="justify-center w-full lg:w-[60%] border border-prime rounded-xl items-center">
         {error ? (
-          <div className="text-center py-12 px-6 text-red-500">
-            {error}
-          </div>
+          <div className="text-center py-12 px-6 text-red-500">{error}</div>
         ) : spotlightStory ? (
           <DetailsCard story={spotlightStory} />
         ) : (
@@ -51,8 +54,12 @@ const SpotlightSection = async () => {
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                 />
               </svg>
-              <p className="text-lg font-medium">No spotlight story this week</p>
-              <p className="text-sm">Check back next week for our featured story</p>
+              <p className="text-lg font-medium">
+                No spotlight story this week
+              </p>
+              <p className="text-sm">
+                Check back next week for our featured story
+              </p>
             </div>
           </div>
         )}

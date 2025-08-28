@@ -1,192 +1,223 @@
-// store/userStore.ts
+import { User, UserProgress } from "@/constants/stories";
+// import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
+import {
+  handleGetMe,
+  handleLogin,
+  handleUpdateUserProgress,
+} from "@/services/user/userAction";
+// import { User, UserProgress } from "@/stores/user/userTypes";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
 
-export const useUserStore = create<UserState>()(
-  persist(
-    (set, get) => ({
-      user: null,
-      isLoading: false,
-      isUpdating: false,
-      error: null,
+interface UserState {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (
+    phoneNumber: string
+  ) => Promise<{ success: boolean; message?: string }>; // async for backend integration
+  logout: () => void;
+  getMe: (phoneNumber: string) => Promise<User | null>;
+  updateProgress: (
+    storyId: string,
+    episodeId: string,
+    progress: number
+  ) => void;
+  toggleBookmark: (storyId: string) => void;
+  unlockEpisode: (episodeId: string, cost: number) => boolean;
+  getUserProgress: (
+    storyId: string,
+    episodeId: string
+  ) => UserProgress | undefined;
+  getStoryProgress: (storyId: string) => UserProgress[];
+  isEpisodeUnlocked: (episodeId: string) => boolean;
+  getContinueReading: () => { storyId: string; episodeId: string } | null;
+}
 
-      // --- Actions ---
-      fetchUserProfile: async () => {
-        try {
-          set({ isLoading: true });
-          // Example API call (replace with your actual backend)
-          const res = await fetch("/api/user/profile");
-          const data: User = await res.json();
-          set({ user: data, isLoading: false });
-        } catch (err: any) {
-          set({ error: err.message, isLoading: false });
-        }
-      },
+const defaultUser: User = {
+  id: "",
+  phoneNumber: null,
+  points: 0,
+  preferences: {
+    theme: "light",
+    fontSize: "medium",
+  },
+  progress: [],
+  bookmarks: [],
+  unlockedEpisodes: [], // episode IDs
+};
+export const useUserStore = create<UserState>((set, get) => ({
+  user: defaultUser,
+  isAuthenticated: false,
 
-      updatePreferences: async (preferences: Partial<UserPreferences>) => {
-        const { user } = get();
-        if (!user) return;
-        set({
-          user: {
-            ...user,
-            preferences: { ...user.preferences, ...preferences },
-            updatedAt: new Date().toISOString(),
-          },
-        });
-      },
+  // For backend: replace with real API call
+  login: async (phoneNumber: string) => {
+    // Example: const response = await fetch("/api/login", { ... });
 
-      updateProgress: async (progress: Omit<UserProgress, "lastReadAt">) => {
-        const { user } = get();
-        if (!user) return;
+    const response = await handleLogin(phoneNumber);
 
-        const newProgress: UserProgress = {
-          ...progress,
-          lastReadAt: new Date().toISOString(),
-        };
-
-        set({
-          user: {
-            ...user,
-            progress: [...user.progress, newProgress],
-            updatedAt: new Date().toISOString(),
-          },
-        });
-      },
-
-      addBookmark: async (storyId: string) => {
-        const { user } = get();
-        if (!user) return;
-
-        const newBookmark = {
-          storyId,
-          bookmarkedAt: new Date().toISOString(),
-        };
-
-        set({
-          user: {
-            ...user,
-            bookmarks: [...user.bookmarks, newBookmark],
-          },
-        });
-      },
-
-      removeBookmark: async (storyId: string) => {
-        const { user } = get();
-        if (!user) return;
-
-        set({
-          user: {
-            ...user,
-            bookmarks: user.bookmarks.filter(
-              (bookmark) => bookmark.storyId !== storyId
-            ),
-          },
-        });
-      },
-
-      toggleBookmark: async (storyId: string) => {
-        const { user, isBookmarked } = get();
-        if (!user) return;
-
-        if (isBookmarked(storyId)) {
-          await get().removeBookmark(storyId);
-        } else {
-          await get().addBookmark(storyId);
-        }
-      },
-
-      unlockEpisode: async (episodeId: string) => {
-        const { user } = get();
-        if (!user) return;
-
-        if (!user.unlockedEpisodes.includes(episodeId)) {
-          set({
-            user: {
-              ...user,
-              unlockedEpisodes: [...user.unlockedEpisodes, episodeId],
-            },
-          });
-        }
-      },
-
-      spendPoints: async (amount: number, reason: string) => {
-        const { user } = get();
-        if (!user) return;
-
-        set({
-          user: {
-            ...user,
-            points: Math.max(0, user.points - amount),
-            updatedAt: new Date().toISOString(),
-          },
-        });
-      },
-
-      earnPoints: async (amount: number, reason: string) => {
-        const { user } = get();
-        if (!user) return;
-
-        set({
-          user: {
-            ...user,
-            points: user.points + amount,
-            updatedAt: new Date().toISOString(),
-          },
-        });
-      },
-
-      // --- Getters ---
-      isBookmarked: (storyId: string) => {
-        const { user } = get();
-        return (
-          user?.bookmarks.some((bookmark) => bookmark.storyId === storyId) ??
-          false
-        );
-      },
-
-      isEpisodeUnlocked: (episodeId: string) => {
-        const { user } = get();
-        return user?.unlockedEpisodes.includes(episodeId) ?? false;
-      },
-
-      getStoryProgress: (storyId: string) => {
-        const { user } = get();
-        return user?.progress.filter((p) => p.storyId === storyId) ?? [];
-      },
-
-      getLatestProgress: (storyId: string) => {
-        const { user } = get();
-        if (!user) return null;
-
-        const storyProgress = user.progress
-          .filter((p) => p.storyId === storyId)
-          .sort(
-            (a, b) =>
-              new Date(b.lastReadAt).getTime() -
-              new Date(a.lastReadAt).getTime()
-          );
-
-        return storyProgress[0] || null;
-      },
-
-      clearError: () => set({ error: null }),
-
-      logout: () => {
-        localStorage.removeItem("authToken");
-        set({
-          user: null,
-          isLoading: false,
-          isUpdating: false,
-          error: null,
-        });
-      },
-    }),
-    {
-      name: "user-store",
-      partialize: (state) => ({
-        user: state.user,
-      }),
+    if ("User" in response) {
+      set({ user: response.User, isAuthenticated: true });
+      return { success: true };
     }
-  )
-);
+    if ("error" in response) {
+      // set({ user: response.User, isAuthenticated: true });
+      const errorMessage = response.error;
+      // console.log(errorMessage);
+
+      return { success: false, message: errorMessage };
+    }
+    return { success: false, message: "Login failed" };
+  },
+
+  logout: () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
+    set({ user: null, isAuthenticated: false });
+  },
+  getMe: async (phoneNumber) => {
+    const response = await handleGetMe(phoneNumber);
+    // console.log(response);
+    if ("error" in response) {
+      // set({ user: response.User, isAuthenticated: true });
+      const errorMessage = response.error;
+      // console.log(errorMessage);
+
+      return { success: false, message: errorMessage };
+    }
+
+    if ("User" in response) {
+      set({ user: response.User, isAuthenticated: true });
+      return response.User;
+    } else {
+      set({ user: null, isAuthenticated: false });
+      return null;
+    }
+
+    return response.User;
+  },
+
+  updateProgress: (storyId, episodeId, progress) => {
+    const { user } = get();
+    if (!user) return;
+
+    const existingProgressIndex = user.progress.findIndex(
+      (p) => p.storyId === storyId && p.episodeId === episodeId
+    );
+
+    const newProgress: UserProgress = {
+      storyId,
+      episodeId,
+      progress,
+      lastReadAt: new Date(),
+      isCompleted: progress >= 100,
+    };
+
+    let updatedProgress;
+    if (existingProgressIndex >= 0) {
+      updatedProgress = [...user.progress];
+      updatedProgress[existingProgressIndex] = newProgress;
+    } else {
+      updatedProgress = [...user.progress, newProgress];
+    }
+    const updatedUser = {
+      ...user,
+      progress: updatedProgress,
+    };
+    set({
+      user: updatedUser,
+    });
+    // TODO: send progress update to backend
+    setInterval(() => {
+      const response = handleUpdateUserProgress(updatedUser);
+
+      if ("error" in response) {
+        console.error("Failed to update user progress:", response.error);
+      }
+    }, 60000);
+  },
+
+  toggleBookmark: (storyId) => {
+    const { user } = get();
+    if (!user) return;
+
+    const isBookmark = user.bookmarks.includes(storyId);
+    const updatedBookmarks = isBookmark
+      ? user.bookmarks.filter((id) => id !== storyId)
+      : [...user.bookmarks, storyId];
+
+    set({
+      user: {
+        ...user,
+        bookmarks: updatedBookmarks,
+      },
+    });
+
+    // TODO: sync with backend
+  },
+
+  unlockEpisode: (episodeId, cost) => {
+    const { user } = get();
+    if (
+      !user ||
+      user.points < cost ||
+      user.unlockedEpisodes.includes(episodeId)
+    ) {
+      return false;
+    }
+
+    set({
+      user: {
+        ...user,
+        points: user.points - cost,
+        unlockedEpisodes: [...user.unlockedEpisodes, episodeId],
+      },
+    });
+
+    // TODO: sync with backend
+    return true;
+  },
+
+  getUserProgress: (storyId, episodeId) => {
+    return get().user?.progress.find(
+      (p) => p.storyId === storyId && p.episodeId === episodeId
+    );
+  },
+
+  getStoryProgress: (storyId) => {
+    return get().user?.progress.filter((p) => p.storyId === storyId) || [];
+  },
+
+  isEpisodeUnlocked: (episodeId) => {
+    return get().user?.unlockedEpisodes.includes(episodeId) || false;
+  },
+
+  getContinueReading: () => {
+    const { user } = get();
+    if (!user || user.progress.length === 0) return null;
+
+    // Find most recent incomplete episode
+    const incompleteProgress = user.progress
+      .filter((p) => !p.isCompleted)
+      .sort((a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime());
+
+    if (incompleteProgress.length > 0) {
+      return {
+        storyId: incompleteProgress[0].storyId,
+        episodeId: incompleteProgress[0].episodeId,
+      };
+    }
+
+    // Otherwise, most recent episode overall
+    const recentProgress = [...user.progress].sort(
+      (a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime()
+    );
+
+    if (recentProgress.length > 0) {
+      return {
+        storyId: recentProgress[0].storyId,
+        episodeId: recentProgress[0].episodeId,
+      };
+    }
+
+    return null;
+  },
+}));

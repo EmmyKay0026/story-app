@@ -7,7 +7,7 @@ import { Clock, Lock } from "lucide-react";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/stores/user/userStore";
 
 const EpisodeCard = ({
   story,

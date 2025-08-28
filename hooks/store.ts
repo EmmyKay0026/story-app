@@ -78,7 +78,6 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
             canDecrease: prevIndex > 0,
           };
         }),
-
     };
   }
 );

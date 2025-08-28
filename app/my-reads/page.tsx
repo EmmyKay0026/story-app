@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
-import { mockStories } from "@/constants/stories";
+import { mockStories, Story, User } from "@/constants/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   calculateStoryProgress,
@@ -12,7 +12,9 @@ import {
 } from "@/utils/storyUtils";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/stores/user/userStore";
+import { authorizationChecker } from "@/services/user/userAction";
+import { fetchStories } from "@/services/story/storyActions";
 
 export default function MyReadsPage() {
   const user = useUserStore((state) => state.user);
@@ -22,30 +24,56 @@ export default function MyReadsPage() {
   const [activeTab, setActiveTab] = useState<"reading" | "completed">(
     "reading"
   );
+  const [stories, setStories] = useState<Story[]>([]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
+    const fetchStoriesData = async () => {
+      const response = await fetchStories();
 
-  if (!isAuthenticated || !user) {
+      if ("data" in response && response.data) {
+        setStories(response.data);
+      } else if ("error" in response && response.error) {
+        console.error(
+          "API error:",
+          response.error.error,
+          "Code:",
+          response.error.code
+        );
+      }
+    };
+
+    fetchStoriesData();
+  }, []);
+
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
+
+  if (!user) {
     return null;
   }
 
   // Get all stories that user has started
-  const storiesWithProgress = mockStories
-    .filter((story) => user.progress.some((p) => p.storyId === story.id))
-    .map((story) => ({
-      ...story,
-      progress: calculateStoryProgress(story, user.progress),
-      isCompleted: isStoryCompleted(story, user.progress),
-      lastRead: user.progress
-        .filter((p) => p.storyId === story.id)
-        .sort((a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime())[0]
-        ?.lastReadAt,
-    }))
-    .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime());
+  const storiesWithProgress =
+    Array.isArray(stories) && stories.length > 0
+      ? stories
+          .filter((story) =>
+            (Array.isArray(user?.progress) ? user?.progress : []).some(
+              (p) => p.storyId === story.id
+            )
+          )
+          .map((story) => ({
+            ...story,
+            progress: calculateStoryProgress(story, user.progress ?? []),
+            isCompleted: isStoryCompleted(story, user.progress ?? []),
+            lastRead: (user.progress ?? [])
+              .filter((p) => p.storyId === story.id)
+              .sort(
+                (a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime()
+              )[0]?.lastReadAt,
+          }))
+          .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime())
+      : [];
 
   const currentlyReading = storiesWithProgress.filter(
     (story) => !story.isCompleted
@@ -59,7 +87,9 @@ export default function MyReadsPage() {
   };
 
   const totalReadTime = storiesWithProgress.reduce((total, story) => {
-    const storyProgress = user.progress.filter((p) => p.storyId === story.id);
+    const storyProgress = Array.isArray(user.progress)
+      ? user.progress.filter((p) => p.storyId === story.id)
+      : [];
     return (
       total +
       storyProgress.reduce((sum, p) => {
@@ -71,7 +101,7 @@ export default function MyReadsPage() {
 
   return (
     <Navigation>
-      <NoIndex/>
+      <NoIndex />
       <div className="max-w-7xl mx-auto p-4 lg:p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
@@ -98,7 +128,10 @@ export default function MyReadsPage() {
               Once you begin reading stories, you&apos;ll see your progress and
               completed reads here.
             </p>
-            <button onClick={() => router.push("/")} className="btn-primary">
+            <button
+              onClick={() => router.push("/library")}
+              className="btn-primary"
+            >
               Browse Stories
             </button>
           </div>

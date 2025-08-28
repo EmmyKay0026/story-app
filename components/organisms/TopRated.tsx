@@ -1,9 +1,9 @@
-import React from 'react';
-import Link from 'next/link';
-import Button, { ButtonNew } from '../atoms/Button';
+import React from "react";
+import Link from "next/link";
+import Button, { ButtonNew } from "../atoms/Button";
 import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
-import { fetchTopRatedStories } from '@/services/story/storyActions';
-import { Story } from '@/constants/stories';
+import { fetchTopRatedStories } from "@/services/story/storyActions";
+import { Story } from "@/constants/stories";
 
 const TopRated = async () => {
   let topRatedStories: Story[] = [];
@@ -15,7 +15,12 @@ const TopRated = async () => {
     if ("data" in response && response.data) {
       topRatedStories = response.data;
     } else if ("error" in response && response.error) {
-      console.error("API error:", response.error.error, "Code:", response.error.code);
+      console.error(
+        "API error:",
+        response.error.error,
+        "Code:",
+        response.error.code
+      );
       error = response.error.error;
     }
   } catch (err) {
@@ -28,7 +33,7 @@ const TopRated = async () => {
       <div className="flex justify-between items-start">
         <div className="mb-12">
           <h3 className="text-2xl md:text-3xl font-bold text-black dark:text-white mb-3">
-            Top Rated
+            New stories
           </h3>
           <div className="h-1 w-20 bg-gradient-to-r mt-[-6] from-[#085f33] via-[#3aa13e] to-[#45B649] rounded-full"></div>
         </div>

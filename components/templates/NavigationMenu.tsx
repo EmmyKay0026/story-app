@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  User,
+  User as UserIcon,
   Book,
   LogOut,
   Coins,
@@ -12,7 +12,10 @@ import {
   Bookmark,
 } from "lucide-react";
 import { useUser } from "@/context/UserContext";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/stores/user/userStore";
+import { useEffect, useState } from "react";
+import { User } from "@/constants/stories";
+// import { User } from "@/constants/stories";
 // import { useTheme } from "@/hooks/usePreferences";
 // import { useUser } from "../contexts/UserContext";
 // import { useTheme } from "../contexts/ThemeContext";
@@ -23,9 +26,31 @@ interface NavigationProps {
 
 export function Navigation({ children }: NavigationProps) {
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const user = useUserStore((state) => state.user);
+  const [user, setUser] = useState<User | null>(null);
   const logout = useUserStore((state) => state.logout);
+  const getMe = useUserStore((state) => state.getMe);
 
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const phoneNumber = localStorage.getItem("userId");
+      if (phoneNumber) {
+        const res = await getMe(phoneNumber);
+        if (res === null) {
+          router.push("/auth/login");
+        }
+        // console.log(res);
+
+        setUser(res);
+      } else {
+        router.push("/auth/login");
+      }
+      return null;
+    };
+
+    fetchUserData();
+  }, []);
+
+  // const phoneNumber = localStorage.getItem("userId");
   // const { resolvedTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
@@ -34,7 +59,7 @@ export function Navigation({ children }: NavigationProps) {
     { href: "/library", label: "Library", icon: BookCopy },
     { href: "/bookmark", label: "Bookmark", icon: Bookmark },
     { href: "/my-reads", label: "My Reads", icon: BookOpen },
-    { href: "/profile", label: "Profile", icon: User },
+    { href: "/profile", label: "Profile", icon: UserIcon },
   ];
 
   const isActive = (href: string) => {
@@ -51,7 +76,12 @@ export function Navigation({ children }: NavigationProps) {
   };
 
   if (!user) {
-    return <>{children}</>;
+    return (
+      <div className="flex flex-col lg:min-h-screen  bg-gray-50 dark:bg-gray-900 lg:flex-row ">
+        <div className="w-full h-[64px] lg:h-full lg:w-64 animate-pulse bg-gray-300/50"></div>{" "}
+        {children}
+      </div>
+    );
   }
 
   return (
@@ -73,7 +103,7 @@ export function Navigation({ children }: NavigationProps) {
               href={"/profile"}
               className="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
             >
-              <User className="w-4 h-4 text-white" />
+              <UserIcon className="w-4 h-4 text-white" />
             </Link>
           </div>
         </div>
@@ -130,7 +160,7 @@ export function Navigation({ children }: NavigationProps) {
               <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div className="flex items-center gap-3 px-3 py-2 text-sm">
                   <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
+                    <UserIcon className="w-4 h-4 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium truncate">User</div>
@@ -153,22 +183,11 @@ export function Navigation({ children }: NavigationProps) {
         </nav>
 
         {/* Mobile Menu */}
-        {/* {isMobileMenuOpen && ( */}
-        {/* <div
-            className="lg:hidden fixed inset-0 z-50 bg-black/50"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            
-          </div> */}
+
         <nav
           className="flex bottom-0 rounded-[50px] mb-[2px] mx-[2px] justify-center items-center backdrop-blur-[40px] fixed z-10 lg:hidden w-[100dvw]"
           // onClick={(e) => e.stopPropagation()}
         >
-          {/* <div className="flex items-center gap-2 p-6 border-b border-gray-200 dark:border-gray-700">
-            <Book className="w-8 h-8 text-blue-600" />
-            <span className="font-bold text-xl">StoryBook</span>
-          </div> */}
-
           <div className="flex justify-center items-center inset-1">
             <div className="space-y-1 justify-around z-[20] backdrop-blur-[40px] flex md:w-[60dvw] w-[100dvw]">
               {navigationItems.map(({ href, icon: Icon }) => (
@@ -189,49 +208,8 @@ export function Navigation({ children }: NavigationProps) {
                 </Link>
               ))}
             </div>
-
-            {/* <div className="px-3 space-y-4">
-              <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                <Coins className="w-5 h-5 text-amber-600" />
-                <div>
-                  <div className="text-sm font-medium text-amber-700 dark:text-amber-300">
-                    {user.points} Points
-                  </div>
-                  <Link
-                    href="/subscription"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xs text-amber-600 hover:text-amber-700"
-                  >
-                    Get more points
-                  </Link>
-                </div>
-              </div>
-
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                <div className="flex items-center gap-3 px-3 py-2 text-sm">
-                  <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">User</div>
-                    <div className="text-xs text-gray-500 truncate">
-                      {user.phoneNumber}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-3 py-2 mt-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Sign Out
-                </button>
-              </div>
-            </div> */}
           </div>
         </nav>
-        {/* )} */}
 
         {/* Main Content */}
         <main className="flex-1 lg:ml-64 dark:bg-dark-primary  bdark:bg-gray-800">

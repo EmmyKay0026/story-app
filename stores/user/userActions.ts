@@ -3,6 +3,17 @@ import api from "../api";
 import { User, UserPreferences, UserProgress, Bookmark } from "./userTypes";
 
 export const createUserActions = (set: any, get: any) => ({
+  login: async (phoneNumber: string) => {
+    const response = await api.post<{ phoneNumber: string }>("/auth/login", {
+      phoneNumber,
+    });
+
+    console.log("Login response:", response.data);
+
+    localStorage.setItem("authToken", phoneNumber);
+    await get().fetchUserProfile();
+  },
+
   fetchUserProfile: async () => {
     set({ isLoading: true, error: null });
     try {

@@ -1,28 +1,30 @@
 // services/storyService.ts
-import api from "../../stores/api";
+import api, { formatError } from "../../stores/api";
 import axios from "axios";
 import { Story, ApiError } from "@/constants/stories";
 
 // Utility: formats error into ApiError shape
-export const formatError = (error: unknown): ApiError => {
-  if (axios.isAxiosError(error)) {
-    return {
-      error:
-        (error.response?.data as { error?: string })?.error ||
-        error.message ||
-        "Something went wrong",
-      code: error.response?.status || 500,
-    };
-  }
+// export const formatError = (error: unknown): ApiError => {
+//   if (axios.isAxiosError(error)) {
+//     return {
+//       error:
+//         (error.response?.data as { error?: string })?.error ||
+//         error.message ||
+//         "Something went wrong",
+//       code: error.response?.status || 500,
+//     };
+//   }
 
-  return {
-    error: error instanceof Error ? error.message : "Unknown error",
-    code: 500,
-  };
-};
+//   return {
+//     error: error instanceof Error ? error.message : "Unknown error",
+//     code: 500,
+//   };
+// };
 
 // Generic type for API responses
-type ApiResponse<T> = { data: T; error?: undefined } | { data?: undefined; error: ApiError };
+type ApiResponse<T> =
+  | { data: T; error?: undefined }
+  | { data?: undefined; error: ApiError };
 
 // Get all stories
 export const fetchStories = async (): Promise<ApiResponse<Story[]>> => {
@@ -59,7 +61,9 @@ export const fetchTopRatedStories = async (): Promise<ApiResponse<Story[]>> => {
 };
 
 // Spotlight story
-export const fetchSpotlightStory = async (): Promise<ApiResponse<Story | null>> => {
+export const fetchSpotlightStory = async (): Promise<
+  ApiResponse<Story | null>
+> => {
   try {
     const spotlight = await api.get("/weeklySpotlight");
 
@@ -106,7 +110,7 @@ export const filterStories = (
 
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
-  fallback = "/placeholder.png"
+  fallback = "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg"
 ): string => {
   if (typeof coverImage === "string") return coverImage;
   return coverImage?.url || fallback;

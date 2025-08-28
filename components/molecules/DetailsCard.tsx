@@ -11,7 +11,7 @@ import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
 import { Story } from "@/constants/stories";
 import Image from "next/image";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/stores/user/userStore";
 // import EpisodeCard from "@/components/molecules/EpisodeCard";
 // import { Navigation } from "../../../components/Navigation";
 // import { useUser } from "../../../contexts/UserContext";

@@ -1,4 +1,5 @@
 // store/api.ts
+import { ApiError } from "@/constants/stories";
 import axios from "axios";
 
 const api = axios.create({
@@ -20,7 +21,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-
 // Response interceptor
 api.interceptors.response.use(
   (response) => response,
@@ -34,3 +34,20 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+export const formatError = (error: unknown): ApiError => {
+  if (axios.isAxiosError(error)) {
+    return {
+      error:
+        (error.response?.data as { error?: string })?.error ||
+        error.message ||
+        "Something went wrong",
+      code: error.response?.status || 500,
+    };
+  }
+
+  return {
+    error: error instanceof Error ? error.message : "Unknown error",
+    code: 500,
+  };
+};

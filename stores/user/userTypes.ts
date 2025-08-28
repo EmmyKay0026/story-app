@@ -3,8 +3,9 @@ export interface UserProgress {
   storyId: string;
   episodeId: string;
   progress: number; // 0-100
-  lastReadAt: string;
+  lastReadAt: Date | string;
   timeSpent: number; // in minutes
+  isCompleted: boolean;
 }
 
 export interface UserPreferences {
@@ -56,4 +57,3 @@ export interface UserState {
   clearError: () => void;
   logout: () => void;
 }
-

@@ -1,15 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
 
-import { mockStories } from "@/constants/stories";
+import { mockStories, Story } from "@/constants/stories";
 import { Bookmark, Eye, Star } from "lucide-react";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import EpisodeCard from "@/components/molecules/EpisodeCard";
 import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/stores/user/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
+import { authorizationChecker } from "@/services/user/userAction";
+import { fetchStories } from "@/services/story/storyActions";
 // import { calculateStoryProgress } from "@/utils/storyUtils";
 
 // const story = mockStories[0]; // Replace with actual story data
@@ -24,18 +26,35 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
   const router = useRouter();
-
+  const [stories, setStories] = useState<Story[]>([]);
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
+    const fetchStoriesData = async () => {
+      const response = await fetchStories();
 
-  const story = mockStories.find((s) => s.id === id);
+      if ("data" in response && response.data) {
+        setStories(response.data);
+      } else if ("error" in response && response.error) {
+        console.error(
+          "API error:",
+          response.error.error,
+          "Code:",
+          response.error.code
+        );
+      }
+    };
 
-  if (!isAuthenticated || !user || !story) {
+    fetchStoriesData();
+  }, []);
+
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
+
+  const story = stories.find((s) => s.id === id);
+
+  if (!user || !story) {
     return null;
   }
 
@@ -136,23 +155,20 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
                 <article className="bg-[#f6f6f6f7] dark:bg-transparent p-4 hidden md:block rounded-lg my-8 md:px-0 md:bg-transparent  w-full">
                   <h3 className="text-2xl font-semibold mb-2">Reviews</h3>
                   <div className="space-y-6">
-                    {
-                      // story.reviews && story.reviews.length > 0
-                      true ? (
-                        [1, 2, 3].map((idx: number) => (
-                          <ReviewCard
-                            key={idx}
-                            userAvatar="/no-avatar.jpg"
-                            rating={5}
-                            comment="This is a sample review."
-                          />
-                        ))
-                      ) : (
-                        <p className="text-gray-500 text-center">
-                          No reviews yet. Be the first to review!
-                        </p>
-                      )
-                    }
+                    {story.reviews && story.reviews.length > 0 ? (
+                      story.reviews.map((review, idx: number) => (
+                        <ReviewCard
+                          key={idx}
+                          userAvatar="/no-avatar.jpg"
+                          rating={review.rating}
+                          comment={review.comment}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center">
+                        No reviews yet. Be the first to review!
+                      </p>
+                    )}
                   </div>
                 </article>
               </>
@@ -174,23 +190,20 @@ const StoryDetailPage = ({ params }: StoryDetailPageProps) => {
                 <article className="bg-[#f6f6f6f7] dark:bg-transparent p-0 mt-10 block rounded-lg mb-4  ">
                   <h3 className="text-2xl font-semibold mb-3">Reviews</h3>
                   <div className="space-y-6">
-                    {
-                      // story.reviews && story.reviews.length > 0
-                      true ? (
-                        [1, 2, 3].map((idx: number) => (
-                          <ReviewCard
-                            key={idx}
-                            userAvatar="/no-avatar.jpg"
-                            rating={5}
-                            comment="This is a sample review."
-                          />
-                        ))
-                      ) : (
-                        <p className="text-gray-500 text-center">
-                          No reviews yet. Be the first to review!
-                        </p>
-                      )
-                    }
+                    {story.reviews && story.reviews.length > 0 ? (
+                      story.reviews.map((review, idx: number) => (
+                        <ReviewCard
+                          key={idx}
+                          userAvatar="/no-avatar.jpg"
+                          rating={review.rating}
+                          comment={review.comment}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center">
+                        No reviews yet. Be the first to review!
+                      </p>
+                    )}
                   </div>
                 </article>
               </div>

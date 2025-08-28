@@ -1,31 +1,29 @@
-"use client"
+"use client";
 
-import React, { useMemo, useState } from "react"
-import Link from "next/link"
-import { BookCopy, Box, Search, AlertCircle } from "lucide-react"
+import React, { useMemo, useState } from "react";
+import Link from "next/link";
+import { BookCopy, Box, Search, AlertCircle } from "lucide-react";
 
-import { Story, ApiError, ALLCATEGORIES } from "@/constants/stories"
-import { StoryCard } from "@/components/molecules/StoryCard"
-import { Navigation } from "@/components/templates/NavigationMenu"
+import { Story, ApiError, ALLCATEGORIES } from "@/constants/stories";
+import { StoryCard } from "@/components/molecules/StoryCard";
+import { Navigation } from "@/components/templates/NavigationMenu";
 
-import {
-  LibrarySkeleton,
-} from "@/components/skeletons/LibrarySkeletons"
+import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
 
-import { filterStories } from "@/services/story/storyActions"
+import { filterStories } from "@/services/story/storyActions";
 
 interface LibraryClientProps {
-  stories: Story[]
-  featuredStories: Story[]
+  stories: Story[];
+  featuredStories: Story[];
 }
 
 export default function LibraryClient({
   stories,
   featuredStories,
 }: LibraryClientProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [error, setError] = useState<ApiError | null>(null) // ✅ FIXED TYPE
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError | null>(null); // ✅ FIXED TYPE
 
   const filteredStories = useMemo(
     () =>
@@ -35,28 +33,28 @@ export default function LibraryClient({
         selectedCategory ? [selectedCategory] : []
       ),
     [stories, searchTerm, selectedCategory]
-  )
+  );
 
   const categoryDisplayName = useMemo(() => {
-    if (!selectedCategory) return "All stories"
+    if (!selectedCategory) return "All stories";
     return (
       ALLCATEGORIES.find((category) => category.label === selectedCategory)
         ?.label ?? "All stories"
-    )
-  }, [selectedCategory])
+    );
+  }, [selectedCategory]);
 
   const handleCategoryChange = (category: (typeof ALLCATEGORIES)[0]) => {
     setSelectedCategory(
       selectedCategory === category.label ? null : category.label
-    )
-  }
+    );
+  };
 
   if (!stories || stories.length === 0) {
     return (
       <Navigation>
         <LibrarySkeleton />
       </Navigation>
-    )
+    );
   }
 
   return (
@@ -177,5 +175,5 @@ export default function LibraryClient({
         </div>
       </section>
     </Navigation>
-  )
+  );
 }

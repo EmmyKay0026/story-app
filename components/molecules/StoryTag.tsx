@@ -18,7 +18,6 @@ const StoryTag = ({ story }: { story: Story }) => {
           {tag}
         </Link>
       ))}
-
     </div>
   );
 };

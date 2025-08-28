@@ -53,7 +53,7 @@ export interface Episode {
   order: number;
 }
 
- export interface Review {
+export interface Review {
   id: string;
   userId: string;
   userName: string;
@@ -76,10 +76,7 @@ export interface Story {
   episodes: Episode[];
   isFeatured: boolean;
   reviews?: Review[];
-
 }
-
-
 
 export interface UserProgress {
   storyId: string;
@@ -91,7 +88,7 @@ export interface UserProgress {
 
 export interface User {
   id: string;
-  phoneNumber: string;
+  phoneNumber: string | null;
   points: number;
   preferences: {
     theme: "light" | "dark" | "system";
@@ -137,8 +134,6 @@ export const CATEGORIES = [
   "Adventure",
 ];
 
-
- 
 export const ALLCATEGORIES = [
   { label: "Romance", value: "romance" },
   { label: "Mystery", value: "mystery" },
