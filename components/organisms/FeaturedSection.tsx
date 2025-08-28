@@ -3,21 +3,24 @@ import Link from "next/link"
 import Button, { ButtonNew } from "../atoms/Button"
 import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard"
 import { Story } from "@/constants/stories"
-import { fetchStories } from "@/services/story/storyActions"
+import { fetchHomeData } from "@/services/story/storyActions"
 
 const FeaturedSection = async () => {
-  let stories: Story[] = []
   let featuredStories: Story[] = []
   let error: string | null = null
 
   try {
-    const response = await fetchStories()
+    const response = await fetchHomeData()
 
     if ("data" in response && response.data) {
-      stories = response.data
-      featuredStories = stories.slice(0, 5)
+      featuredStories = response.data.featured || []
     } else if ("error" in response && response.error) {
-      console.error("API error:", response.error.error, "Code:", response.error.code)
+      console.error(
+        "API error:",
+        response.error.error,
+        "Code:",
+        response.error.code
+      )
       error = response.error.error
     }
   } catch (err) {
@@ -41,13 +44,13 @@ const FeaturedSection = async () => {
               {error}
             </p>
           ) : featuredStories.length > 0 ? (
-            featuredStories.map((story) => (
+            featuredStories.slice(0, 5).map((story) => (
               <Link href={`/story/${story.id}`} key={story.id} className="group">
                 <StoryCardV2
                   story={story}
                   showProgress={false}
                   showDescription={false}
-                  variant="continue"
+                  variant="compact_v2"
                 />
               </Link>
             ))

@@ -63,7 +63,7 @@ StoryCardProps) {
                 by {story.author}
               </p>
             </div>
-            <button
+            {/* <button
               onClick={() => toggleBookmark(story.id)}
               className="p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label={
@@ -77,7 +77,7 @@ StoryCardProps) {
                     : "text-gray-400"
                 }`}
               />
-            </button>
+            </button> */}
           </div>
 
           <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">

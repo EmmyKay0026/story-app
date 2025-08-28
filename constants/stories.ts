@@ -62,14 +62,20 @@ export interface Episode {
   createdAt: string;
 }
 
+export type Category = {
+  id: string
+  label: string
+  value: string
+}
+
 export interface Story {
   id: string;
   title: string;
   description: string;
   author: string;
   coverImage?: string | { url: string };
-  category: string;
-  tags: string[];
+  category: Category;
+  tags?: string[];
   rating: number;
   totalEpisodes: number;
   totalReadTime: number; // in minutes
@@ -161,7 +167,7 @@ export const mockStories: Story[] = [
     author: "Elena Rodriguez",
     coverImage:
       "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg",
-    category: "Adventure",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Post-apocalyptic", "Sci-Fi", "Mystery"],
     rating: 4.8,
     totalEpisodes: 5,
@@ -365,7 +371,7 @@ She sent the message out into the vast, open world, and for the first time in he
     author: "Maria Santos",
     coverImage:
       "https://img.freepik.com/free-photo/open-book-concept-fairy-tale-fiction-storytelling_23-2150793737.jpg",
-    category: "Contemporary",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Romance", "Enemies to lovers", "Small town"],
     rating: 4.6,
     totalEpisodes: 4,
@@ -699,7 +705,7 @@ Sarah pulled out her phone and started typing. "We crash a city council meeting.
     author: "Elena Rodriguez",
     coverImage:
       "https://img.freepik.com/free-vector/flat-vertical-poster-template-world-book-day-celebration_23-2150216808.jpg",
-    category: "Sci-Fi",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Post-apocalyptic", "Adventure", "Mystery"],
     rating: 4.9,
     totalEpisodes: 5,
@@ -903,7 +909,7 @@ She sent the message out into the vast, open world, and for the first time in he
     author: "Maria Santos",
     coverImage:
       "https://img.freepik.com/free-vector/book-with-scene-sugar-gliders-forest_1308-103484.jpg?t=st=1754491420~exp=1754495020~hmac=4475a88f6ac2c9e6565eee765c1f579ff5558188c116dcb0d6114e6475f4493a&w=2000",
-    category: "Romance",
+    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Contemporary", "Enemies to lovers", "Small town"],
     rating: 5.0,
     totalEpisodes: 3,

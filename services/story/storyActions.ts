@@ -1,4 +1,3 @@
-// services/storyService.ts
 import api from "../../stores/api";
 import axios from "axios";
 import { Story, ApiError } from "@/constants/stories";
@@ -14,67 +13,92 @@ export const formatError = (error: unknown): ApiError => {
       code: error.response?.status || 500,
     };
   }
-
   return {
     error: error instanceof Error ? error.message : "Unknown error",
     code: 500,
   };
 };
 
-// Generic type for API responses
-type ApiResponse<T> = { data: T; error?: undefined } | { data?: undefined; error: ApiError };
+type ApiResponse<T> =
+  | { data: T; error?: undefined }
+  | { data?: undefined; error: ApiError };
 
-// Get all stories
-export const fetchStories = async (): Promise<ApiResponse<Story[]>> => {
+// Get all stories with pagination & filters
+export const fetchStories = async (
+  search = "",
+  tag = "",
+  page = 1,
+  limit = 10
+): Promise<ApiResponse<{ stories: Story[]; pagination: any }>> => {
   try {
-    const response = await api.get<{ data: Story[] }>("/stories");
-    return { data: response.data.data || response.data };
-  } catch (error) {
-    return { error: formatError(error) };
-  }
-};
-
-// Featured stories
-export const fetchFeaturedStories = async (): Promise<ApiResponse<Story[]>> => {
-  try {
-    const response = await api.get("/stories/featuredStories", {
-      params: { isFeatured: true, _limit: 6 },
+    const response = await api.get<{
+      data: Story[];
+      pagination: { page: number; record_count: number; total_records: number };
+    }>("/stories", {
+      params: {
+        search,
+        tag,
+        limit_start: page,
+        limit_count: limit,
+      },
     });
-    return { data: response.data?.data || [] };
+
+    return {
+      data: {
+        stories: response.data.data,
+        pagination: response.data.pagination,
+      },
+    };
   } catch (error) {
     return { error: formatError(error) };
   }
 };
 
-// Top-rated stories
-export const fetchTopRatedStories = async (): Promise<ApiResponse<Story[]>> => {
+// Featured, Trending, Categories from /home
+export const fetchHomeData = async (): Promise<
+  ApiResponse<{ featured: Story[]; trending: Story[]; categories: string[] }>
+> => {
   try {
-    const response = await api.get("/stories/topratedstories", {
-      params: { _sort: "rating", _order: "desc", _limit: 6 },
-    });
-    return { data: response.data.data || [] };
+    const response = await api.get<{
+      featured: Story[];
+      trending: Story[];
+      categories: string[];
+    }>("/home");
+
+    return { data: response.data };
   } catch (error) {
     return { error: formatError(error) };
   }
 };
 
-// Spotlight story
-export const fetchSpotlightStory = async (): Promise<ApiResponse<Story | null>> => {
+//Get story details (includes episodes)
+export const fetchStoryDetails = async (
+  storyId: string
+): Promise<ApiResponse<Story>> => {
   try {
-    const spotlight = await api.get("/weeklySpotlight");
-
-    if (spotlight.data.length > 0) {
-      const storyId = spotlight.data[0].storyId;
-      const storyResponse = await api.get(`/stories/${storyId}`);
-      return { data: storyResponse.data };
-    }
-    return { data: null };
+    const response = await api.get<Story>(`/stories/${storyId}`);
+    return { data: response.data };
   } catch (error) {
     return { error: formatError(error) };
   }
 };
 
-// ✅ Filtering logic (done client-side)
+//Get categories
+export const fetchCategories = async (): Promise<ApiResponse<{ label: string; value: string }[]>> => {
+  try {
+    const response = await api.get<{
+      data: { label: string; value: string }[];
+      record_count: number;
+      total_records: number;
+    }>("/categories");
+
+    return { data: response.data.data }; // 👈 unwrap the array
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+// Client-side filtering helper
 export const filterStories = (
   stories: Story[],
   searchTerm: string,
@@ -82,28 +106,47 @@ export const filterStories = (
 ): Story[] => {
   let filtered = [...stories];
 
+  // Search filter
   if (searchTerm) {
-    const lowerSearchTerm = searchTerm.toLowerCase();
+    const lowerSearch = searchTerm.toLowerCase();
     filtered = filtered.filter(
-      (story: Story) =>
-        story.title.toLowerCase().includes(lowerSearchTerm) ||
-        story.description.toLowerCase().includes(lowerSearchTerm) ||
-        story.author.toLowerCase().includes(lowerSearchTerm) ||
-        story.tags.some((tag) => tag.toLowerCase().includes(lowerSearchTerm))
+      (s) =>
+        s.title.toLowerCase().includes(lowerSearch) ||
+        s.description.toLowerCase().includes(lowerSearch) ||
+        s.author.toLowerCase().includes(lowerSearch) ||
+        (Array.isArray(s.tags) &&
+          s.tags.some((t) => t.toLowerCase().includes(lowerSearch)))
     );
   }
 
+  // Category filter
   if (categories.length > 0) {
-    filtered = filtered.filter(
-      (story: Story) =>
-        categories.includes(story.category) ||
-        story.tags.some((tag) => categories.includes(tag))
-    );
+    filtered = filtered.filter((s) => {
+      // Normalize story category to a string id/label
+      let storyCategory = "";
+      if (typeof s.category === "object" && s.category !== null) {
+        storyCategory = s.category.value || s.category.label || "";
+      } else if (typeof s.category === "string") {
+        storyCategory = s.category;
+      }
+
+      // Normalize all to lowercase for comparison
+      return (
+        categories.some(
+          (c) => c.toLowerCase() === storyCategory.toLowerCase()
+        ) ||
+        (Array.isArray(s.tags) &&
+          s.tags.some((t) =>
+            categories.some((c) => c.toLowerCase() === t.toLowerCase())
+          ))
+      );
+    });
   }
 
   return filtered;
 };
 
+// Cover image utility
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
   fallback = "/placeholder.png"

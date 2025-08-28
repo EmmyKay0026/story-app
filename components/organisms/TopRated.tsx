@@ -1,26 +1,41 @@
-import React from 'react';
-import Link from 'next/link';
-import Button, { ButtonNew } from '../atoms/Button';
-import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
-import { fetchTopRatedStories } from '@/services/story/storyActions';
-import { Story } from '@/constants/stories';
+import React from "react"
+import Link from "next/link"
+import Button, { ButtonNew } from "../atoms/Button"
+import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard"
+import { fetchHomeData } from "@/services/story/storyActions"
+import { Story } from "@/constants/stories"
 
 const TopRated = async () => {
-  let topRatedStories: Story[] = [];
-  let error: string | null = null;
+  let topRatedStories: Story[] = []
+  let error: string | null = null
 
   try {
-    const response = await fetchTopRatedStories();
+    const response = await fetchHomeData()
 
     if ("data" in response && response.data) {
-      topRatedStories = response.data;
+      // Option A: Use trending stories directly
+      // topRatedStories = response.data.trending || []
+
+      // Option B: Sort all featured + trending by rating
+      const combined = [
+        ...(response.data.featured || []),
+        ...(response.data.trending || []),
+      ]
+      topRatedStories = combined
+        .sort((a, b) => b.rating - a.rating)
+        .slice(0, 6)
     } else if ("error" in response && response.error) {
-      console.error("API error:", response.error.error, "Code:", response.error.code);
-      error = response.error.error;
+      console.error(
+        "API error:",
+        response.error.error,
+        "Code:",
+        response.error.code
+      )
+      error = response.error.error
     }
   } catch (err) {
-    console.error("Unexpected error:", err);
-    error = "Unexpected error occurred";
+    console.error("Unexpected error:", err)
+    error = "Unexpected error occurred"
   }
 
   return (
@@ -48,7 +63,7 @@ const TopRated = async () => {
                 story={story}
                 showProgress={false}
                 showDescription={false}
-                variant="continue"
+                variant="compact_v2"
               />
             </Link>
           ))}
@@ -75,7 +90,7 @@ const TopRated = async () => {
         </div>
       )}
     </section>
-  );
-};
+  )
+}
 
-export default TopRated;
+export default TopRated
