@@ -11,7 +11,7 @@ const StoryTag = ({ story }: { story: Story }) => {
       {/* Category */}
       {story.category && (
         <span className="inline-block px-3 py-1 bg-[#ccffd0c5] dark:bg-faded-primary text-primary dark:text-dark-primary text-sm font-medium rounded-full">
-          {story.category}
+          {story.category.label}
         </span>
       )}
 

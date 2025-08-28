@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
-import { mockStories, Story, User } from "@/constants/stories";
+import { Story } from "@/constants/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   calculateStoryProgress,
@@ -12,13 +12,14 @@ import {
 } from "@/utils/storyUtils";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
-import { useUserStore } from "@/stores/user/userStore";
+// import { useUserStore } from "@/stores/user/userStore";
 import { authorizationChecker } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
+import { useUserStore } from "@/hooks/useUserStore";
 
 export default function MyReadsPage() {
   const user = useUserStore((state) => state.user);
-  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
 
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"reading" | "completed">(
@@ -31,7 +32,7 @@ export default function MyReadsPage() {
       const response = await fetchStories();
 
       if ("data" in response && response.data) {
-        setStories(response.data);
+        setStories(response.data.stories);
       } else if ("error" in response && response.error) {
         console.error(
           "API error:",

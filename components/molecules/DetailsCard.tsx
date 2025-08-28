@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Bookmark } from "lucide-react";
-import { useUser } from "@/context/UserContext";
+// import { Bookmark } from "lucide-react";
+// import { useUser } from "@/context/UserContext";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import { calculateStoryProgress } from "@/utils/storyUtils";
 // import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
@@ -11,7 +11,8 @@ import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
 import { Story } from "@/constants/stories";
 import Image from "next/image";
-import { useUserStore } from "@/stores/user/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 // import EpisodeCard from "@/components/molecules/EpisodeCard";
 // import { Navigation } from "../../../components/Navigation";
 // import { useUser } from "../../../contexts/UserContext";
@@ -35,9 +36,9 @@ StoryCardProps) {
   // const { user, toggleBookmark } = useUser();
 
   const user = useUserStore((state) => state.user);
-  const toggleBookmark = useUserStore((state) => state.toggleBookmark);
+  // const toggleBookmark = useUserStore((state) => state.toggleBookmark);
 
-  const isBookmark = user?.bookmarks.includes(story.id) || false;
+  // const isBookmark = user?.bookmarks.includes(story.id) || false;
 
   const storyProgress = user ? calculateStoryProgress(story, user.progress) : 0;
 

@@ -13,7 +13,8 @@ import {
 } from "@/utils/storyUtils";
 import { useFontSizeStore } from "@/hooks/store";
 import PreferencesSetting from "@/components/molecules/PreferencesSetting";
-import { useUserStore } from "@/stores/user/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 
 interface EpisodeReaderProps {
   params: Promise<{ episodeId: string }>;

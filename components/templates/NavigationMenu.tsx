@@ -11,10 +11,11 @@ import {
   BookCopy,
   Bookmark,
 } from "lucide-react";
-import { useUser } from "@/context/UserContext";
-import { useUserStore } from "@/stores/user/userStore";
+
+// import { useUserStore } from "@/stores/user/userStore";
 import { useEffect, useState } from "react";
 import { User } from "@/constants/stories";
+import { useUserStore } from "@/hooks/useUserStore";
 // import { User } from "@/constants/stories";
 // import { useTheme } from "@/hooks/usePreferences";
 // import { useUser } from "../contexts/UserContext";

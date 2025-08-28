@@ -5,7 +5,7 @@ import {
 } from "@/services/story/storyActions";
 import { Story } from "@/constants/stories";
 import LibraryClient from "@/components/organisms/LibraryClient";
-import { Navigation } from "@/components/templates/NavigationMenu";
+// import { Navigation } from "@/components/templates/NavigationMenu";
 
 export default async function LibraryPage() {
   let stories: Story[] = [];
@@ -14,7 +14,7 @@ export default async function LibraryPage() {
 
   // Fetch stories
   try {
-    const response = await fetchStories();
+    // const response = await fetchStories();
     const storiesResponse = await fetchStories("", "", 1, 20);
 
     if ("data" in storiesResponse && storiesResponse.data) {

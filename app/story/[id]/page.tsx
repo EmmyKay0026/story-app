@@ -7,20 +7,23 @@ import EpisodeCard from "@/components/molecules/EpisodeCard";
 import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
 import { useRouter, useParams } from "next/navigation";
-import { useUserStore } from "@/hooks/userStore";
+// import { useUserStore } from "@/hooks/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
 import { fetchStoryDetails } from "@/services/story/storyActions"; // ✅ import your API
 
 import { Story } from "@/constants/stories";
 import { authorizationChecker } from "@/services/user/userAction";
-import { fetchStories } from "@/services/story/storyActions";
+// import { fetchStories } from "@/services/story/storyActions";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/hooks/store";
+// import { useUserStore } from "@/stores/user/userStore";
 // import { calculateStoryProgress } from "@/utils/storyUtils";
 
 // const story = mockStories[0]; // Replace with actual story data
 
-interface StoryDetailPageProps {
-  params: Promise<{ id: string }>;
-}
+// interface StoryDetailPageProps {
+//   params: Promise<{ id: string }>;
+// }
 
 const StoryDetailPage = () => {
   const { id } = useParams<{ id: string }>(); // ✅ get story ID from route
@@ -33,10 +36,7 @@ const StoryDetailPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-      return;
-    }
+    authorizationChecker(window.location.pathname);
 
     const loadStory = async () => {
       setLoading(true);

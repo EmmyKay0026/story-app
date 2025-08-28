@@ -19,10 +19,6 @@ export const formatError = (error: unknown): ApiError => {
   };
 };
 
-// Generic type for API responses
-type ApiResponse<T> =
-  | { data: T; error?: undefined }
-  | { data?: undefined; error: ApiError };
 type ApiResponse<T> =
   | { data: T; error?: undefined }
   | { data?: undefined; error: ApiError };
@@ -90,13 +86,10 @@ export const fetchStoryDetails = async (
   }
 };
 
-// Spotlight story
-export const fetchSpotlightStory = async (): Promise<
-  ApiResponse<Story | null>
-> => {
-
 //Get categories
-export const fetchCategories = async (): Promise<ApiResponse<{ label: string; value: string }[]>> => {
+export const fetchCategories = async (): Promise<
+  ApiResponse<{ label: string; value: string }[]>
+> => {
   try {
     const response = await api.get<{
       data: { label: string; value: string }[];
@@ -161,7 +154,7 @@ export const filterStories = (
 // Cover image utility
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
-  fallback = "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg"
+  fallback = "/placeholder.png"
 ): string => {
   if (typeof coverImage === "string") return coverImage;
   return coverImage?.url || fallback;

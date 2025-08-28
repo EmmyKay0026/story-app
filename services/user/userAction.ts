@@ -1,8 +1,9 @@
 import { User } from "@/constants/stories";
 import api, { formatError } from "../../stores/api";
 import axios from "axios";
-import { useUserStore } from "@/stores/user/userStore";
+// import { useUserStore } from "@/stores/user/userStore";
 import { redirect } from "next/navigation";
+import { useUserStore } from "@/hooks/useUserStore";
 // import { useUserStore } from "@/hooks/userStore";
 
 export const handleLogin = async (phoneNumber: string) => {

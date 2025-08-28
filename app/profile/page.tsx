@@ -3,23 +3,23 @@
 import { useEffect, useState } from "react";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { Edit3, BookOpen, Bookmark, Coins, SunMoon, Box } from "lucide-react";
-import { mockStories, Story, User } from "@/constants/stories";
+import { Story } from "@/constants/stories";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
-import { useRouter } from "next/navigation";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Image from "next/image";
-import { useUserStore } from "@/stores/user/userStore";
+// import { useUserStore } from "@/stores/user/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
 import { fetchStories } from "@/services/story/storyActions";
 import { authorizationChecker } from "@/services/user/userAction";
+import { useUserStore } from "@/hooks/useUserStore";
 
 export default function ProfilePage() {
   const user = useUserStore((state) => state.user);
-  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  const getMe = useUserStore((state) => state.getMe);
+  // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  // const getMe = useUserStore((state) => state.getMe);
   // console.log(getMe);
 
-  const router = useRouter();
+  // const router = ();
   const [activeTab, setActiveTab] = useState<"stories" | "bookmark">("stories");
   // const [user, setUser] = useState<User | null>(null);
   const [allStories, setAllStories] = useState<Story[] | null>(null);
@@ -60,7 +60,7 @@ export default function ProfilePage() {
       const response = await fetchStories();
 
       if ("data" in response && response.data) {
-        setAllStories(response.data);
+        setAllStories(response.data.stories);
       } else if ("error" in response && response.error) {
         console.error(
           "API error:",

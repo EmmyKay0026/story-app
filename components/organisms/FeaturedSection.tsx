@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import Button, { ButtonNew } from "../atoms/Button";
+import { ButtonNew } from "../atoms/Button";
 import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
 import { Story } from "@/constants/stories";
 import { fetchHomeData } from "@/services/story/storyActions";

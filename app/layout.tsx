@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { UserProvider } from "@/context/UserContext";
+// import { UserProvider } from "@/context/UserContext";
 import { ThemeProvider } from "next-themes";
 import { SITE_URL } from "@/constants/constant";
 
@@ -17,7 +17,8 @@ export const metadata: Metadata = {
     default: "Storybook App",
     template: "%s | Storybook App",
   },
-  description: "StoryApp is a platform where users can read engaging stories online.",
+  description:
+    "StoryApp is a platform where users can read engaging stories online.",
   robots: {
     index: true,
     follow: true,
