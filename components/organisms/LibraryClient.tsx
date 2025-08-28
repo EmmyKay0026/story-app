@@ -48,7 +48,7 @@ export default function LibraryClient({
 
   const handleCategoryChange = (category: { label: string; value: string }) => {
     setSelectedCategory(
-      selectedCategory === category.value ? null : category.value
+      selectedCategory === category.label ? null : category.label
     )
   }
   useEffect(() => {
@@ -139,7 +139,7 @@ export default function LibraryClient({
                     <StoryCard
                       story={story}
                       showProgress={false}
-                      variant="compact_v2"
+                      variant="continue"
                     />
                   </Link>
                 ))}
