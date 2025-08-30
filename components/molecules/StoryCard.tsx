@@ -174,7 +174,7 @@ export function StoryCard({
 
         <div className="flex items-center justify-between mt-3">
           <span className="inline-block px-2 py-1 bg-[#45B649] text-xs font-medium text-white dark:text-gray-300 rounded">
-            {story.category}
+            {String(story.category)}
           </span>
           {variant === "continue" && hasStarted && showProgress && (
             <div className="flex items-center gap-2">

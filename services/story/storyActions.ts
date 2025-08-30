@@ -153,7 +153,7 @@ export const filterStories = (
 // Cover image utility
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
-  fallback = "/placeholder.png"
+  fallback = "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg"
 ): string => {
   if (typeof coverImage === "string") return coverImage;
   return coverImage?.url || fallback;

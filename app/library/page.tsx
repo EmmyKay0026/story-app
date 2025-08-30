@@ -1,20 +1,31 @@
-import { fetchStories, fetchHomeData, fetchCategories } from "@/services/story/storyActions";
+import {
+  fetchStories,
+  fetchHomeData,
+  fetchCategories,
+} from "@/services/story/storyActions";
 import { Story } from "@/constants/stories";
 import LibraryClient from "@/components/organisms/LibraryClient";
+// import { Navigation } from "@/components/templates/NavigationMenu";
 
 export default async function LibraryPage() {
   let stories: Story[] = [];
   let featuredStories: Story[] = [];
-  let categories: { label: string; value: string }[] = [] 
+  let categories: { label: string; value: string }[] = [];
 
   // Fetch stories
   try {
+    // const response = await fetchStories();
     const storiesResponse = await fetchStories("", "", 1, 20);
 
     if ("data" in storiesResponse && storiesResponse.data) {
       stories = storiesResponse.data.stories;
     } else if ("error" in storiesResponse && storiesResponse.error) {
-      console.error("Stories API error:", storiesResponse.error.error, "Code:", storiesResponse.error.code);
+      console.error(
+        "Stories API error:",
+        storiesResponse.error.error,
+        "Code:",
+        storiesResponse.error.code
+      );
     }
   } catch (err) {
     console.error("Unexpected error fetching stories:", err);
@@ -27,7 +38,12 @@ export default async function LibraryPage() {
     if ("data" in homeResponse && homeResponse.data) {
       featuredStories = homeResponse.data.featured?.slice(0, 5) || [];
     } else if ("error" in homeResponse && homeResponse.error) {
-      console.error("Home API error:", homeResponse.error.error, "Code:", homeResponse.error.code);
+      console.error(
+        "Home API error:",
+        homeResponse.error.error,
+        "Code:",
+        homeResponse.error.code
+      );
     }
   } catch (err) {
     console.error("Unexpected error fetching home data:", err);
@@ -37,7 +53,10 @@ export default async function LibraryPage() {
   try {
     const categoriesResponse = await fetchCategories();
 
-    if ("data" in categoriesResponse && Array.isArray(categoriesResponse.data)) {
+    if (
+      "data" in categoriesResponse &&
+      Array.isArray(categoriesResponse.data)
+    ) {
       categories = categoriesResponse.data;
     } else {
       console.error(
@@ -50,7 +69,6 @@ export default async function LibraryPage() {
     console.error("Unexpected error fetching categories:", err);
     categories = [];
   }
-
 
   // if (!stories.length) {
   //   return (

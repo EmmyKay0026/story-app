@@ -9,9 +9,10 @@ const StoryTag = ({ story }: { story: Story }) => {
   return (
     <div className="flex flex-wrap gap-2">
       {/* Category */}
-      {story.category && (
+      {story.category?.label && (
         <span className="inline-block px-3 py-1 bg-[#ccffd0c5] dark:bg-faded-primary text-primary dark:text-dark-primary text-sm font-medium rounded-full">
-          {story.category}
+          {story.category?.label}
+ 
         </span>
       )}
 
