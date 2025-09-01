@@ -1,23 +1,24 @@
-"use client"
+"use client";
 
-import React, { useMemo, useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { BookCopy, Box, Search, AlertCircle } from "lucide-react"
+import React, { useMemo, useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { BookCopy, Box, Search, AlertCircle } from "lucide-react";
+import { authorizationChecker } from "@/services/user/userAction";
+import { Story, ApiError } from "@/constants/stories";
+import { StoryCard } from "@/components/molecules/StoryCard";
+import { Navigation } from "@/components/templates/NavigationMenu";
+import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
+import { filterStories } from "@/services/story/storyActions";
+import { useUserStore } from "@/hooks/useUserStore";
 
-import { Story, ApiError } from "@/constants/stories"
-import { StoryCard } from "@/components/molecules/StoryCard"
-import { Navigation } from "@/components/templates/NavigationMenu"
-import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons"
-import { filterStories } from "@/services/story/storyActions"
-
-import { useUserStore } from "@/hooks/userStore"
+// import { useUserStore } from "@/hooks/userStore";
 
 interface LibraryClientProps {
-  stories: Story[]
-  featuredStories: Story[]
-  categories: { label: string; value: string }[]
-  error?: ApiError | null
+  stories: Story[];
+  featuredStories: Story[];
+  categories: { label: string; value: string }[];
+  error?: ApiError | null;
 }
 
 export default function LibraryClient({
@@ -26,47 +27,65 @@ export default function LibraryClient({
   categories,
   error = null,
 }: LibraryClientProps) {
-  const router = useRouter()
-  const { isAuthenticated, user } = useUserStore()
+  const router = useRouter();
+  const { isAuthenticated, user } = useUserStore();
 
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const searchParams = useSearchParams();
+
+  const initialCategory = searchParams.get("category");
+  const initialSearch = searchParams.get("q");
+
+  const [searchTerm, setSearchTerm] = useState(initialSearch || "");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (selectedCategory) {
+      params.set("category", selectedCategory);
+    }
+    if (searchTerm) {
+      params.set("q", searchTerm);
+    }
+
+    const query = params.toString();
+    router.push(query ? `?${query}` : "?", { scroll: false });
+  }, [selectedCategory, searchTerm, router]);
 
   const filteredStories = useMemo(
     () =>
-      filterStories(stories, searchTerm, selectedCategory ? [selectedCategory] : []),
+      filterStories(
+        stories,
+        searchTerm,
+        selectedCategory ? [selectedCategory] : []
+      ),
     [stories, searchTerm, selectedCategory]
   );
 
-
   const categoryDisplayName = useMemo(() => {
-    if (!selectedCategory) return "All stories"
+    if (!selectedCategory) return "All stories";
     return (
-      categories.find((c) => c.value === selectedCategory)?.label ?? "All stories"
-    )
-  }, [selectedCategory, categories])
+      categories.find((c) => c.value === selectedCategory)?.label ??
+      "All stories"
+    );
+  }, [selectedCategory, categories]);
 
   const handleCategoryChange = (category: { label: string; value: string }) => {
     setSelectedCategory(
       selectedCategory === category.label ? null : category.label
-    )
-  }
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login")
-    }
-  }, [isAuthenticated, router])
+    );
+  };
 
-  if (!isAuthenticated || !user) {
-    return null
-  }
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
 
   if (!stories || stories.length === 0) {
     return (
       <Navigation>
         <LibrarySkeleton />
       </Navigation>
-    )
+    );
   }
 
   return (
@@ -107,7 +126,7 @@ export default function LibraryClient({
                   <input
                     type="checkbox"
                     className="sr-only peer"
-                    checked={selectedCategory === category.value}
+                    checked={selectedCategory === category.label}
                     onChange={() => handleCategoryChange(category)}
                   />
                   <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm rounded-full cursor-pointer transition-colors peer-checked:bg-faded-primary">
@@ -190,5 +209,5 @@ export default function LibraryClient({
         </article>
       </section>
     </Navigation>
-  )
+  );
 }

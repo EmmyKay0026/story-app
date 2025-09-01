@@ -1,30 +1,52 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
-import { mockStories } from "@/constants/stories";
+import { Story } from "@/constants/stories";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
-import { useUserStore } from "@/hooks/userStore";
+// import { useUserStore } from "@/stores/user/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
+import { authorizationChecker } from "@/services/user/userAction";
+import { fetchStories } from "@/services/story/storyActions";
+import { useUserStore } from "@/hooks/useUserStore";
 
 export default function BookmarksPage() {
   const user = useUserStore((state) => state.user);
-  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
+  const [stories, setStories] = useState<Story[]>([]);
 
-  if (!isAuthenticated || !user) {
+  useEffect(() => {
+    const fetchStoriesData = async () => {
+      const response = await fetchStories();
+
+      if ("data" in response && response.data) {
+        setStories(response.data.stories);
+      } else if ("error" in response && response.error) {
+        console.error(
+          "API error:",
+          response.error.error,
+          "Code:",
+          response.error.code
+        );
+      }
+    };
+
+    fetchStoriesData();
+  }, []);
+
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
+
+  if (!user) {
     return null;
   }
 
-  const bookmarkStories = mockStories.filter((story) =>
+  const bookmarkStories = stories.filter((story) =>
     user.bookmarks.includes(story.id)
   );
 

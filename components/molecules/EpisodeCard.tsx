@@ -1,13 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import { Story } from "@/constants/stories";
-import { useUser } from "@/context/UserContext";
 import { formatReadTime } from "@/utils/storyUtils";
 import { Clock, Lock } from "lucide-react";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 
 const EpisodeCard = ({
   story,
@@ -24,7 +24,7 @@ const EpisodeCard = ({
   const getUserProgress = useUserStore((state) => state.getUserProgress);
 
   const router = useRouter();
-  const [showUnlockModal, setShowUnlockModal] = useState(false);
+  // const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
   const handleEpisodeClick = (
     episodeId: string,
@@ -37,24 +37,31 @@ const EpisodeCard = ({
       router.push(`/read/${episodeId}`);
     } else {
       setSelectedEpisode(episodeId);
-      setShowUnlockModal(true);
+      // setShowUnlockModal(true);
     }
   };
+
+
   const handleUnlockEpisode = () => {
     if (!selectedEpisode) return;
-
-    const episode = story.episodes.find((ep) => ep.id === selectedEpisode);
-    if (!episode) return;
-
-    const success = unlockEpisode(selectedEpisode, episode.pointsCost);
-    if (success) {
-      setShowUnlockModal(false);
-      router.push(`/read/${selectedEpisode}`);
-    } else {
-      // Show error - not enough points
-      alert("Not enough points to unlock this episode!");
-    }
+    router.push(`/read/${selectedEpisode}`);
   };
+
+  // const handleUnlockEpisode = () => {
+  //   if (!selectedEpisode) return;
+
+  //   const episode = story.episodes.find((ep) => ep.id === selectedEpisode);
+  //   if (!episode) return;
+
+  //   const success = unlockEpisode(selectedEpisode, episode.pointsCost);
+  //   if (success) {
+  //     // setShowUnlockModal(false);
+  //     router.push(`/read/${selectedEpisode}`);
+  //   } else {
+  //     // Show error - not enough points
+  //     alert("Not enough points to unlock this episode!");
+  //   }
+  // };
   return (
     <>
       <div className="space-y-4 md:w-full">
@@ -150,7 +157,8 @@ const EpisodeCard = ({
       </div>
 
       {/* Unlock Modal */}
-      {showUnlockModal && selectedEpisode && (
+      {/* showUnlockModal &&  */}
+      {selectedEpisode && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
@@ -189,20 +197,20 @@ const EpisodeCard = ({
             </div>
 
             <div className="flex gap-3">
-              <button
+              {/* <button
                 onClick={() => setShowUnlockModal(false)}
                 className="flex-1 py-2 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
-              </button>
+              </button> */}
               <button
-                onClick={handleUnlockEpisode}
-                disabled={(() => {
-                  const episode = story.episodes.find(
-                    (ep) => ep.id === selectedEpisode
-                  );
-                  return !episode || (user?.points ?? 0) < episode.pointsCost;
-                })()}
+                onClick={() => handleUnlockEpisode()}
+                // disabled={(() => {
+                //   const episode = story.episodes.find(
+                //     (ep) => ep.id === selectedEpisode
+                //   );
+                //   return !episode || (user?.points ?? 0) < episode.pointsCost;
+                // })()}
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >
                 Unlock Episode

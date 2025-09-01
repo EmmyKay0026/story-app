@@ -2,32 +2,48 @@
 
 import { useEffect, useState } from "react";
 import { Navigation } from "@/components/templates/NavigationMenu";
-import { Edit3, BookOpen, Bookmark, Coins, SunMoon } from "lucide-react";
-import { mockStories } from "@/constants/stories";
+import { Edit3, BookOpen, Bookmark, Coins, SunMoon, Box } from "lucide-react";
+import { Story } from "@/constants/stories";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
-import { useRouter } from "next/navigation";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Image from "next/image";
-import { useUserStore } from "@/hooks/userStore";
+// import { useUserStore } from "@/stores/user/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
+import { fetchStories } from "@/services/story/storyActions";
+import { authorizationChecker } from "@/services/user/userAction";
+import { useUserStore } from "@/hooks/useUserStore";
 
 export default function ProfilePage() {
   const user = useUserStore((state) => state.user);
-  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  // const getMe = useUserStore((state) => state.getMe);
+  // console.log(getMe);
 
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState<
-    "stories" | "bookmark" | "activity"
-  >("stories");
-
+  // const router = ();
+  const [activeTab, setActiveTab] = useState<"stories" | "bookmark">("stories");
+  // const [user, setUser] = useState<User | null>(null);
+  const [allStories, setAllStories] = useState<Story[] | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   // Redirect if not logged in
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
+    authorizationChecker(window.location.pathname);
+    // const isAuthenticated = localStorage.getItem("userId") ? true : false;
+    // const phoneNumber = localStorage.getItem("userId");
+    // const fetchUserData = async () => {
+    //   if (phoneNumber) {
+    //     const res = await getMe(phoneNumber);
+    //     if (res === null) {
+    //       router.push("/auth/login");
+    //     }
+    //     setUser(res);
+    //   } else {
+    //     router.push("/auth/login");
+    //   }
+    //   return null;
+    // };
+    // fetchUserData();
+  }, []);
 
   // Load theme on mount
   useEffect(() => {
@@ -37,6 +53,25 @@ export default function ProfilePage() {
       setTheme(storedTheme);
       document.documentElement.classList.toggle("dark", storedTheme === "dark");
     }
+  }, []);
+
+  useEffect(() => {
+    const getStories = async () => {
+      const response = await fetchStories();
+
+      if ("data" in response && response.data) {
+        setAllStories(response.data.stories);
+      } else if ("error" in response && response.error) {
+        console.error(
+          "API error:",
+          response.error.error,
+          "Code:",
+          response.error.code
+        );
+      }
+    };
+
+    getStories();
   }, []);
 
   // Toggle theme
@@ -54,11 +89,22 @@ export default function ProfilePage() {
     }
   };
 
-  if (!isAuthenticated || !user) return null;
+  if (!user) return null;
 
   // Story progress logic
-  const storiesWithProgress = mockStories
-    .filter((story) => user?.progress.some((p) => p.storyId === story.id))
+  if (!Array.isArray(user.progress)) {
+    user.progress = [
+      {
+        storyId: "3",
+        episodeId: "2",
+        progress: 60,
+        lastReadAt: new Date("2023-10-01T12:00:00Z"),
+        isCompleted: false,
+      },
+    ];
+  }
+  const storiesWithProgress = allStories
+    ?.filter((story) => user?.progress.some((p) => p.storyId === story.id))
     .map((story) => ({
       ...story,
       progress: calculateStoryProgress(story, user?.progress),
@@ -70,13 +116,18 @@ export default function ProfilePage() {
     }))
     .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime());
 
-  const currentlyReading = storiesWithProgress.filter((s) => !s.isCompleted);
-  const completedStories = storiesWithProgress.filter((s) => s.isCompleted);
+  const currentlyReading =
+    storiesWithProgress?.filter((s) => !s.isCompleted) ?? [];
+  const completedStories =
+    storiesWithProgress?.filter((s) => s.isCompleted) ?? [];
 
   const totalReads = completedStories.length + currentlyReading.length;
-  const bookmarkStories = mockStories.filter((story) =>
-    user.bookmarks.includes(story.id)
-  );
+  const bookmarkStories =
+    allStories?.filter((story) => user.bookmarks.includes(story.id)) ?? [];
+
+  if (!allStories) {
+    return <div>Loading...</div>;
+  }
   return (
     <Navigation>
       <NoIndex />
@@ -151,13 +202,10 @@ export default function ProfilePage() {
           {[
             { key: "stories", label: "My Stories" },
             { key: "bookmark", label: "Bookmark" },
-            { key: "activity", label: "Activity" },
           ].map((tab) => (
             <button
               key={tab.key}
-              onClick={() =>
-                setActiveTab(tab.key as "stories" | "bookmark" | "activity")
-              }
+              onClick={() => setActiveTab(tab.key as "stories" | "bookmark")}
               className={`flex-1 py-3 text-sm font-medium transition ${
                 activeTab === tab.key
                   ? "border-b-2 border-primary text-primary"
@@ -173,61 +221,36 @@ export default function ProfilePage() {
         <div className="p-4 sm:p-6">
           {activeTab === "stories" && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {currentlyReading.map((item, index) => (
-                <StoryCard
-                  story={item}
-                  key={`${item.id}-${index}`}
-                  variant="continue"
-                />
-                // <div
-                //   key={item}
-                //   className="bg-white dark:bg-dark-primary rounded-lg overflow-hidden shadow hover:shadow-lg transition cursor-pointer"
-                // >
-                //   <div className="h-32 bg-gray-200 dark:bg-gray-700">
-                //     <img
-                //       src={`/images/story-${item}.jpg`}
-                //       alt="Story cover"
-                //       className="w-full h-full object-cover"
-                //     />
-                //   </div>
-                //   <div className="p-4">
-                //     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                //       Story Title {item}
-                //     </h3>
-                //     <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2">
-                //       Short description of the story goes here...
-                //     </p>
-                //   </div>
-                // </div>
-              ))}
+              {currentlyReading.length > 0 ? (
+                currentlyReading.map((item, index) => (
+                  <StoryCard
+                    story={item}
+                    key={`${item.id}-${index}`}
+                    variant="continue"
+                  />
+                ))
+              ) : (
+                <div className="flex flex-col items-center text-gray-500 py-16">
+                  <Box className="w-16 h-16 mb-4 opacity-50" />
+                  <h3 className="text-lg font-medium">No stories found</h3>
+                </div>
+              )}
             </div>
           )}
 
           {activeTab === "bookmark" && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {bookmarkStories.map((item, index) => (
-                <StoryCard story={item} key={(item.id, index)} />
-              ))}
+              {bookmarkStories.length > 0 ? (
+                bookmarkStories.map((item, index) => (
+                  <StoryCard story={item} key={(item.id, index)} />
+                ))
+              ) : (
+                <div className="flex flex-col items-center text-gray-500 py-16">
+                  <Box className="w-16 h-16 mb-4 opacity-50" />
+                  <h3 className="text-lg font-medium">No stories found</h3>
+                </div>
+              )}
             </div>
-          )}
-
-          {activeTab === "activity" && (
-            <ul className="space-y-3">
-              {[1, 2, 3].map((item) => (
-                <li
-                  key={item}
-                  className="bg-white dark:bg-dark-primary p-4 rounded-lg shadow hover:shadow-md transition"
-                >
-                  <p className="text-sm text-gray-900 dark:text-white">
-                    You finished reading{" "}
-                    <span className="font-semibold">Story {item}</span>
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    2 days ago
-                  </p>
-                </li>
-              ))}
-            </ul>
           )}
         </div>
       </section>

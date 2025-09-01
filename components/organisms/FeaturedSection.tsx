@@ -1,31 +1,31 @@
-import React from "react"
-import Link from "next/link"
-import Button, { ButtonNew } from "../atoms/Button"
-import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard"
-import { Story } from "@/constants/stories"
-import { fetchHomeData } from "@/services/story/storyActions"
+import React from "react";
+import Link from "next/link";
+import { ButtonNew } from "../atoms/Button";
+import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
+import { Story } from "@/constants/stories";
+import { fetchHomeData } from "@/services/story/storyActions";
 
 const FeaturedSection = async () => {
-  let featuredStories: Story[] = []
-  let error: string | null = null
+  let featuredStories: Story[] = [];
+  let error: string | null = null;
 
   try {
-    const response = await fetchHomeData()
+    const response = await fetchHomeData();
 
     if ("data" in response && response.data) {
-      featuredStories = response.data.featured || []
+      featuredStories = response.data.featured || [];
     } else if ("error" in response && response.error) {
       console.error(
         "API error:",
         response.error.error,
         "Code:",
         response.error.code
-      )
-      error = response.error.error
+      );
+      error = response.error.error;
     }
   } catch (err) {
-    console.error("Unexpected error:", err)
-    error = "Unexpected error occurred"
+    console.error("Unexpected error:", err);
+    error = "Unexpected error occurred";
   }
 
   return (
@@ -40,12 +40,14 @@ const FeaturedSection = async () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {error ? (
-            <p className="col-span-full text-center text-red-500">
-              {error}
-            </p>
+            <p className="col-span-full text-center text-red-500">{error}</p>
           ) : featuredStories.length > 0 ? (
             featuredStories.slice(0, 5).map((story) => (
-              <Link href={`/story/${story.id}`} key={story.id} className="group">
+              <Link
+                href={`/story/${story.id}`}
+                key={story.id}
+                className="group"
+              >
                 <StoryCardV2
                   story={story}
                   showProgress={false}
@@ -62,7 +64,7 @@ const FeaturedSection = async () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default FeaturedSection
+export default FeaturedSection;

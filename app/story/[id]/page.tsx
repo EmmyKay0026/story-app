@@ -7,11 +7,23 @@ import EpisodeCard from "@/components/molecules/EpisodeCard";
 import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
 import { useRouter, useParams } from "next/navigation";
-import { useUserStore } from "@/hooks/userStore";
+// import { useUserStore } from "@/hooks/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
 import { fetchStoryDetails } from "@/services/story/storyActions"; // ✅ import your API
 
 import { Story } from "@/constants/stories";
+import { authorizationChecker } from "@/services/user/userAction";
+// import { fetchStories } from "@/services/story/storyActions";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/hooks/store";
+// import { useUserStore } from "@/stores/user/userStore";
+// import { calculateStoryProgress } from "@/utils/storyUtils";
+
+// const story = mockStories[0]; // Replace with actual story data
+
+// interface StoryDetailPageProps {
+//   params: Promise<{ id: string }>;
+// }
 
 const StoryDetailPage = () => {
   const { id } = useParams<{ id: string }>(); // ✅ get story ID from route
@@ -24,10 +36,7 @@ const StoryDetailPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-      return;
-    }
+    authorizationChecker(window.location.pathname);
 
     const loadStory = async () => {
       setLoading(true);
@@ -137,14 +146,20 @@ const StoryDetailPage = () => {
                 <article className="bg-[#f6f6f6f7] dark:bg-transparent p-4 hidden md:block rounded-lg my-8 md:px-0 md:bg-transparent w-full">
                   <h3 className="text-2xl font-semibold mb-2">Reviews</h3>
                   <div className="space-y-6">
-                    {[1, 2, 3].map((idx: number) => (
-                      <ReviewCard
-                        key={idx}
-                        userAvatar="/no-avatar.jpg"
-                        rating={5}
-                        comment="This is a sample review."
-                      />
-                    ))}
+                    {story.reviews && story.reviews.length > 0 ? (
+                      story.reviews.map((review, idx: number) => (
+                        <ReviewCard
+                          key={idx}
+                          userAvatar="/no-avatar.jpg"
+                          rating={review.rating}
+                          comment={review.comment}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center">
+                        No reviews yet. Be the first to review!
+                      </p>
+                    )}
                   </div>
                 </article>
               </>
@@ -159,6 +174,25 @@ const StoryDetailPage = () => {
                 <article className="bg-[#f6f6f6f7] dark:bg-dark-primary p-4 block rounded-lg mb-4">
                   <h3 className="text-2xl font-semibold mb-3">Tags</h3>
                   <StoryTag story={story} />
+                </article>
+                <article className="bg-[#f6f6f6f7] dark:bg-transparent p-0 mt-10 block rounded-lg mb-4  ">
+                  <h3 className="text-2xl font-semibold mb-3">Reviews</h3>
+                  <div className="space-y-6">
+                    {story.reviews && story.reviews.length > 0 ? (
+                      story.reviews.map((review, idx: number) => (
+                        <ReviewCard
+                          key={idx}
+                          userAvatar="/no-avatar.jpg"
+                          rating={review.rating}
+                          comment={review.comment}
+                        />
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center">
+                        No reviews yet. Be the first to review!
+                      </p>
+                    )}
+                  </div>
                 </article>
               </div>
             )}

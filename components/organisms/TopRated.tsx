@@ -1,16 +1,16 @@
-import React from "react"
-import Link from "next/link"
-import Button, { ButtonNew } from "../atoms/Button"
-import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard"
-import { fetchHomeData } from "@/services/story/storyActions"
-import { Story } from "@/constants/stories"
+import React from "react";
+import Link from "next/link";
+import { ButtonNew } from "../atoms/Button";
+import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
+import { fetchHomeData } from "@/services/story/storyActions";
+import { Story } from "@/constants/stories";
 
 const TopRated = async () => {
-  let topRatedStories: Story[] = []
-  let error: string | null = null
+  let topRatedStories: Story[] = [];
+  let error: string | null = null;
 
   try {
-    const response = await fetchHomeData()
+    const response = await fetchHomeData();
 
     if ("data" in response && response.data) {
       // Option A: Use trending stories directly
@@ -20,22 +20,22 @@ const TopRated = async () => {
       const combined = [
         ...(response.data.featured || []),
         ...(response.data.trending || []),
-      ]
+      ];
       topRatedStories = combined
         .sort((a, b) => b.rating - a.rating)
-        .slice(0, 6)
+        .slice(0, 6);
     } else if ("error" in response && response.error) {
       console.error(
         "API error:",
         response.error.error,
         "Code:",
         response.error.code
-      )
-      error = response.error.error
+      );
+      error = response.error.error;
     }
   } catch (err) {
-    console.error("Unexpected error:", err)
-    error = "Unexpected error occurred"
+    console.error("Unexpected error:", err);
+    error = "Unexpected error occurred";
   }
 
   return (
@@ -43,7 +43,7 @@ const TopRated = async () => {
       <div className="flex justify-between items-start">
         <div className="mb-12">
           <h3 className="text-2xl md:text-3xl font-bold text-black dark:text-white mb-3">
-            Top Rated
+            New stories
           </h3>
           <div className="h-1 w-20 bg-gradient-to-r mt-[-6] from-[#085f33] via-[#3aa13e] to-[#45B649] rounded-full"></div>
         </div>
@@ -90,7 +90,7 @@ const TopRated = async () => {
         </div>
       )}
     </section>
-  )
-}
+  );
+};
 
-export default TopRated
+export default TopRated;

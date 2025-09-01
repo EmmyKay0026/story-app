@@ -1,6 +1,6 @@
 import api from "../../stores/api";
 import axios from "axios";
-import { Story, ApiError } from "@/constants/stories";
+import { Story, Episode, ApiError } from "@/constants/stories";
 
 // Utility: formats error into ApiError shape
 export const formatError = (error: unknown): ApiError => {
@@ -86,9 +86,25 @@ export const fetchStoryDetails = async (
   }
 };
 
+// Get specific episode details
+export const fetchEpisode = async (
+  storyId: string,
+  episodeId: string
+): Promise<ApiResponse<Episode>> => {
+  try {
+    const response = await api.get<{ data: Episode }>(
+      `/stories/${storyId}/${episodeId}`
+    );
+    return { data: response.data.data };
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
 
 //Get categories
-export const fetchCategories = async (): Promise<ApiResponse<{ label: string; value: string }[]>> => {
+export const fetchCategories = async (): Promise<
+  ApiResponse<{ label: string; value: string }[]>
+> => {
   try {
     const response = await api.get<{
       data: { label: string; value: string }[];

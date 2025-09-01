@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import {
   fetchStories,
   fetchHomeData,
@@ -49,7 +50,7 @@ export default async function LibraryPage() {
     console.error("Unexpected error fetching home data:", err);
   }
 
-  // ✅ Fetch categories
+  // Fetch categories
   try {
     const categoriesResponse = await fetchCategories();
 
@@ -70,20 +71,13 @@ export default async function LibraryPage() {
     categories = [];
   }
 
-  // if (!stories.length) {
-  //   return (
-  //     <div className="flex flex-col items-center justify-center py-20 text-center">
-  //       <h2 className="text-xl font-semibold">No stories available</h2>
-  //       <p className="text-gray-500 mt-2">Check back later or refresh to try again.</p>
-  //     </div>
-  //   );
-  // }
-
   return (
-    <LibraryClient
-      stories={stories}
-      featuredStories={featuredStories}
-      categories={categories} // ✅ now matches type
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <LibraryClient
+        stories={stories}
+        featuredStories={featuredStories}
+        categories={categories}
+      />
+    </Suspense>
   );
 }

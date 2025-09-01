@@ -1,8 +1,8 @@
 "use client";
 
 import { Story } from "@/constants/stories";
-import { useUser } from "@/context/UserContext";
-import { useUserStore } from "@/hooks/userStore";
+import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/stores/user/userStore";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 import { Clock, Star, BookOpen, Bookmark } from "lucide-react";
@@ -26,10 +26,13 @@ export function StoryCard({
   const user = useUserStore((state) => state.user);
   const toggleBookmark = useUserStore((state) => state.toggleBookmark);
 
-  const isBookmark = user?.bookmarks.includes(story.id) || false;
-  const userProgress = user ? calculateStoryProgress(story, user.progress) : 0;
-  const hasStarted =
-    user?.progress.some((p) => p.storyId === story.id) || false;
+  const isBookmark = (user?.bookmarks ?? []).includes(story.id) || false;
+  const userProgress = Array.isArray(user?.progress)
+    ? calculateStoryProgress(story, user.progress)
+    : 0;
+  const hasStarted = Array.isArray(user?.progress)
+    ? user?.progress.some((p) => p.storyId === story.id)
+    : false;
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.stopPropagation();

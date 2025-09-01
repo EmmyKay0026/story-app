@@ -1,94 +1,21 @@
-import { fontSizes } from "@/constants/fonts";
-import { create } from "zustand";
-
-const defaultFontSizeValue = "medium";
-
-const getPreloadedFontSize = () => {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("fontSize") || defaultFontSizeValue;
-  }
-  return defaultFontSizeValue; // fallback for SSR
-};
-
-const preLoadedFontSizeValue = getPreloadedFontSize();
-
-const preLoadedFontSize = fontSizes.find(
-  (fs) => fs.value === preLoadedFontSizeValue
-);
-type FontSizeValue = (typeof fontSizes)[number]["size"];
-type FontSizeState = {
-  fontSize: FontSizeValue;
-  fontSizeLabel: (typeof fontSizes)[number]["label"];
-  canIncrease: boolean | null;
-  canDecrease: boolean | null;
-  increaseFontSize: () => void;
-  decreaseFontSize: () => void;
-};
-
-const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
-  (set) => {
-    const initialIndex = fontSizes.findIndex(
-      (fs) => fs.value === preLoadedFontSizeValue
-    );
-    const safeIndex =
-      initialIndex === -1
-        ? fontSizes.findIndex((fs) => fs.value === "medium")
-        : initialIndex;
-
-    return {
-      fontSize: fontSizes[safeIndex].size,
-      fontSizeLabel: fontSizes[safeIndex].label,
-      currentIndex: safeIndex,
-      canIncrease: safeIndex < fontSizes.length - 1,
-      canDecrease: safeIndex > 0,
-
-      increaseFontSize: () =>
-        set((state) => {
-          const nextIndex = Math.min(
-            state.currentIndex + 1,
-            fontSizes.length - 1
-          );
-
-          if (typeof window !== "undefined") {
-            localStorage.setItem("fontSize", fontSizes[nextIndex].value);
-          }
-
-          return {
-            fontSize: fontSizes[nextIndex].size,
-            fontSizeLabel: fontSizes[nextIndex].label,
-            currentIndex: nextIndex,
-            canIncrease: nextIndex < fontSizes.length - 1,
-            canDecrease: nextIndex > 0,
-          };
-        }),
-
-      decreaseFontSize: () =>
-        set((state) => {
-          const prevIndex = Math.max(state.currentIndex - 1, 0);
-
-          if (typeof window !== "undefined") {
-            localStorage.setItem("fontSize", fontSizes[prevIndex].value);
-          }
-
-          return {
-            fontSize: fontSizes[prevIndex].size,
-            fontSizeLabel: fontSizes[prevIndex].label,
-            currentIndex: prevIndex,
-            canIncrease: prevIndex < fontSizes.length - 1,
-            canDecrease: prevIndex > 0,
-          };
-        }),
-    };
-  }
-);
-
 import { User, UserProgress } from "@/constants/stories";
+// import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
+import {
+  handleGetMe,
+  handleLogin,
+  handleUpdateUserProgress,
+} from "@/services/user/userAction";
+// import { User, UserProgress } from "@/stores/user/userTypes";
+import { create } from "zustand";
 
 interface UserState {
   user: User | null;
   isAuthenticated: boolean;
-  login: (phoneNumber: string) => Promise<void>; // async for backend integration
+  login: (
+    phoneNumber: string
+  ) => Promise<{ success: boolean; message?: string }>; // async for backend integration
   logout: () => void;
+  getMe: (phoneNumber: string) => Promise<User | null>;
   updateProgress: (
     storyId: string,
     episodeId: string,
@@ -105,32 +32,67 @@ interface UserState {
   getContinueReading: () => { storyId: string; episodeId: string } | null;
 }
 
+const defaultUser: User = {
+  id: "",
+  phoneNumber: null,
+  points: 0,
+  preferences: {
+    theme: "light",
+    fontSize: "medium",
+  },
+  progress: [],
+  bookmarks: [],
+  unlockedEpisodes: [], // episode IDs
+};
 export const useUserStore = create<UserState>((set, get) => ({
-  user: null,
+  user: defaultUser,
   isAuthenticated: false,
 
   // For backend: replace with real API call
   login: async (phoneNumber: string) => {
     // Example: const response = await fetch("/api/login", { ... });
-    // const user = await response.json();
-    const mockUser: User = {
-      id: "1",
-      phoneNumber,
-      points: 100,
-      preferences: {
-        theme: "system",
-        fontSize: "medium",
-      },
-      progress: [],
-      bookmarks: [],
-      unlockedEpisodes: [],
-    };
 
-    set({ user: mockUser, isAuthenticated: true });
+    const response = await handleLogin(phoneNumber);
+
+    if ("User" in response) {
+      set({ user: response.User, isAuthenticated: true });
+      return { success: true };
+    }
+    if ("error" in response) {
+      // set({ user: response.User, isAuthenticated: true });
+      const errorMessage = response.error;
+      // console.log(errorMessage);
+
+      return { success: false, message: errorMessage };
+    }
+    return { success: false, message: "Login failed" };
   },
 
   logout: () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("token");
     set({ user: null, isAuthenticated: false });
+  },
+  getMe: async (phoneNumber) => {
+    const response = await handleGetMe(phoneNumber);
+    // console.log(response);
+    if ("error" in response) {
+      // set({ user: response.User, isAuthenticated: true });
+      const errorMessage = response.error;
+      // console.log(errorMessage);
+
+      return { success: false, message: errorMessage };
+    }
+
+    if ("User" in response) {
+      set({ user: response.User, isAuthenticated: true });
+      return response.User;
+    } else {
+      set({ user: null, isAuthenticated: false });
+      return null;
+    }
+
+    return response.User;
   },
 
   updateProgress: (storyId, episodeId, progress) => {
@@ -156,15 +118,21 @@ export const useUserStore = create<UserState>((set, get) => ({
     } else {
       updatedProgress = [...user.progress, newProgress];
     }
-
+    const updatedUser = {
+      ...user,
+      progress: updatedProgress,
+    };
     set({
-      user: {
-        ...user,
-        progress: updatedProgress,
-      },
+      user: updatedUser,
     });
-
     // TODO: send progress update to backend
+    setInterval(() => {
+      const response = handleUpdateUserProgress(updatedUser);
+
+      if ("error" in response) {
+        console.error("Failed to update user progress:", response.error);
+      }
+    }, 60000);
   },
 
   toggleBookmark: (storyId) => {
@@ -253,5 +221,3 @@ export const useUserStore = create<UserState>((set, get) => ({
     return null;
   },
 }));
-
-export { useFontSizeStore };

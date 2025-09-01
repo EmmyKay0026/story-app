@@ -23,7 +23,9 @@ export function calculateStoryProgress(
   story: Story,
   userProgress: UserProgress[]
 ): number {
-  const storyProgress = userProgress.filter((p) => p.storyId === story.id);
+  const storyProgress = (userProgress ?? []).filter(
+    (p) => p.storyId === story.id
+  );
   if (storyProgress.length === 0) return 0;
 
   const totalProgress = storyProgress.reduce((sum, p) => sum + p.progress, 0);
@@ -57,7 +59,9 @@ export function isStoryCompleted(
   story: Story,
   userProgress: UserProgress[]
 ): boolean {
-  const storyProgress = userProgress.filter((p) => p.storyId === story.id);
+  const storyProgress = (userProgress ?? []).filter(
+    (p) => p.storyId === story.id
+  );
   return (
     storyProgress.length === story.totalEpisodes &&
     storyProgress.every((p) => p.isCompleted)
