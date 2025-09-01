@@ -57,10 +57,10 @@ export function Navigation({ children }: NavigationProps) {
   const router = useRouter();
 
   const navigationItems = [
-    { href: "/library", label: "Library", icon: BookCopy },
-    { href: "/bookmark", label: "Bookmark", icon: Bookmark },
-    { href: "/my-reads", label: "My Reads", icon: BookOpen },
-    { href: "/profile", label: "Profile", icon: UserIcon },
+    { href: "/dashboard/library", label: "Library", icon: BookCopy },
+    { href: "/dashboard/bookmark", label: "Bookmark", icon: Bookmark },
+    { href: "/dashboard/my-reads", label: "My Reads", icon: BookOpen },
+    { href: "/dashboard/profile", label: "Profile", icon: UserIcon },
   ];
 
   const isActive = (href: string) => {
@@ -79,7 +79,7 @@ export function Navigation({ children }: NavigationProps) {
   if (!user) {
     return (
       <div className="flex flex-col lg:min-h-screen  bg-gray-50 dark:bg-gray-900 lg:flex-row ">
-        <div className="w-full h-[64px] lg:h-full lg:w-64 animate-pulse bg-gray-300/50"></div>{" "}
+        <div className="w-full h-[64px] lg:h-screen lg:w-64 animate-pulse dark:bg-gray-800"></div>{" "}
         {children}
       </div>
     );

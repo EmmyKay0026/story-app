@@ -1,38 +1,29 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { Navigation } from "@/components/templates/NavigationMenu";
-import { Edit3, BookOpen, Bookmark, Coins, SunMoon, Box } from "lucide-react";
 import { Story } from "@/constants/stories";
-import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
-import { StoryCard } from "@/components/molecules/StoryCard";
-import Image from "next/image";
-// import { useUserStore } from "@/stores/user/userStore";
-import NoIndex from "@/components/atoms/NoIndex";
-import { fetchStories } from "@/services/story/storyActions";
-import { authorizationChecker } from "@/services/user/userAction";
-import { useUserStore } from "@/hooks/useUserStore";
-import { useRouter } from "next/navigation";
-import PageLoader from "@/components/atoms/PageLoader";
 
-export default function ProfilePage() {
+import { useUserStore } from "@/hooks/useUserStore";
+import React, { useEffect, useState } from "react";
+import NoIndex from "../atoms/NoIndex";
+import Image from "next/image";
+import { Bookmark, BookOpen, Box, Coins, Edit3, SunMoon } from "lucide-react";
+import { StoryCard } from "../molecules/StoryCard";
+import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
+
+const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
   const user = useUserStore((state) => state.user);
+  const router = useRouter();
   // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   // const getMe = useUserStore((state) => state.getMe);
   // console.log(getMe);
-  const router = useRouter();
+
   // const router = ();
   const [activeTab, setActiveTab] = useState<"stories" | "bookmark">("stories");
   // const [user, setUser] = useState<User | null>(null);
-  const [allStories, setAllStories] = useState<Story[] | null>(null);
+  //   const [allStories, setAllStories] = useState<Story[] | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
-  // Redirect if not logged in
-  useEffect(() => {
-    authorizationChecker(window.location.pathname);
-  }, []);
-
-  // Load theme on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTheme =
@@ -42,26 +33,6 @@ export default function ProfilePage() {
     }
   }, []);
 
-  useEffect(() => {
-    const getStories = async () => {
-      const response = await fetchStories();
-
-      if ("data" in response && response.data) {
-        setAllStories(response.data.stories);
-      } else if ("error" in response && response.error) {
-        console.error(
-          "API error:",
-          response.error.error,
-          "Code:",
-          response.error.code
-        );
-      }
-    };
-
-    getStories();
-  }, []);
-
-  // Toggle theme
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -76,19 +47,9 @@ export default function ProfilePage() {
     }
   };
 
-  if (!user) return null;
-
-  // Story progress logic
-  if (!Array.isArray(user.progress)) {
-    user.progress = [
-      {
-        storyId: "3",
-        episodeId: "2",
-        progress: 60,
-        lastReadAt: new Date("2023-10-01T12:00:00Z"),
-        isCompleted: false,
-      },
-    ];
+  if (!user) {
+    router.push("/auth/login");
+    return null;
   }
   const storiesWithProgress = allStories
     ?.filter((story) => user?.progress.some((p) => p.storyId === story.id))
@@ -112,19 +73,8 @@ export default function ProfilePage() {
   const bookmarkStories =
     allStories?.filter((story) => user.bookmarks.includes(story.id)) ?? [];
 
-  const handleStoryClick = (storyId: string) => {
-    router.push(`/story/${storyId}`);
-  };
-
-  if (!allStories) {
-    return (
-      <section className="relative w-full h-screen flex justify-center items-center">
-        <PageLoader />
-      </section>
-    );
-  }
   return (
-    <Navigation>
+    <>
       <NoIndex />
       <section className="relative max-w-4xl mx-auto min-h-screen">
         {/* Cover Banner */}
@@ -173,7 +123,7 @@ export default function ProfilePage() {
             {
               icon: SunMoon,
               label: "Mode",
-              value: localStorage.getItem("theme") || "Light",
+              value: theme || "Light",
             },
           ].map((stat, idx) => (
             <div
@@ -237,11 +187,7 @@ export default function ProfilePage() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {bookmarkStories.length > 0 ? (
                 bookmarkStories.map((item, index) => (
-                  <StoryCard
-                    onClick={() => handleStoryClick(item.id)}
-                    story={item}
-                    key={(item.id, index)}
-                  />
+                  <StoryCard story={item} key={(item.id, index)} />
                 ))
               ) : (
                 <div className="flex flex-col items-center text-gray-500 py-16">
@@ -253,6 +199,8 @@ export default function ProfilePage() {
           )}
         </div>
       </section>
-    </Navigation>
+    </>
   );
-}
+};
+
+export default ProfileClient;

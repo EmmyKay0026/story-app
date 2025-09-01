@@ -80,8 +80,9 @@ const StoryDetailPage = () => {
   };
 
   return (
-    <Navigation>
+    <>
       <NoIndex />
+
       <section className="relative max-w-4xl mx-auto">
         <div
           style={{
@@ -202,7 +203,7 @@ const StoryDetailPage = () => {
           </article>
         </div>
       </section>
-    </Navigation>
+    </>
   );
 };
 

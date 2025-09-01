@@ -201,7 +201,9 @@ const EpisodeCard = ({
                   const episode = story.episodes.find(
                     (ep) => ep.id === selectedEpisode
                   );
-                  return !episode || (user?.points ?? 0) < episode.pointsCost;
+                  return (
+                    !episode || (Number(user?.points) ?? 0) < episode.pointsCost
+                  );
                 })()}
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >

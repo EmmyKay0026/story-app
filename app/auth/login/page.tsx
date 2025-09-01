@@ -26,7 +26,7 @@ export default function LoginPage() {
     e.preventDefault();
     if (!phoneNumber.trim()) return;
 
-    // setIsLoading(true);
+    setIsLoading(true);
 
     // Simulate loading delay for better UX
     // await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -148,7 +148,7 @@ export default function LoginPage() {
               className="
                 w-full flex items-center justify-center gap-2 py-3 px-4 
                 bg-primary disabled:bg-faded-primary
-                text-white font-medium rounded-lg transition-colors
+                text-white font-medium rounded-lg transition-colors cursor-pointer
                 disabled:cursor-not-allowed
               "
             >
@@ -175,7 +175,7 @@ export default function LoginPage() {
           {/* Demo Info */}
           <div className="mt-8 p-4 bg-[#e4ffe6c5] dark:bg-blue-900/20 rounded-lg">
             <h3 className="text-sm font-medium text-primary dark:text-white mb-2">
-              Demo Information
+              Login Information
             </h3>
             <ul className="text-xs text-primary dark:text-white space-y-1">
               <li>• Enter any phone number to econtinue</li>

@@ -1,6 +1,6 @@
 import api from "../../stores/api";
 import axios from "axios";
-import { Story, ApiError } from "@/constants/stories";
+import { Story, ApiError, Episode } from "@/constants/stories";
 
 // Utility: formats error into ApiError shape
 export const formatError = (error: unknown): ApiError => {
@@ -151,11 +151,45 @@ export const filterStories = (
   return filtered;
 };
 
+//Get episode details
+export const fetchEpisodeDetails = async (
+  storyId: string,
+  episodeId: string
+): Promise<ApiResponse<Episode>> => {
+  try {
+    const response = await api.get<{ data: Episode }>(
+      `/stories/${storyId}/${episodeId}`
+    );
+
+    // console.log(response);
+
+    const episode = response.data.data;
+
+    return { data: episode };
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
 // Cover image utility
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
-  fallback = "/placeholder.png"
+  fallback = "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg"
 ): string => {
   if (typeof coverImage === "string") return coverImage;
   return coverImage?.url || fallback;
 };
+
+export function formatNumber(num: number): string {
+  if (num < 1000) {
+    return num.toString();
+  } else if (num < 1_000_000) {
+    return (num / 1000).toFixed(num % 1000 === 0 ? 0 : 1) + "k";
+  } else if (num < 1_000_000_000) {
+    return (num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1) + "M";
+  } else {
+    return (
+      (num / 1_000_000_000).toFixed(num % 1_000_000_000 === 0 ? 0 : 1) + "B"
+    );
+  }
+}

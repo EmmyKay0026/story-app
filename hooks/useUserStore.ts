@@ -3,6 +3,7 @@ import { User, UserProgress } from "@/constants/stories";
 import {
   handleGetMe,
   handleLogin,
+  handleUpdateUserData,
   handleUpdateUserProgress,
 } from "@/services/user/userAction";
 // import { User, UserProgress } from "@/stores/user/userTypes";
@@ -21,7 +22,7 @@ interface UserState {
     episodeId: string,
     progress: number
   ) => void;
-  toggleBookmark: (storyId: string) => void;
+  toggleBookmark: (storyId: string) => Promise<boolean | undefined>;
   unlockEpisode: (episodeId: string, cost: number) => boolean;
   getUserProgress: (
     storyId: string,
@@ -92,7 +93,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       return null;
     }
 
-    return response.User;
+    // return response.User;
   },
 
   updateProgress: (storyId, episodeId, progress) => {
@@ -135,7 +136,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     }, 60000);
   },
 
-  toggleBookmark: (storyId) => {
+  toggleBookmark: async (storyId) => {
     const { user } = get();
     if (!user) return;
 
@@ -144,21 +145,29 @@ export const useUserStore = create<UserState>((set, get) => ({
       ? user.bookmarks.filter((id) => id !== storyId)
       : [...user.bookmarks, storyId];
 
+    const updatedUser = {
+      ...user,
+      bookmarks: updatedBookmarks,
+    };
     set({
-      user: {
-        ...user,
-        bookmarks: updatedBookmarks,
-      },
+      user: updatedUser,
     });
 
     // TODO: sync with backend
+    const response = await handleUpdateUserData(updatedUser);
+    console.log(response);
+
+    if ("error" in response) {
+      console.error("Failed to update user data:", response.error);
+      return !isBookmark;
+    }
   },
 
   unlockEpisode: (episodeId, cost) => {
     const { user } = get();
     if (
       !user ||
-      user.points < cost ||
+      Number(user.points) < cost ||
       user.unlockedEpisodes.includes(episodeId)
     ) {
       return false;
@@ -167,7 +176,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     set({
       user: {
         ...user,
-        points: user.points - cost,
+        points: Number(user.points) - cost,
         unlockedEpisodes: [...user.unlockedEpisodes, episodeId],
       },
     });
@@ -177,16 +186,19 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   getUserProgress: (storyId, episodeId) => {
+    if (!get().user?.progress) return undefined;
     return get().user?.progress.find(
       (p) => p.storyId === storyId && p.episodeId === episodeId
     );
   },
 
   getStoryProgress: (storyId) => {
+    if (!get().user?.progress) return [];
     return get().user?.progress.filter((p) => p.storyId === storyId) || [];
   },
 
   isEpisodeUnlocked: (episodeId) => {
+    if (!get().user) return false;
     return get().user?.unlockedEpisodes.includes(episodeId) || false;
   },
 

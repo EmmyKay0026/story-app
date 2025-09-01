@@ -58,7 +58,7 @@ export const authorizationChecker = async (currentPath: string) => {
       if (res === null) {
         redirect("/auth/login");
       }
-      console.log(res);
+
       useUserStore.setState({ user: res, isAuthenticated: true });
     } else {
       window.location.href = `/auth/login?to=${
@@ -73,6 +73,23 @@ export const authorizationChecker = async (currentPath: string) => {
     window.location.href = `/auth/login?to=${
       encodeURIComponent(currentPath) || `/`
     }`;
+  }
+};
+
+export const handleUpdateUserData = async (updatedUserData: User) => {
+  try {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      redirect("/auth/login");
+    }
+    const response = await api.put(`/auth/${userId}`, updatedUserData);
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to update user data" };
+    }
+  } catch (error) {
+    return { error: formatError(error) };
   }
 };
 

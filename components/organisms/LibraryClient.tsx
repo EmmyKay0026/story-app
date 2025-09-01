@@ -68,14 +68,14 @@ export default function LibraryClient({
 
   if (!stories || stories.length === 0) {
     return (
-      <Navigation>
-        <LibrarySkeleton />
-      </Navigation>
+      // <Navigation>
+      <LibrarySkeleton />
+      // </Navigation>
     );
   }
 
   return (
-    <Navigation>
+    <>
       <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
@@ -194,6 +194,6 @@ export default function LibraryClient({
           </div>
         </article>
       </section>
-    </Navigation>
+    </>
   );
 }
