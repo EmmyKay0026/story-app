@@ -1,6 +1,6 @@
 import api from "../../stores/api";
 import axios from "axios";
-import { Story, ApiError } from "@/constants/stories";
+import { Story, Episode, ApiError } from "@/constants/stories";
 
 // Utility: formats error into ApiError shape
 export const formatError = (error: unknown): ApiError => {
@@ -86,6 +86,21 @@ export const fetchStoryDetails = async (
   }
 };
 
+// Get specific episode details
+export const fetchEpisode = async (
+  storyId: string,
+  episodeId: string
+): Promise<ApiResponse<Episode>> => {
+  try {
+    const response = await api.get<{ data: Episode }>(
+      `/stories/${storyId}/${episodeId}`
+    );
+    return { data: response.data.data };
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
 //Get categories
 export const fetchCategories = async (): Promise<
   ApiResponse<{ label: string; value: string }[]>
@@ -154,7 +169,7 @@ export const filterStories = (
 // Cover image utility
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
-  fallback = "/placeholder.png"
+  fallback = "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg"
 ): string => {
   if (typeof coverImage === "string") return coverImage;
   return coverImage?.url || fallback;

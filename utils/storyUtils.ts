@@ -99,8 +99,8 @@ export function searchStories(stories: Story[], query: string): Story[] {
       story.title.toLowerCase().includes(lowercaseQuery) ||
       story.description.toLowerCase().includes(lowercaseQuery) ||
       story.author.toLowerCase().includes(lowercaseQuery) ||
-      story.category.label.toLowerCase().includes(lowercaseQuery) ||
-      story.tags?.some((tag) => tag?.toLowerCase().includes(lowercaseQuery))
+      story.category.label.toLowerCase().includes(lowercaseQuery) ||  // ✅ fixed
+      (story.tags ?? []).some((tag) => tag.toLowerCase().includes(lowercaseQuery))
   );
 }
 
@@ -109,7 +109,7 @@ export function filterStoriesByCategory(
   category: string
 ): Story[] {
   if (!category || category === "All") return stories;
-  return stories.filter((story) => story.category.value === category);
+  return stories.filter((story) => story.category.value === category); // ✅ fixed
 }
 
 export function sortStories(
