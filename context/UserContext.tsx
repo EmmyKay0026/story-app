@@ -124,23 +124,32 @@ export function UserProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const unlockEpisode = (episodeId: string, cost: number): boolean => {
-    if (
-      !user ||
-      user.points < cost ||
-      user.unlockedEpisodes.includes(episodeId)
-    ) {
-      return false;
-    }
+  const unlockEpisode = (episodeId: string, cost: number, storyId?: string): boolean => {
+    if (!user) return false;
+
+    const balance = Number(user.points) || 0;
+    const newBalance = balance - cost;
+    if (newBalance < 0) return false;
 
     setUser({
       ...user,
-      points: user.points - cost,
-      unlockedEpisodes: [...user.unlockedEpisodes, episodeId],
+      points: newBalance,
+      progress: [
+        ...(user.progress ?? []),
+        {
+          storyId: storyId ?? "unknown", // fallback if not passed
+          episodeId,
+          progress: 0,
+          lastReadAt: new Date(),
+          isCompleted: false,
+        },
+      ],
     });
 
     return true;
   };
+
+
 
   const getUserProgress = (
     storyId: string,

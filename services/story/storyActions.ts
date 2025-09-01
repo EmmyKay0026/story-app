@@ -86,6 +86,21 @@ export const fetchStoryDetails = async (
   }
 };
 
+// Get specific episode details
+export const fetchEpisode = async (
+  storyId: string,
+  episodeId: string
+): Promise<ApiResponse<Episode>> => {
+  try {
+    const response = await api.get<{ data: Episode }>(
+      `/stories/${storyId}/${episodeId}`
+    );
+    return { data: response.data.data };
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
 //Get categories
 export const fetchCategories = async (): Promise<
   ApiResponse<{ label: string; value: string }[]>

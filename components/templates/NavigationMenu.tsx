@@ -31,6 +31,9 @@ export function Navigation({ children }: NavigationProps) {
   const logout = useUserStore((state) => state.logout);
   const getMe = useUserStore((state) => state.getMe);
 
+  const pathname = usePathname();
+  const router = useRouter();
+
   useEffect(() => {
     const fetchUserData = async () => {
       const phoneNumber = localStorage.getItem("userId");
@@ -49,12 +52,11 @@ export function Navigation({ children }: NavigationProps) {
     };
 
     fetchUserData();
-  }, []);
+  }, [getMe, router]);
 
   // const phoneNumber = localStorage.getItem("userId");
   // const { resolvedTheme } = useTheme();
-  const pathname = usePathname();
-  const router = useRouter();
+  
 
   const navigationItems = [
     { href: "/dashboard/library", label: "Library", icon: BookCopy },
