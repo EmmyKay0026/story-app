@@ -10,8 +10,12 @@ import { StoryCard } from "../molecules/StoryCard";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
+import { handleThemeChange } from "@/services/user/userAction";
+import { fetchStories } from "@/services/story/storyActions";
 
-const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
+const ProfileClient = () => {
+  // console.log(allStories);
+
   const user = useUserStore((state) => state.user);
   const router = useRouter();
   // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -21,7 +25,7 @@ const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
   // const router = ();
   const [activeTab, setActiveTab] = useState<"stories" | "bookmark">("stories");
   // const [user, setUser] = useState<User | null>(null);
-  //   const [allStories, setAllStories] = useState<Story[] | null>(null);
+  const [allStories, setAllStories] = useState<Story[] | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -33,18 +37,39 @@ const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
     }
   }, []);
 
-  const toggleTheme = () => {
+  useEffect(() => {
+    const getStories = async () => {
+      try {
+        const response = await fetchStories();
+        if ("data" in response && response.data) {
+          console.log(response);
+          setAllStories(response.data.stories);
+        } else if ("error" in response && response.error) {
+          console.error(
+            "API error:",
+            response.error.error,
+            "Code:",
+            response.error.code
+          );
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching stories:", err);
+      }
+    };
+    getStories();
+  }, []);
+
+  const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", newTheme);
-      if (newTheme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    localStorage.setItem("theme", newTheme);
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
+    await handleThemeChange(newTheme);
   };
 
   if (!user) {
@@ -72,6 +97,7 @@ const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
   const totalReads = completedStories.length + currentlyReading.length;
   const bookmarkStories =
     allStories?.filter((story) => user.bookmarks.includes(story.id)) ?? [];
+  // console.log(user.bookmarks, allStories);
 
   return (
     <>
@@ -123,7 +149,7 @@ const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
             {
               icon: SunMoon,
               label: "Mode",
-              value: theme || "Light",
+              value: theme,
             },
           ].map((stat, idx) => (
             <div
@@ -185,7 +211,7 @@ const ProfileClient = ({ allStories }: { allStories: Story[] | null }) => {
 
           {activeTab === "bookmark" && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {bookmarkStories.length > 0 ? (
+              {bookmarkStories?.length > 0 ? (
                 bookmarkStories.map((item, index) => (
                   <StoryCard story={item} key={(item.id, index)} />
                 ))

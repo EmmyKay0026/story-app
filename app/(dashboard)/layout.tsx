@@ -1,6 +1,5 @@
 import { Navigation } from "@/components/templates/NavigationMenu";
 import React, { ReactNode } from "react";
-import BookmarksPage from "./bookmark/page";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (

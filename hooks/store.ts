@@ -12,9 +12,6 @@ const getPreloadedFontSize = () => {
 
 const preLoadedFontSizeValue = getPreloadedFontSize();
 
-const preLoadedFontSize = fontSizes.find(
-  (fs) => fs.value === preLoadedFontSizeValue
-);
 type FontSizeValue = (typeof fontSizes)[number]["size"];
 type FontSizeState = {
   fontSize: FontSizeValue;
@@ -42,7 +39,7 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
       canIncrease: safeIndex < fontSizes.length - 1,
       canDecrease: safeIndex > 0,
 
-      increaseFontSize: () =>
+      increaseFontSize: async () => {
         set((state) => {
           const nextIndex = Math.min(
             state.currentIndex + 1,
@@ -60,7 +57,8 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
             canIncrease: nextIndex < fontSizes.length - 1,
             canDecrease: nextIndex > 0,
           };
-        }),
+        });
+      },
 
       decreaseFontSize: () =>
         set((state) => {
@@ -83,6 +81,7 @@ const useFontSizeStore = create<FontSizeState & { currentIndex: number }>(
 );
 
 import { User, UserProgress } from "@/constants/stories";
+import { handleFontSizeChange } from "@/services/user/userAction";
 
 interface UserState {
   user: User | null;

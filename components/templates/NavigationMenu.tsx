@@ -56,13 +56,12 @@ export function Navigation({ children }: NavigationProps) {
 
   // const phoneNumber = localStorage.getItem("userId");
   // const { resolvedTheme } = useTheme();
-  
 
   const navigationItems = [
-    { href: "/dashboard/library", label: "Library", icon: BookCopy },
-    { href: "/dashboard/bookmark", label: "Bookmark", icon: Bookmark },
-    { href: "/dashboard/my-reads", label: "My Reads", icon: BookOpen },
-    { href: "/dashboard/profile", label: "Profile", icon: UserIcon },
+    { href: "/library", label: "Library", icon: BookCopy },
+    { href: "/bookmark", label: "Bookmark", icon: Bookmark },
+    { href: "/my-reads", label: "My Reads", icon: BookOpen },
+    { href: "/profile", label: "Profile", icon: UserIcon },
   ];
 
   const isActive = (href: string) => {

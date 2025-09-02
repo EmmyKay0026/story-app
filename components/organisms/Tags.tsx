@@ -1,29 +1,61 @@
+"use client";
 import Link from "next/link";
 import { fetchCategories } from "@/services/story/storyActions";
+import { useEffect, useState } from "react";
 
-export default async function Tags() {
-  let categories: { label: string; value: string }[] = [];
+export default function Tags() {
+  // let categories: { label: string; value: string }[] = [];
+
+  const [categories, setCategories] = useState<
+    { label: string; value: string }[]
+  >([]);
+  // const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getSpotlightSection = async () => {
+      try {
+        const categoriesResponse = await fetchCategories();
+        if (
+          "data" in categoriesResponse &&
+          Array.isArray(categoriesResponse.data)
+        ) {
+          setCategories(categoriesResponse.data);
+        } else {
+          console.error(
+            "API error fetching categories:",
+            "error" in categoriesResponse ? categoriesResponse.error : "No data"
+          );
+          setCategories([]); // fallback
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching categories:", err);
+        setCategories([]); // fallback
+      }
+    };
+
+    getSpotlightSection();
+  }, []);
 
   // ✅ Fetch categories (same pattern as LibraryPage)
-  try {
-    const categoriesResponse = await fetchCategories();
+  // try {
+  //   const categoriesResponse = await fetchCategories();
 
-    if (
-      "data" in categoriesResponse &&
-      Array.isArray(categoriesResponse.data)
-    ) {
-      categories = categoriesResponse.data;
-    } else {
-      console.error(
-        "API error fetching categories:",
-        "error" in categoriesResponse ? categoriesResponse.error : "No data"
-      );
-      categories = []; // fallback
-    }
-  } catch (err) {
-    console.error("Unexpected error fetching categories:", err);
-    categories = []; // fallback
-  }
+  //   if (
+  //     "data" in categoriesResponse &&
+  //     Array.isArray(categoriesResponse.data)
+  //   ) {
+  //     categories = categoriesResponse.data;
+  //   } else {
+  //     console.error(
+  //       "API error fetching categories:",
+  //       "error" in categoriesResponse ? categoriesResponse.error : "No data"
+  //     );
+  //     categories = []; // fallback
+  //   }
+  // } catch (err) {
+  //   console.error("Unexpected error fetching categories:", err);
+  //   categories = []; // fallback
+  // }
 
   return (
     <section className="pb-[7rem] pt-[3rem] px-[1rem] md:px-[3rem]">

@@ -1,9 +1,11 @@
 import { User, UserProgress } from "@/constants/stories";
 // import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
 import {
+  handleFontSizeChange,
   handleGetMe,
   handleLogin,
-  handleUpdateUserData,
+  handleUnlockEpisode,
+  handleUpdateBookmark,
   handleUpdateUserProgress,
 } from "@/services/user/userAction";
 // import { User, UserProgress } from "@/stores/user/userTypes";
@@ -23,13 +25,20 @@ interface UserState {
     progress: number
   ) => void;
   toggleBookmark: (storyId: string) => Promise<boolean | undefined>;
-  unlockEpisode: (episodeId: string, cost: number) => boolean;
+  unlockEpisode: (
+    storyId: string,
+    episodeId: string,
+    cost: number
+  ) => Promise<boolean>;
   getUserProgress: (
     storyId: string,
     episodeId: string
   ) => UserProgress | undefined;
   getStoryProgress: (storyId: string) => UserProgress[];
   isEpisodeUnlocked: (episodeId: string) => boolean;
+  updateFontSize: (
+    fontSize: "small" | "medium" | "large" | "extra-large"
+  ) => Promise<boolean | undefined>;
   getContinueReading: () => { storyId: string; episodeId: string } | null;
 }
 
@@ -123,17 +132,18 @@ export const useUserStore = create<UserState>((set, get) => ({
       ...user,
       progress: updatedProgress,
     };
-    set({
-      user: updatedUser,
-    });
+
     // TODO: send progress update to backend
     setInterval(() => {
-      const response = handleUpdateUserProgress(updatedUser);
+      const response = handleUpdateUserProgress(newProgress);
 
       if ("error" in response) {
         console.error("Failed to update user progress:", response.error);
       }
-    }, 60000);
+    }, 2000);
+    set({
+      user: updatedUser,
+    });
   },
 
   toggleBookmark: async (storyId) => {
@@ -149,21 +159,23 @@ export const useUserStore = create<UserState>((set, get) => ({
       ...user,
       bookmarks: updatedBookmarks,
     };
-    set({
-      user: updatedUser,
-    });
 
     // TODO: sync with backend
-    const response = await handleUpdateUserData(updatedUser);
-    console.log(response);
+    const response = await handleUpdateBookmark(updatedBookmarks);
 
     if ("error" in response) {
       console.error("Failed to update user data:", response.error);
+      return isBookmark;
+    }
+    if (response.success) {
+      set({
+        user: response.user,
+      });
       return !isBookmark;
     }
   },
 
-  unlockEpisode: (episodeId, cost) => {
+  unlockEpisode: async (storyId, episodeId, cost) => {
     const { user } = get();
     if (
       !user ||
@@ -173,15 +185,28 @@ export const useUserStore = create<UserState>((set, get) => ({
       return false;
     }
 
-    set({
-      user: {
-        ...user,
-        points: Number(user.points) - cost,
-        unlockedEpisodes: [...user.unlockedEpisodes, episodeId],
-      },
-    });
-
+    const updatedUnlockedEpisodes = [
+      ...user.unlockedEpisodes,
+      `${storyId}-${episodeId}`,
+    ];
     // TODO: sync with backend
+    const response = await handleUnlockEpisode(updatedUnlockedEpisodes, cost);
+    console.log(response);
+
+    if ("error" in response) {
+      console.error("Failed to update user data:", response.error);
+      return false;
+    }
+    if (response.success) {
+      set({
+        user: {
+          ...user,
+          points: Number(user.points) - cost,
+          unlockedEpisodes: updatedUnlockedEpisodes,
+        },
+      });
+    }
+
     return true;
   },
 
@@ -202,6 +227,32 @@ export const useUserStore = create<UserState>((set, get) => ({
     return get().user?.unlockedEpisodes.includes(episodeId) || false;
   },
 
+  updateFontSize: async (
+    fontSize: "small" | "medium" | "large" | "extra-large"
+  ) => {
+    const { user } = get();
+    if (!user) return;
+    const updatedUser = {
+      ...user,
+      preferences: {
+        ...user.preferences,
+        fontSize,
+      },
+    };
+
+    const res = await handleFontSizeChange(fontSize);
+    if ("data" in res) {
+      console.log(res);
+
+      set({
+        user: updatedUser,
+      });
+      return res.success;
+    } else if ("error" in res) {
+      console.error("Failed to update user data:", res.error);
+      return false;
+    }
+  },
   getContinueReading: () => {
     const { user } = get();
     if (!user || user.progress.length === 0) return null;

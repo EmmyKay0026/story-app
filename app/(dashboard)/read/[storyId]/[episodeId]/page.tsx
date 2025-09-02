@@ -2,8 +2,14 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { Episode, mockStories } from "@/constants/stories";
+import {
+  ArrowLeft,
+  Bookmark,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+} from "lucide-react";
+// import { Episode, mockStories } from "@/constants/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   estimateTimeRemaining,
@@ -14,23 +20,21 @@ import {
 import { useFontSizeStore } from "@/hooks/store";
 import PreferencesSetting from "@/components/molecules/PreferencesSetting";
 import { useUserStore } from "@/hooks/useUserStore";
+import {
+  fetchStoryDetails,
+  fetchEpisode,
+  fetchEpisodeDetails,
+} from "@/services/story/storyActions";
+import { Story, Episode, ApiError } from "@/constants/stories"; // ✅ adjust paths if needed
 import { authorizationChecker } from "@/services/user/userAction";
-import { fetchEpisodeDetails } from "@/services/story/storyActions";
-// import { useUserStore } from "@/stores/user/userStore";
 
 interface EpisodeReaderProps {
-  params: Promise<{ episodeId: string }>;
+  params: Promise<{ episodeId: string; storyId: string }>;
 }
 
 export default function EpisodeReader({ params }: EpisodeReaderProps) {
-  const { episodeId } = React.use(params);
-  // const {
-  //   user,
-  //   isAuthenticated,
-  //   updateProgress,
-  //   isEpisodeUnlocked,
-  //   unlockEpisode,
-  // } = useUser();
+  const { episodeId, storyId } = React.use(params);
+  // const { dynamicSlug } = React.use(params);
 
   const user = useUserStore((state) => state.user);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -42,76 +46,77 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   const router = useRouter();
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // const [showPreferences, setShowPreferences] = useState(false);
+  const [story, setStory] = useState<Story | null>(null);
+  const [episode, setEpisode] = useState<Episode | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  // const [storyId, setStoryId] = useState<string | null>(null);
+  // const [episodeId, setEpisodeId] = useState<string | null>(null);
+
   const [readingProgress, setReadingProgress] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showRating, setShowRating] = useState(false);
   const [userRating, setUserRating] = useState(0);
   const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
-  const [story, setStory] = useState<(typeof mockStories)[0] | null>(null);
-  const [episode, setEpisode] = useState<Episode | null>(null);
-  const [loading, setLoading] = useState(true);
-  // const [domFontSize, setDomFontSize] = useState(fontSize);
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
   }, []);
-
+  // const episodeId = dynamicSlug;
+  // const [story_Id, episodeId] = dynamicSlug.split("-");
+  // setStoryId(story_id);
+  // setEpisodeId(episode_id);
+  // ✅ Fetch story + episode
   useEffect(() => {
-    const fetchEpisode = async () => {
-      const episode = await fetchEpisodeDetails("2", episodeId);
-      setEpisode(episode.data || null);
+    async function loadEpisodeAndStory() {
+      setLoading(true);
+      const storyRes = await fetchStoryDetails(storyId);
+      const episodeRes = await fetchEpisode(storyId, episodeId);
+
+      if (storyRes.error) setError(storyRes.error.error);
+      else setStory(storyRes.data);
+
+      if (episodeRes.error) setError(episodeRes.error.error);
+      else setEpisode(episodeRes.data);
+
       setLoading(false);
-      console.log(episode);
-    };
-
-    fetchEpisode();
-  }, []);
-
-  // Find the story and episode
-  // const story = mockStories.find((s) =>
-  //   s.episodes.some((ep) => ep.id === episodeId)
-  // );
-  // const episode = story?.episodes.find((ep) => ep.id === episodeId);
-
-  useEffect(() => {
-    if (!story || !episode || !user) return;
-
-    // Check if episode is unlocked
-    if (episode.isPremium && !isEpisodeUnlocked(episode.id)) {
-      router.push(`/story/${story.id}`);
-      return;
     }
+    loadEpisodeAndStory();
+  }, [storyId, episodeId]);
 
-    // Load existing progress
-    const existingProgress = user.progress.find(
-      (p) => p.storyId === story.id && p.episodeId === episode.id
-    );
+  // ✅ Redirect if not logged in
 
-    if (existingProgress) {
-      setReadingProgress(existingProgress.progress);
-    }
-  }, [story, episode, user, isEpisodeUnlocked, router]);
+  // useEffect(() => {
+  //   const fetchEpisode = async () => {
+  //     const episode = await fetchEpisodeDetails("2", episodeId);
+  //     setEpisode(episode.data || null);
+  //     setLoading(false);
+  //     console.log(episode);
+  //   };
 
-  // Handle scroll tracking for progress
+  //   fetchEpisode();
+  // }, []);
+
+  // ✅ Track scroll progress
   useEffect(() => {
+    if (!episode || !user) return;
+
     const handleScroll = () => {
-      if (!contentRef.current || !story || !episode) return;
+      if (!contentRef.current) return;
 
       const container = contentRef.current;
       const scrollTop = container.scrollTop;
       const scrollHeight = container.scrollHeight - container.clientHeight;
       const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
 
+      updateProgress(storyId, episode.id, Math.ceil(progress));
       setReadingProgress(Math.min(100, Math.max(0, progress)));
 
-      // Calculate time remaining
       const remainingContent = episode.content.slice(
         Math.round((progress / 100) * episode.content.length)
       );
       setTimeRemaining(estimateTimeRemaining(remainingContent, 0));
 
-      // Update progress in context (debounced)
       clearTimeout(
         (window as unknown as { progressTimeout?: NodeJS.Timeout })
           .progressTimeout
@@ -119,7 +124,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
       (
         window as unknown as { progressTimeout?: NodeJS.Timeout }
       ).progressTimeout = setTimeout(() => {
-        updateProgress(story.id, episode.id, Math.ceil(progress));
+        updateProgress(storyId, episode.id, Math.ceil(progress));
       }, 1000);
     };
 
@@ -128,52 +133,64 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
       container.addEventListener("scroll", handleScroll);
       return () => container.removeEventListener("scroll", handleScroll);
     }
-  }, [story, episode, updateProgress]);
+  }, [episode, user, storyId]);
 
-  // Show rating when episode is completed
-  // useEffect(() => {
-  //   if (readingProgress >= 100 && !showRating) {
-  //     setTimeout(() => setShowRating(true), 2000);
-  //   }
-  // }, [readingProgress, showRating]);
+  if (loading) return <p className="p-6">Loading episode...</p>;
+  if (error) return <p className="p-6 text-red-500">Error: {error}</p>;
+  if (!episode || !story || !user) return null;
 
-  if (!isAuthenticated || !user || !story || !episode) {
-    return null;
-  }
-
+  // ✅ Navigation
   const nextEpisode = getNextEpisode(story, episode.id);
   const previousEpisode = getPreviousEpisode(story, episode.id);
 
   const handleUnlockEpisode = () => {
     if (!nextEpisode) return;
-
-    const episode = story.episodes.find((ep) => ep.id === nextEpisode.id);
-    if (!episode) return;
-
-    const success = unlockEpisode(nextEpisode.id, episode.pointsCost);
-    if (success) {
-      setShowUnlockModal(false);
-      router.push(`/read/${nextEpisode.id}`);
-    } else {
-      // Show error - not enough points
-      alert("Not enough points to unlock this episode!");
-    }
+    router.push(`/read/${story.id}/${nextEpisode.id}`);
   };
+
+  // const handleUnlockEpisode = () => {
+  //   if (!nextEpisode) return;
+
+  //   const ep = story.episodes.find((e) => e.id === nextEpisode.id);
+  //   if (!ep || user?.points == null) return;
+
+  //   const cost = Number(ep.pointsCost);
+  //   const balance = Number(user.points);
+
+  //   console.log("Balance:", balance, typeof balance, "Cost:", cost, typeof cost);
+
+  //   if (balance < cost) {
+  //     alert("Not enough points to unlock this episode!");
+  //     return;
+  //   }
+
+  //   const success = unlockEpisode(nextEpisode.id, cost);
+  //   if (success) {
+  //     setShowUnlockModal(false);
+  //     router.push(`/read/${story.id}/${nextEpisode.id}`);
+  //   }
+  // };
 
   const handleNextEpisode = () => {
     if (nextEpisode) {
-      if (nextEpisode.isPremium && !isEpisodeUnlocked(nextEpisode.id)) {
-        // router.push(`/story/${story.id}`);
-        setShowUnlockModal(true);
-      } else {
-        router.push(`/read/${nextEpisode.id}`);
-      }
+      router.push(`/read/${story.id}/${nextEpisode.id}`);
     }
   };
 
+  // const handleNextEpisode = () => {
+  //   if (nextEpisode) {
+  //     if (nextEpisode.isPremium && !isEpisodeUnlocked(nextEpisode.id)) {
+  //       // router.push(`/story/${story.id}`);
+  //       setShowUnlockModal(true);
+  //     } else {
+  //       router.push(`/read/${nextEpisode.id}`);
+  //     }
+  //   }
+  // };
+
   const handlePreviousEpisode = () => {
     if (previousEpisode) {
-      router.push(`/read/${previousEpisode.id}`);
+      router.push(`/read/${story.id}/${previousEpisode.id}`);
     }
   };
 
@@ -214,6 +231,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 <span>{Math.round(readingProgress)}% complete</span>
                 <span>{formatReadTime(timeRemaining)} left</span>
               </div>
+
               <PreferencesSetting />
             </div>
           </div>
@@ -257,7 +275,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
             {/* Episode Content */}
             <article className="reading-content text-gray-900 dark:text-gray-100 leading-read">
-              {episode.content.split("\n\n").map((paragraph, index) => (
+              {episode.content.split("\n").map((paragraph, index) => (
                 <p key={index} className={`mb-6 ${fontSize}`}>
                   {paragraph.trim()}
                 </p>
@@ -396,7 +414,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   onClick={() => setShowRating(false)}
                   className="flex-1 cursor-pointer  py-2 px-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  Skip
+                  Cancel
                 </button>
                 <button
                   onClick={() => submitRating(userRating || 5)}
@@ -432,7 +450,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                         Cost:
                       </span>
                       <span className="font-bold text-amber-600">
-                        {episode.pointsCost} points
+                        {Number(episode.pointsCost)} points
                       </span>
                     </div>
                     <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg mt-2">
@@ -440,7 +458,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                         Your balance:
                       </span>
                       <span className="font-bold text-gray-900 dark:text-white">
-                        {user?.points} points
+                        {Number(user?.points)} points
                       </span>
                     </div>
                   </div>
@@ -456,13 +474,25 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 Cancel
               </button>
               <button
-                onClick={handleUnlockEpisode}
-                disabled={(() => {
-                  const episode = story.episodes.find(
-                    (ep) => ep.id === nextEpisode?.id
-                  );
-                  return !episode || user?.points < episode.pointsCost;
-                })()}
+                onClick={() => {
+                  // handleUnlockEpisode(); // <-- disabled for now
+                  alert("Unlock function temporarily disabled");
+                }}
+                disabled={false}
+                // disabled={(() => {
+                //   if (!nextEpisode) return true;
+
+                //   const episode = story.episodes.find((ep) => ep.id === nextEpisode.id);
+                //   if (!episode) return true;
+
+                //   if (isEpisodeUnlocked(nextEpisode.id)) return false;
+
+                //   const cost = episode.pointsCost ?? 0;
+                //   const balance = user?.points ?? 0;
+
+                //   return balance < cost;
+                // })()}
+
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >
                 Unlock Episode

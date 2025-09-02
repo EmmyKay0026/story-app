@@ -31,18 +31,18 @@ export const fetchStories = async (
   limit = 10
 ): Promise<ApiResponse<{ stories: Story[]; pagination: any }>> => {
   try {
-    const response = await api.get<{
-      data: Story[];
-      pagination: { page: number; record_count: number; total_records: number };
-    }>("/stories", {
-      params: {
-        search,
-        tag,
-        limit_start: page,
-        limit_count: limit,
-      },
-    });
-
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/stories`,
+      {
+        params: {
+          search,
+          tag,
+          limit_start: page,
+          limit_count: limit,
+        },
+      }
+    );
+    // console.log(response);
     return {
       data: {
         stories: response.data.data,
@@ -59,11 +59,11 @@ export const fetchHomeData = async (): Promise<
   ApiResponse<{ featured: Story[]; trending: Story[]; categories: string[] }>
 > => {
   try {
-    const response = await api.get<{
+    const response = await axios.get<{
       featured: Story[];
       trending: Story[];
       categories: string[];
-    }>("/home");
+    }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/home`);
 
     return { data: response.data };
   } catch (error) {

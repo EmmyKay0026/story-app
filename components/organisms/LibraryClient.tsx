@@ -9,7 +9,12 @@ import { Story, ApiError } from "@/constants/stories";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
-import { filterStories } from "@/services/story/storyActions";
+import {
+  fetchCategories,
+  fetchHomeData,
+  fetchStories,
+  filterStories,
+} from "@/services/story/storyActions";
 import { useUserStore } from "@/hooks/useUserStore";
 
 // import { useUserStore } from "@/hooks/userStore";
@@ -20,13 +25,13 @@ interface LibraryClientProps {
   categories: { label: string; value: string }[];
   error?: ApiError | null;
 }
-
-export default function LibraryClient({
-  stories,
-  featuredStories,
-  categories,
-  error = null,
-}: LibraryClientProps) {
+// {
+//   stories,
+//   featuredStories,
+//   categories,
+//   error = null,
+// }: LibraryClientProps
+export default function LibraryClient() {
   const router = useRouter();
   const { isAuthenticated, user } = useUserStore();
 
@@ -34,9 +39,98 @@ export default function LibraryClient({
 
   const initialCategory = searchParams.get("category");
   const initialSearch = searchParams.get("q");
-
+  //  let stories: Story[] = [];
+  //  let featuredStories: Story[] = [];
+  //  let categories: { label: string; value: string }[] = [];
+  const [stories, setStories] = useState<Story[]>([]);
+  const [featuredStories, setFeaturedStories] = useState<Story[]>([]);
+  const [categories, setCategories] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [error, setError] = useState<ApiError | null>(null);
   const [searchTerm, setSearchTerm] = useState(initialSearch || "");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    initialCategory
+  );
+
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
+
+  useEffect(() => {
+    const getHomeData = async () => {
+      try {
+        const homeResponse = await fetchHomeData();
+
+        if ("data" in homeResponse && homeResponse.data) {
+          setFeaturedStories(homeResponse.data.featured?.slice(0, 5) || []);
+        } else if ("error" in homeResponse && homeResponse.error) {
+          console.error(
+            "Home API error:",
+            homeResponse.error.error,
+            "Code:",
+            homeResponse.error.code
+          );
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching home data:", err);
+      }
+    };
+
+    getHomeData();
+  }, []);
+
+  useEffect(() => {
+    const getStories = async () => {
+      try {
+        // const response = await fetchStories();
+        const storiesResponse = await fetchStories("", "", 1, 20);
+        // console.log(storiesResponse);
+
+        if ("data" in storiesResponse && storiesResponse.data) {
+          setStories(storiesResponse.data.stories);
+        } else if ("error" in storiesResponse && storiesResponse.error) {
+          console.error(
+            "Stories API error:",
+            storiesResponse.error.error,
+            "Code:",
+            storiesResponse.error.code
+          );
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching stories:", err);
+      }
+    };
+
+    getStories();
+  }, []);
+
+  // ✅ Fetch categories
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const categoriesResponse = await fetchCategories();
+
+        if (
+          "data" in categoriesResponse &&
+          Array.isArray(categoriesResponse.data)
+        ) {
+          setCategories(categoriesResponse.data);
+        } else {
+          console.error(
+            "API error fetching categories:",
+            "error" in categoriesResponse ? categoriesResponse.error : "No data"
+          );
+          setCategories([]); // fallback
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching categories:", err);
+        setCategories([]);
+      }
+    };
+
+    getCategories();
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -76,11 +170,9 @@ export default function LibraryClient({
     );
   };
 
-  useEffect(() => {
-    authorizationChecker(window.location.pathname);
-  }, []);
-
   if (!stories || stories.length === 0) {
+    console.log(stories);
+
     return (
       // <Navigation>
       <LibrarySkeleton />
