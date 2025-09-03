@@ -1,3 +1,4 @@
+import { BookCopy, Search } from "lucide-react";
 import React from "react";
 
 // Story Card Skeleton
@@ -56,19 +57,30 @@ export const LibrarySkeleton = () => {
     <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
       {/* Header Skeleton */}
       <div className="flex items-start gap-3 mb-8">
-        <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-        <div className="mt-0 p-0 flex-1">
-          <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-32 animate-pulse" />
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 animate-pulse" />
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 animate-pulse" />
-          </div>
+        <BookCopy className="w-8 h-8 text-shaft dark:text-white fill-current" />
+        <div className="mt-0 p-0">
+          <h1 className="text-3xl mt-0 p-0 font-bold text-gray-900 dark:text-white">
+            Library
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 w-[80%]">
+            Explore stories across various genres and categories. Use the
+            search bar to find specific stories or filter by category.
+          </p>
         </div>
       </div>
 
       {/* Search and Filter Skeleton */}
       <article className="mb-8">
-        <div className="h-12 bg-gray-200 dark:bg-gray-700 rounded-lg mb-6 animate-pulse" />
+        <div className="flex items-center gap-6 p-3 mb-6 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400">
+          <Search />
+          <input
+            type="search"
+            placeholder="Search stories..."
+            className="w-full outline-0 bg-transparent text-gray-900 dark:text-white"
+            // value={searchTerm}
+            // onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
         <CategoryFilterSkeleton />
       </article>
 
@@ -76,7 +88,7 @@ export const LibrarySkeleton = () => {
       <article className="flex flex-col items-center justify-between gap-8 md:items-start min-h-[60vh] rounded-t-3xl lg:flex-row">
         {/* Main Stories Skeleton */}
         <div className="mb-8 lg:w-[60%] w-full">
-          <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded mb-8 w-48 animate-pulse" />
+          <h2 className="text-4xl font-bold mb-8">All Stories</h2>
           <div className="flex flex-wrap">
             {Array.from({ length: 6 }).map((_, idx) => (
               <div key={idx} className="w-full sm:w-1/2 lg:w-1/2 p-4">
@@ -88,11 +100,11 @@ export const LibrarySkeleton = () => {
 
         {/* Featured Stories Skeleton */}
         <div className="sticky top-[50px] mb-8 w-full lg:w-[300px] lg:mt-20">
-          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-32 animate-pulse" />
+          <h2 className="text-xl font-bold mb-2">Featured Stories</h2>
           <div className="flex flex-wrap">
             {Array.from({ length: 2 }).map((_, idx) => (
               <div key={idx} className="w-full p-4">
-                <StoryCardSkeleton variant="compact" />
+                <StoryCardSkeleton variant="compact_v2" />
               </div>
             ))}
           </div>

@@ -4,6 +4,7 @@ import { ButtonNew } from "../atoms/Button";
 import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
 import { Story } from "@/constants/stories";
 import { fetchHomeData } from "@/services/story/storyActions";
+import HomeSkeleton from "../skeletons/HomeSkeleton";
 
 const FeaturedSection = async () => {
   let featuredStories: Story[] = [];
@@ -28,6 +29,12 @@ const FeaturedSection = async () => {
     error = "Unexpected error occurred";
   }
 
+  // if (!featuredStories  || featuredStories .length === 0) {
+  //   return (
+      
+  //   );
+  // }
+
   return (
     <div className="px-[1rem] md:px-[3rem]">
       <section className="max-w-7xl px-[1rem] md:px-[3rem] mb-[4rem] py-[3rem] bg-white dark:bg-black rounded-xl">
@@ -40,7 +47,7 @@ const FeaturedSection = async () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {error ? (
-            <p className="col-span-full text-center text-red-500">{error}</p>
+            <HomeSkeleton />
           ) : featuredStories.length > 0 ? (
             featuredStories.slice(0, 5).map((story) => (
               <Link

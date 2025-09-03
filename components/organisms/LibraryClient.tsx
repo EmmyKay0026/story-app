@@ -76,9 +76,9 @@ export default function LibraryClient({
     );
   };
 
-  useEffect(() => {
-    authorizationChecker(window.location.pathname);
-  }, []);
+  // useEffect(() => {
+  //   authorizationChecker(window.location.pathname);
+  // }, []);
 
   if (!stories || stories.length === 0) {
     return (
