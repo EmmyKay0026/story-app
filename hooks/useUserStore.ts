@@ -109,12 +109,12 @@ export const useUserStore = create<UserState>((set, get) => ({
     if (!user) return;
 
     const existingIndex = user.progress.findIndex(
-      (p) => p.storyId === storyId && p.episodeId === episodeId
+      (p) => p.story_id === storyId && p.episode_id === episodeId
     );
 
     const newProgress: UserProgress = {
-      storyId,
-      episodeId,
+      story_id: storyId,
+      episode_id: episodeId,
       progress,
       lastReadAt: new Date(),
       isCompleted: progress >= 100,
@@ -227,7 +227,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     ];
     // TODO: sync with backend
     const response = await handleUnlockEpisode(updatedUnlockedEpisodes, cost);
-    console.log(response);
+    // console.log(response);
 
     if ("error" in response) {
       console.error("Failed to update user data:", response.error);
@@ -248,18 +248,26 @@ export const useUserStore = create<UserState>((set, get) => ({
 
   getUserProgress: (storyId, episodeId) => {
     if (!get().user?.progress) return undefined;
+
+    // console.log(get().user?.progress);
+
     return get().user?.progress.find(
-      (p) => p.storyId === storyId && p.episodeId === episodeId
+      (p) => p.story_id === storyId && p.episode_id === episodeId
     );
+    // return get().user?.progress.find(
+    //   (p) => p.storyId === storyId && p.episodeId === episodeId
+    // );
   },
 
   getStoryProgress: (storyId) => {
     if (!get().user?.progress) return [];
-    return get().user?.progress.filter((p) => p.storyId === storyId) || [];
+    return get().user?.progress.filter((p) => p.story_id === storyId) || [];
   },
 
   isEpisodeUnlocked: (episodeId) => {
     if (!get().user) return false;
+    // console.log(get().user?.unlockedEpisodes);
+
     return get().user?.unlockedEpisodes.includes(episodeId) || false;
   },
 
@@ -278,7 +286,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     const res = await handleFontSizeChange(fontSize);
     if ("data" in res) {
-      console.log(res);
+      // console.log(res);
 
       set({
         user: updatedUser,
@@ -300,8 +308,8 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     if (incompleteProgress.length > 0) {
       return {
-        storyId: incompleteProgress[0].storyId,
-        episodeId: incompleteProgress[0].episodeId,
+        storyId: incompleteProgress[0].story_id,
+        episodeId: incompleteProgress[0].episode_id,
       };
     }
 
@@ -312,8 +320,8 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     if (recentProgress.length > 0) {
       return {
-        storyId: recentProgress[0].storyId,
-        episodeId: recentProgress[0].episodeId,
+        storyId: recentProgress[0].story_id,
+        episodeId: recentProgress[0].episode_id,
       };
     }
 

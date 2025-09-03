@@ -31,7 +31,7 @@ export function StoryCard({
     ? calculateStoryProgress(story, user.progress)
     : 0;
   const hasStarted = Array.isArray(user?.progress)
-    ? user?.progress.some((p) => p.storyId === story.id)
+    ? user?.progress.some((p) => p.story_id === story.id)
     : false;
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
@@ -182,7 +182,7 @@ export function StoryCard({
           {variant === "continue" && hasStarted && showProgress && (
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-500">
-                {userProgress}% complete
+                {Math.ceil(userProgress)}% complete
               </span>
               <div className="w-20 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div

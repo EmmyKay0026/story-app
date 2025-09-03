@@ -4,6 +4,7 @@ import axios from "axios";
 // import { useUserStore } from "@/stores/user/userStore";
 import { redirect } from "next/navigation";
 import { useUserStore } from "@/hooks/useUserStore";
+import { convertDateFormat } from "@/utils/dateTimeConverter";
 // import { useUserStore } from "@/hooks/userStore";
 
 export const handleLogin = async (phoneNumber: string) => {
@@ -97,10 +98,19 @@ export const handleUpdateUserProgress = async (
     redirect("/auth/login");
   }
 
-  console.log(upadatedUserProgress);
+  // console.log(upadatedUserProgress.lastReadAt.toString(), "to string");
+  // console.log(upadatedUserProgress.lastReadAt.toDateString(), "to date string");
+  // console.log(convertDateFormat(upadatedUserProgress.lastReadAt.toString()));
+  // return;
 
   try {
-    const response = await api.put(`/user/${userId}`, upadatedUserProgress);
+    const response = await api.put(`/userprogress/${userId}`, {
+      ...upadatedUserProgress,
+      lastReadAt: convertDateFormat(upadatedUserProgress.lastReadAt.toString()),
+    });
+
+    // console.log(response);
+
     if (response.status == 200 || response.status == 201) {
       return response.data;
     }

@@ -7,7 +7,6 @@ import { handleFontSizeChange } from "@/services/user/userAction";
 const FontSizeControl = () => {
   //   const [fontSize, setFontSize] = useState<string>("medium");
   const {
-    fontSize,
     fontSizeLabel,
     canIncrease,
     canDecrease,
@@ -36,14 +35,14 @@ const FontSizeControl = () => {
   const handleFontDecrease = async () => {
     decreaseFontSize();
     const response = await handleFontSizeChange(fontSizeLabel);
-    console.log(response);
+    // console.log(response);
   };
   const handleFontIncrease = async () => {
     const newFontSize = increaseFontSize();
-    console.log(newFontSize);
+    // console.log(newFontSize);
 
     const response = await handleFontSizeChange(fontSizeLabel);
-    console.log(response);
+    // console.log(response);
   };
   return (
     <div className="flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-gray-800 p-1 theme-transition">

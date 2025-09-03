@@ -198,10 +198,11 @@ export const submitReview = async (
       redirect("/auth/login");
     }
 
-    const response = await api.post(`/reviews/${storyId}`, {
+    const response = await api.post(`/reviews/add`, {
       rating: rating,
       comment: comment,
-      user: userId,
+      user_id: userId,
+      story_id: storyId,
     });
 
     if (response.status == 200 || response.status == 201) {

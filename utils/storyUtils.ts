@@ -24,11 +24,16 @@ export function calculateStoryProgress(
   userProgress: UserProgress[]
 ): number {
   const storyProgress = (userProgress ?? []).filter(
-    (p) => p.storyId === story.id
+    (p) => p.story_id === story.id
   );
+
   if (storyProgress.length === 0) return 0;
 
-  const totalProgress = storyProgress.reduce((sum, p) => sum + p.progress, 0);
+  const totalProgress = storyProgress.reduce(
+    (sum, p) => sum + Number(p.progress),
+    0
+  );
+
   return Math.round(totalProgress / story.totalEpisodes);
 }
 
@@ -39,6 +44,8 @@ export function getNextEpisode(
   const currentIndex = story.episodes.findIndex(
     (ep) => ep.id === currentEpisodeId
   );
+  // console.log(currentIndex);
+
   if (currentIndex === -1 || currentIndex === story.episodes.length - 1)
     return null;
   return story.episodes[currentIndex + 1];
@@ -60,7 +67,7 @@ export function isStoryCompleted(
   userProgress: UserProgress[]
 ): boolean {
   const storyProgress = (userProgress ?? []).filter(
-    (p) => p.storyId === story.id
+    (p) => p.story_id === story.id
   );
   return (
     storyProgress.length === story.totalEpisodes &&
@@ -70,10 +77,10 @@ export function isStoryCompleted(
 
 export function getReadingPosition(content: string, progress: number): number {
   const totalLength = content.length;
-  console.log(
-    "getReadingPosition:",
-    Math.round((progress / 100) * totalLength)
-  );
+  // console.log(
+  //   "getReadingPosition:",
+  //   Math.round((progress / 100) * totalLength)
+  // );
   return Math.round((progress / 100) * totalLength);
 }
 
@@ -82,10 +89,10 @@ export function calculateProgressFromPosition(
   position: number
 ): number {
   const totalLength = content.length;
-  console.log(
-    "calculateProgressFromPosition:",
-    Math.min(100, Math.max(0, Math.round((position / totalLength) * 100)))
-  );
+  // console.log(
+  //   "calculateProgressFromPosition:",
+  //   Math.min(100, Math.max(0, Math.round((position / totalLength) * 100)))
+  // );
   return Math.min(100, Math.max(0, Math.round((position / totalLength) * 100)));
 }
 
@@ -99,8 +106,10 @@ export function searchStories(stories: Story[], query: string): Story[] {
       story.title.toLowerCase().includes(lowercaseQuery) ||
       story.description.toLowerCase().includes(lowercaseQuery) ||
       story.author.toLowerCase().includes(lowercaseQuery) ||
-      story.category.label.toLowerCase().includes(lowercaseQuery) ||  // ✅ fixed
-      (story.tags ?? []).some((tag) => tag.toLowerCase().includes(lowercaseQuery))
+      story.category.label.toLowerCase().includes(lowercaseQuery) || // ✅ fixed
+      (story.tags ?? []).some((tag) =>
+        tag.toLowerCase().includes(lowercaseQuery)
+      )
   );
 }
 
@@ -141,7 +150,7 @@ export function getStoriesWithProgress(
     ...story,
     userProgress: calculateStoryProgress(story, userProgress),
     isCompleted: isStoryCompleted(story, userProgress),
-    hasStarted: userProgress.some((p) => p.storyId === story.id),
+    hasStarted: userProgress.some((p) => p.story_id === story.id),
   }));
 }
 

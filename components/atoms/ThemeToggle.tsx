@@ -8,7 +8,7 @@ import { useUserStore } from "@/hooks/useUserStore";
 export const ThemeToggle = () => {
   const user = useUserStore((state) => state.user);
 
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
   const themes = [
     { value: "light" as const, icon: Sun, label: "Light" },
@@ -49,7 +49,7 @@ export const ThemeToggle = () => {
       document.documentElement.classList.remove("dark");
     }
     if (!user) return;
-    const res = await handleThemeChange(newTheme);
+    await handleThemeChange(newTheme);
   };
 
   return (

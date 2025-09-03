@@ -9,6 +9,7 @@ const baseURL = new URL(
 
 const api = axios.create({
   baseURL,
+  timeout: 90000,
 });
 
 // Request interceptor

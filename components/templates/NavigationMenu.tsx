@@ -16,10 +16,6 @@ import {
 import { useEffect, useState } from "react";
 import { User } from "@/constants/stories";
 import { useUserStore } from "@/hooks/useUserStore";
-// import { User } from "@/constants/stories";
-// import { useTheme } from "@/hooks/usePreferences";
-// import { useUser } from "../contexts/UserContext";
-// import { useTheme } from "../contexts/ThemeContext";
 
 interface NavigationProps {
   children: React.ReactNode;

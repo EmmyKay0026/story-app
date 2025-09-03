@@ -7,7 +7,7 @@ import { BookCopy, Box, Search, AlertCircle } from "lucide-react";
 import { authorizationChecker } from "@/services/user/userAction";
 import { Story, ApiError } from "@/constants/stories";
 import { StoryCard } from "@/components/molecules/StoryCard";
-import { Navigation } from "@/components/templates/NavigationMenu";
+// import { Navigation } from "@/components/templates/NavigationMenu";
 import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
 import {
   fetchCategories,
@@ -15,16 +15,16 @@ import {
   fetchStories,
   filterStories,
 } from "@/services/story/storyActions";
-import { useUserStore } from "@/hooks/useUserStore";
+// import { useUserStore } from "@/hooks/useUserStore";
 
 // import { useUserStore } from "@/hooks/userStore";
 
-interface LibraryClientProps {
-  stories: Story[];
-  featuredStories: Story[];
-  categories: { label: string; value: string }[];
-  error?: ApiError | null;
-}
+// interface LibraryClientProps {
+//   stories: Story[];
+//   featuredStories: Story[];
+//   categories: { label: string; value: string }[];
+//   error?: ApiError | null;
+// }
 // {
 //   stories,
 //   featuredStories,
@@ -33,7 +33,7 @@ interface LibraryClientProps {
 // }: LibraryClientProps
 export default function LibraryClient() {
   const router = useRouter();
-  const { isAuthenticated, user } = useUserStore();
+  // const { isAuthenticated, user } = useUserStore();
 
   const searchParams = useSearchParams();
 
@@ -65,6 +65,7 @@ export default function LibraryClient() {
         if ("data" in homeResponse && homeResponse.data) {
           setFeaturedStories(homeResponse.data.featured?.slice(0, 5) || []);
         } else if ("error" in homeResponse && homeResponse.error) {
+          setError(homeResponse.error);
           console.error(
             "Home API error:",
             homeResponse.error.error,
@@ -90,6 +91,7 @@ export default function LibraryClient() {
         if ("data" in storiesResponse && storiesResponse.data) {
           setStories(storiesResponse.data.stories);
         } else if ("error" in storiesResponse && storiesResponse.error) {
+          setError(storiesResponse.error);
           console.error(
             "Stories API error:",
             storiesResponse.error.error,
@@ -171,7 +173,7 @@ export default function LibraryClient() {
   };
 
   if (!stories || stories.length === 0) {
-    console.log(stories);
+    // console.log(stories);
 
     return (
       // <Navigation>

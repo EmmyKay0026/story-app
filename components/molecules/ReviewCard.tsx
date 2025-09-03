@@ -1,3 +1,7 @@
+import {
+  // convertDateFormat,
+  convertDateToDateType,
+} from "@/utils/dateTimeConverter";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -6,6 +10,7 @@ const ReviewCard = (review: {
   userAvatar: string;
   rating: number;
   comment: string;
+  created_at: string;
 }) => {
   return (
     <div
@@ -23,8 +28,10 @@ const ReviewCard = (review: {
       </div>
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-1">
-          <span className="font-semibold text-base">{"review.userName"}</span>
-          <span className="text-xs italic text-gray-400">{"review.date"}</span>
+          {/* <span className="font-semibold text-base">{"review.userName"}</span> */}
+          <span className="text-xs italic text-gray-400">
+            {convertDateToDateType(review.created_at).toLocaleDateString()}
+          </span>
         </div>
         <div className="flex items-center gap-1 mb-2">
           {[...Array(5)].map((_, i) => (

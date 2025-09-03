@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Bookmark, Eye, Star } from "lucide-react";
-import { Navigation } from "@/components/templates/NavigationMenu";
+import { Bookmark } from "lucide-react";
+// import { Navigation } from "@/components/templates/NavigationMenu";
 import EpisodeCard from "@/components/molecules/EpisodeCard";
 import StoryTag from "@/components/molecules/StoryTag";
 import ReviewCard from "@/components/molecules/ReviewCard";
@@ -15,7 +15,7 @@ import { authorizationChecker } from "@/services/user/userAction";
 // import { fetchStories } from "@/services/story/storyActions";
 import { useUserStore } from "@/hooks/useUserStore";
 import PageLoader from "@/components/atoms/PageLoader";
-import Button from "@/components/atoms/Button";
+// import Button from "@/components/atoms/Button";
 // import { useUserStore } from "@/hooks/store";
 // import { useUserStore } from "@/stores/user/userStore";
 // import { calculateStoryProgress } from "@/utils/storyUtils";
@@ -38,7 +38,7 @@ const StoryDetailPage = () => {
   const [story, setStory] = useState<Story | null>(null);
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
-  const [bookmarkIsLoading, setBookmarkIsLoading] = useState(false);
+  // const [bookmarkIsLoading, setBookmarkIsLoading] = useState(false);
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
@@ -62,11 +62,11 @@ const StoryDetailPage = () => {
   }, [id, isAuthenticated, router]);
 
   const handleBookmarkToggle = async (id: string) => {
-    setBookmarkIsLoading(true);
+    // setBookmarkIsLoading(true);
 
     await toggleBookmark(id);
 
-    setBookmarkIsLoading(false);
+    // setBookmarkIsLoading(false);
   };
   if (!isAuthenticated || !user) return null;
 
@@ -177,6 +177,7 @@ const StoryDetailPage = () => {
                           userAvatar="/no-avatar.jpg"
                           rating={review.rating}
                           comment={review.comment}
+                          created_at={review.created_at}
                         />
                       ))
                     ) : (
@@ -209,6 +210,7 @@ const StoryDetailPage = () => {
                           userAvatar="/no-avatar.jpg"
                           rating={review.rating}
                           comment={review.comment}
+                          created_at={review.created_at}
                         />
                       ))
                     ) : (

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
 import { Story } from "@/constants/stories";
-import { Navigation } from "@/components/templates/NavigationMenu";
+// import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
 // import { useUserStore } from "@/stores/user/userStore";
