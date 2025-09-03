@@ -104,12 +104,11 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     // return response.User;
   },
-
   updateProgress: (storyId, episodeId, progress) => {
     const { user } = get();
     if (!user) return;
 
-    const existingProgressIndex = user.progress.findIndex(
+    const existingIndex = user.progress.findIndex(
       (p) => p.storyId === storyId && p.episodeId === episodeId
     );
 
@@ -122,29 +121,66 @@ export const useUserStore = create<UserState>((set, get) => ({
     };
 
     let updatedProgress;
-    if (existingProgressIndex >= 0) {
+    if (existingIndex >= 0) {
       updatedProgress = [...user.progress];
-      updatedProgress[existingProgressIndex] = newProgress;
+      updatedProgress[existingIndex] = newProgress;
     } else {
       updatedProgress = [...user.progress, newProgress];
     }
-    const updatedUser = {
-      ...user,
-      progress: updatedProgress,
-    };
 
-    // TODO: send progress update to backend
-    setInterval(() => {
-      const response = handleUpdateUserProgress(newProgress);
-
-      if ("error" in response) {
-        console.error("Failed to update user progress:", response.error);
-      }
-    }, 2000);
     set({
-      user: updatedUser,
+      user: {
+        ...user,
+        progress: updatedProgress,
+      },
     });
+
+    // one-shot backend sync
+    handleUpdateUserProgress(newProgress).catch((err) =>
+      console.error("Failed to update progress:", err)
+    );
   },
+
+  // updateProgress: (storyId, episodeId, progress) => {
+  //   const { user } = get();
+  //   if (!user) return;
+
+  //   const existingProgressIndex = user.progress.findIndex(
+  //     (p) => p.storyId === storyId && p.episodeId === episodeId
+  //   );
+
+  //   const newProgress: UserProgress = {
+  //     storyId,
+  //     episodeId,
+  //     progress,
+  //     lastReadAt: new Date(),
+  //     isCompleted: progress >= 100,
+  //   };
+
+  //   let updatedProgress;
+  //   if (existingProgressIndex >= 0) {
+  //     updatedProgress = [...user.progress];
+  //     updatedProgress[existingProgressIndex] = newProgress;
+  //   } else {
+  //     updatedProgress = [...user.progress, newProgress];
+  //   }
+  //   const updatedUser = {
+  //     ...user,
+  //     progress: updatedProgress,
+  //   };
+
+  //   // TODO: send progress update to backend
+  //   setInterval(() => {
+  //     const response = handleUpdateUserProgress(newProgress);
+
+  //     if ("error" in response) {
+  //       console.error("Failed to update user progress:", response.error);
+  //     }
+  //   }, 2000);
+  //   set({
+  //     user: updatedUser,
+  //   });
+  // },
 
   toggleBookmark: async (storyId) => {
     const { user } = get();
@@ -200,7 +236,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     if (response.success) {
       set({
         user: {
-          ...user,
+          ...user, // RESPONSE FROM BACKEND
           points: Number(user.points) - cost,
           unlockedEpisodes: updatedUnlockedEpisodes,
         },

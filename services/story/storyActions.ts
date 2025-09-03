@@ -1,6 +1,7 @@
 import api from "../../stores/api";
 import axios from "axios";
 import { Story, ApiError, Episode } from "@/constants/stories";
+import { redirect } from "next/navigation";
 
 // Utility: formats error into ApiError shape
 export const formatError = (error: unknown): ApiError => {
@@ -181,6 +182,33 @@ export const fetchEpisodeDetails = async (
     const episode = response.data.data;
 
     return { data: episode };
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+export const submitReview = async (
+  rating: number,
+  comment: string,
+  storyId: string
+) => {
+  try {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      redirect("/auth/login");
+    }
+
+    const response = await api.post(`/reviews/${storyId}`, {
+      rating: rating,
+      comment: comment,
+      user: userId,
+    });
+
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to update user data" };
+    }
   } catch (error) {
     return { error: formatError(error) };
   }

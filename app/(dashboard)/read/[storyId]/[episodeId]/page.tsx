@@ -2,13 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import {
-  ArrowLeft,
-  Bookmark,
-  ChevronLeft,
-  ChevronRight,
-  Star,
-} from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Star } from "lucide-react";
 // import { Episode, mockStories } from "@/constants/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
@@ -24,9 +18,11 @@ import {
   fetchStoryDetails,
   fetchEpisode,
   fetchEpisodeDetails,
+  submitReview,
 } from "@/services/story/storyActions";
 import { Story, Episode, ApiError } from "@/constants/stories"; // ✅ adjust paths if needed
 import { authorizationChecker } from "@/services/user/userAction";
+import { debounce } from "@/utils/debounce";
 
 interface EpisodeReaderProps {
   params: Promise<{ episodeId: string; storyId: string }>;
@@ -56,7 +52,8 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   const [readingProgress, setReadingProgress] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showRating, setShowRating] = useState(false);
-  const [userRating, setUserRating] = useState(0);
+  const [userRating, setUserRating] = useState<number>(0);
+  const [reviewComment, setReviewComment] = useState<string>("");
   const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
 
   useEffect(() => {
@@ -101,15 +98,19 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   useEffect(() => {
     if (!episode || !user) return;
 
-    const handleScroll = () => {
-      if (!contentRef.current) return;
+    const container = contentRef.current;
+    if (!container) return;
 
-      const container = contentRef.current;
+    // Debounced backend update
+    const debouncedUpdate = debounce((progress: number) => {
+      updateProgress(storyId, episode.id, Math.ceil(progress));
+    }, 1500); // 1.5s after scrolling stops
+
+    const handleScroll = () => {
       const scrollTop = container.scrollTop;
       const scrollHeight = container.scrollHeight - container.clientHeight;
       const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
 
-      updateProgress(storyId, episode.id, Math.ceil(progress));
       setReadingProgress(Math.min(100, Math.max(0, progress)));
 
       const remainingContent = episode.content.slice(
@@ -117,23 +118,54 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
       );
       setTimeRemaining(estimateTimeRemaining(remainingContent, 0));
 
-      clearTimeout(
-        (window as unknown as { progressTimeout?: NodeJS.Timeout })
-          .progressTimeout
-      );
-      (
-        window as unknown as { progressTimeout?: NodeJS.Timeout }
-      ).progressTimeout = setTimeout(() => {
-        updateProgress(storyId, episode.id, Math.ceil(progress));
-      }, 1000);
+      // Trigger debounced backend update
+      debouncedUpdate(progress);
     };
 
-    const container = contentRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
-    }
-  }, [episode, user, storyId]);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [episode, user, storyId, updateProgress]);
+  // useEffect(() => {
+  //   if (!episode || !user) return;
+
+  //   const handleScroll = () => {
+  //     if (!contentRef.current) return;
+
+  //     // Debounced backend update
+  //     const debouncedUpdate = debounce((progress: number) => {
+  //       updateProgress(storyId, episode.id, Math.ceil(progress));
+  //     }, 1500);
+
+  //     const container = contentRef.current;
+  //     const scrollTop = container.scrollTop;
+  //     const scrollHeight = container.scrollHeight - container.clientHeight;
+  //     const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+  //     updateProgress(storyId, episode.id, Math.ceil(progress));
+  //     setReadingProgress(Math.min(100, Math.max(0, progress)));
+
+  //     const remainingContent = episode.content.slice(
+  //       Math.round((progress / 100) * episode.content.length)
+  //     );
+  //     setTimeRemaining(estimateTimeRemaining(remainingContent, 0));
+
+  //     clearTimeout(
+  //       (window as unknown as { progressTimeout?: NodeJS.Timeout })
+  //         .progressTimeout
+  //     );
+  //     (
+  //       window as unknown as { progressTimeout?: NodeJS.Timeout }
+  //     ).progressTimeout = setTimeout(() => {
+  //       updateProgress(storyId, episode.id, Math.ceil(progress));
+  //     }, 1000);
+  //   };
+  //
+  //   const container = contentRef.current;
+  //   if (container) {
+  //     container.addEventListener("scroll", handleScroll);
+  //     return () => container.removeEventListener("scroll", handleScroll);
+  //   }
+  // }, [episode, user, storyId]);
 
   if (loading) return <p className="p-6">Loading episode...</p>;
   if (error) return <p className="p-6 text-red-500">Error: {error}</p>;
@@ -194,10 +226,18 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
     }
   };
 
-  const submitRating = (rating: number) => {
+  const submitRating = async (rating: number) => {
     setUserRating(rating);
+    console.log("Rating:", rating);
+
+    console.log("Comment:", reviewComment);
+
     setShowRating(false);
     // In a real app, you'd save this rating to the backend
+
+    const res = await submitReview(rating, reviewComment, story.id);
+
+    console.log(res);
   };
 
   return (
@@ -406,6 +446,12 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 ))}
               </div>
               <textarea
+                name="review"
+                id="review"
+                value={reviewComment}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setReviewComment(e.target.value)
+                }
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                 placeholder="Leave a comment (optional)"
               />
