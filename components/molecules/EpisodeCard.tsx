@@ -50,7 +50,7 @@ const EpisodeCard = ({
       selectedEpisode,
       episodeCost
     );
-    console.log(response);
+    // console.log(response);
 
     if (!response) {
       alert("Not enough points to unlock this episode!");

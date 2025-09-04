@@ -59,14 +59,14 @@ export interface Review {
   userName: string;
   rating: number;
   comment: string;
-  createdAt: string;
+  created_at: string;
 }
 
 export type Category = {
-  id: string
-  label: string
-  value: string
-}
+  id: string;
+  label: string;
+  value: string;
+};
 
 export interface Story {
   id: string;
@@ -85,8 +85,8 @@ export interface Story {
 }
 
 export interface UserProgress {
-  storyId: string;
-  episodeId: string;
+  story_id: string;
+  episode_id: string;
   progress: number; // 0-100 percentage
   lastReadAt: Date;
   isCompleted: boolean;
@@ -120,8 +120,8 @@ export const mockUser: User = {
   },
   progress: [
     {
-      storyId: "1",
-      episodeId: "1-1",
+      story_id: "1",
+      episode_id: "1-1",
       progress: 60,
       lastReadAt: new Date("2023-10-01T12:00:00Z"),
       isCompleted: false,
@@ -162,7 +162,7 @@ export const mockStories: Story[] = [
     author: "Elena Rodriguez",
     coverImage:
       "https://img.freepik.com/free-psd/world-book-day-template-design_23-2150195598.jpg",
-    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
+    category: { id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Post-apocalyptic", "Sci-Fi", "Mystery"],
     rating: 4.8,
     totalEpisodes: 5,
@@ -366,7 +366,7 @@ She sent the message out into the vast, open world, and for the first time in he
     author: "Maria Santos",
     coverImage:
       "https://img.freepik.com/free-photo/open-book-concept-fairy-tale-fiction-storytelling_23-2150793737.jpg",
-    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
+    category: { id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Romance", "Enemies to lovers", "Small town"],
     rating: 4.6,
     totalEpisodes: 4,
@@ -700,7 +700,7 @@ Sarah pulled out her phone and started typing. "We crash a city council meeting.
     author: "Elena Rodriguez",
     coverImage:
       "https://img.freepik.com/free-vector/flat-vertical-poster-template-world-book-day-celebration_23-2150216808.jpg",
-    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
+    category: { id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Post-apocalyptic", "Adventure", "Mystery"],
     rating: 4.9,
     totalEpisodes: 5,
@@ -904,7 +904,7 @@ She sent the message out into the vast, open world, and for the first time in he
     author: "Maria Santos",
     coverImage:
       "https://img.freepik.com/free-vector/book-with-scene-sugar-gliders-forest_1308-103484.jpg?t=st=1754491420~exp=1754495020~hmac=4475a88f6ac2c9e6565eee765c1f579ff5558188c116dcb0d6114e6475f4493a&w=2000",
-    category: {  id: "1 ", label: "Sci-Fi", value: "sci-fi" },
+    category: { id: "1 ", label: "Sci-Fi", value: "sci-fi" },
     tags: ["Contemporary", "Enemies to lovers", "Small town"],
     rating: 5.0,
     totalEpisodes: 3,

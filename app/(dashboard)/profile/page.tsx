@@ -1,6 +1,6 @@
-import { Story } from "@/constants/stories";
-import { fetchStories } from "@/services/story/storyActions";
-import PageLoader from "@/components/atoms/PageLoader";
+// import { Story } from "@/constants/stories";
+// import { fetchStories } from "@/services/story/storyActions";
+// import PageLoader from "@/components/atoms/PageLoader";
 import ProfileClient from "@/components/organisms/ProfileClient";
 
 export default async function ProfilePage() {

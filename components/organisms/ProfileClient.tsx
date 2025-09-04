@@ -8,10 +8,11 @@ import Image from "next/image";
 import { Bookmark, BookOpen, Box, Coins, Edit3, SunMoon } from "lucide-react";
 import { StoryCard } from "../molecules/StoryCard";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
-import { redirect } from "next/dist/server/api-utils";
+// import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
 import { handleThemeChange } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
+import { convertDateToDateType } from "@/utils/dateTimeConverter";
 
 const ProfileClient = () => {
   // console.log(allStories);
@@ -42,7 +43,7 @@ const ProfileClient = () => {
       try {
         const response = await fetchStories();
         if ("data" in response && response.data) {
-          console.log(response);
+          // console.log(response);
           setAllStories(response.data.stories);
         } else if ("error" in response && response.error) {
           console.error(
@@ -77,17 +78,21 @@ const ProfileClient = () => {
     return null;
   }
   const storiesWithProgress = allStories
-    ?.filter((story) => user?.progress.some((p) => p.storyId === story.id))
+    ?.filter((story) => user?.progress.some((p) => p.story_id === story.id))
     .map((story) => ({
       ...story,
       progress: calculateStoryProgress(story, user?.progress),
       isCompleted: isStoryCompleted(story, user?.progress),
       lastRead: user?.progress
-        .filter((p) => p.storyId === story.id)
-        .sort((a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime())[0]
-        ?.lastReadAt,
+        .filter((p) => p.story_id === story.id)
+        .sort(
+          (a, b) =>
+            convertDateToDateType(b.lastReadAt.toString()).getTime() -
+            convertDateToDateType(a.lastReadAt.toString()).getTime()
+        )[0]?.lastReadAt,
     }))
     .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime());
+  // console.log(storiesWithProgress);
 
   const currentlyReading =
     storiesWithProgress?.filter((s) => !s.isCompleted) ?? [];

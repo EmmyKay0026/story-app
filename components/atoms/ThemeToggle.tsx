@@ -49,7 +49,7 @@ export const ThemeToggle = () => {
       document.documentElement.classList.remove("dark");
     }
     if (!user) return;
-    const res = await handleThemeChange(newTheme);
+    await handleThemeChange(newTheme);
   };
 
   return (

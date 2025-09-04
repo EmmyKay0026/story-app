@@ -3,19 +3,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
-import { Story } from "@/constants/stories";
+import { Episode, Story, UserProgress } from "@/constants/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   calculateStoryProgress,
   formatReadTime,
   isStoryCompleted,
 } from "@/utils/storyUtils";
-import { Navigation } from "@/components/templates/NavigationMenu";
+// import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 // import { useUserStore } from "@/stores/user/userStore";
 import { authorizationChecker } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
 import { useUserStore } from "@/hooks/useUserStore";
+import {
+  // convertDateFormat,
+  convertDateToDateType,
+} from "@/utils/dateTimeConverter";
+
+interface StoryWithProgress extends Story {
+  isCompleted: boolean;
+  progress: number;
+  lastRead: string;
+}
 
 export default function MyReadsPage() {
   const user = useUserStore((state) => state.user);
@@ -26,6 +36,9 @@ export default function MyReadsPage() {
     "reading"
   );
   const [stories, setStories] = useState<Story[]>([]);
+  const [storiesWithProgress, setStoriesWithProgress] = useState<
+    StoryWithProgress[]
+  >([]);
 
   useEffect(() => {
     const fetchStoriesData = async () => {
@@ -55,26 +68,37 @@ export default function MyReadsPage() {
   }
 
   // Get all stories that user has started
-  const storiesWithProgress =
-    Array.isArray(stories) && stories.length > 0
-      ? stories
-          .filter((story) =>
-            (Array.isArray(user?.progress) ? user?.progress : []).some(
-              (p) => p.storyId === story.id
-            )
-          )
-          .map((story) => ({
-            ...story,
-            progress: calculateStoryProgress(story, user.progress ?? []),
-            isCompleted: isStoryCompleted(story, user.progress ?? []),
-            lastRead: (user.progress ?? [])
-              .filter((p) => p.storyId === story.id)
-              .sort(
-                (a, b) => b.lastReadAt.getTime() - a.lastReadAt.getTime()
-              )[0]?.lastReadAt,
-          }))
-          .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime())
-      : [];
+  useEffect(() => {
+    const getAllStoriesWithProgress = () => {
+      const allStoriesWithProgress =
+        Array.isArray(stories) && stories.length > 0
+          ? stories
+              .filter((story) =>
+                (Array.isArray(user?.progress) ? user?.progress : []).some(
+                  (p) => p.story_id === story.id
+                )
+              )
+              .map((story) => ({
+                ...story,
+                progress: calculateStoryProgress(story, user.progress ?? []),
+                isCompleted: isStoryCompleted(story, user.progress ?? []),
+                lastRead: (user.progress ?? [])
+                  .filter((p) => p.story_id === story.id)
+                  .sort(
+                    (a, b) =>
+                      convertDateToDateType(b.lastReadAt.toString()).getTime() -
+                      convertDateToDateType(a.lastReadAt.toString()).getTime()
+                  )[0]
+                  ?.lastReadAt.toString(),
+              }))
+          : // .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime())
+            [];
+
+      setStoriesWithProgress(allStoriesWithProgress);
+    };
+
+    getAllStoriesWithProgress();
+  }, [stories]);
 
   const currentlyReading = storiesWithProgress.filter(
     (story) => !story.isCompleted
@@ -89,12 +113,14 @@ export default function MyReadsPage() {
 
   const totalReadTime = storiesWithProgress.reduce((total, story) => {
     const storyProgress = Array.isArray(user.progress)
-      ? user.progress.filter((p) => p.storyId === story.id)
+      ? user.progress.filter((p: UserProgress) => p.story_id === story.id)
       : [];
     return (
       total +
       storyProgress.reduce((sum, p) => {
-        const episode = story.episodes.find((ep) => ep.id === p.episodeId);
+        const episode = story.episodes.find(
+          (ep: Episode) => ep.id === p.episode_id
+        );
         return sum + (episode ? (episode.readTime * p.progress) / 100 : 0);
       }, 0)
     );
@@ -240,7 +266,10 @@ export default function MyReadsPage() {
                               {story.progress}% complete
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-500">
-                              Last read: {story.lastRead?.toLocaleDateString()}
+                              Last read:{" "}
+                              {convertDateToDateType(
+                                story.lastRead
+                              )?.toLocaleDateString()}
                             </div>
                           </div>
                         </div>
@@ -279,7 +308,10 @@ export default function MyReadsPage() {
                               Completed
                             </div>
                             <div className="text-xs text-gray-500 dark:text-gray-500">
-                              Finished: {story.lastRead?.toLocaleDateString()}
+                              Finished:{" "}
+                              {convertDateToDateType(
+                                story.lastRead
+                              )?.toLocaleDateString()}
                             </div>
                           </div>
                         </div>
