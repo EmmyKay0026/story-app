@@ -9,7 +9,12 @@ import { Story, ApiError } from "@/constants/stories";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import { Navigation } from "@/components/templates/NavigationMenu";
 import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
-import { filterStories } from "@/services/story/storyActions";
+import {
+  fetchCategories,
+  fetchHomeData,
+  fetchStories,
+  filterStories,
+} from "@/services/story/storyActions";
 import { useUserStore } from "@/hooks/useUserStore";
 
 // import { useUserStore } from "@/hooks/userStore";
@@ -20,13 +25,13 @@ interface LibraryClientProps {
   categories: { label: string; value: string }[];
   error?: ApiError | null;
 }
-
-export default function LibraryClient({
-  stories,
-  featuredStories,
-  categories,
-  error = null,
-}: LibraryClientProps) {
+// {
+//   stories,
+//   featuredStories,
+//   categories,
+//   error = null,
+// }: LibraryClientProps
+export default function LibraryClient() {
   const router = useRouter();
   const { isAuthenticated, user } = useUserStore();
 
@@ -34,23 +39,142 @@ export default function LibraryClient({
 
   const initialCategory = searchParams.get("category");
   const initialSearch = searchParams.get("q");
-
+  //  let stories: Story[] = [];
+  //  let featuredStories: Story[] = [];
+  //  let categories: { label: string; value: string }[] = [];
+  const [stories, setStories] = useState<Story[]>([]);
+  const [featuredStories, setFeaturedStories] = useState<Story[]>([]);
+  const [categories, setCategories] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [error, setError] = useState<ApiError | null>(null);
   const [searchTerm, setSearchTerm] = useState(initialSearch || "");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(initialCategory);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    initialCategory
+  );
 
   useEffect(() => {
-    const params = new URLSearchParams();
+    authorizationChecker(window.location.pathname);
+  }, []);
 
+  useEffect(() => {
+    const getHomeData = async () => {
+      try {
+        const homeResponse = await fetchHomeData();
+
+        if ("data" in homeResponse && homeResponse.data) {
+          setFeaturedStories(homeResponse.data.featured?.slice(0, 5) || []);
+        } else if ("error" in homeResponse && homeResponse.error) {
+          console.error(
+            "Home API error:",
+            homeResponse.error.error,
+            "Code:",
+            homeResponse.error.code
+          );
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching home data:", err);
+      }
+    };
+
+    getHomeData();
+  }, []);
+
+  useEffect(() => {
+    const getStories = async () => {
+      try {
+        // const response = await fetchStories();
+        const storiesResponse = await fetchStories("", "", 1, 20);
+        // console.log(storiesResponse);
+
+        if ("data" in storiesResponse && storiesResponse.data) {
+          setStories(storiesResponse.data.stories);
+        } else if ("error" in storiesResponse && storiesResponse.error) {
+          console.error(
+            "Stories API error:",
+            storiesResponse.error.error,
+            "Code:",
+            storiesResponse.error.code
+          );
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching stories:", err);
+      }
+    };
+
+    getStories();
+  }, []);
+
+  // ✅ Fetch categories
+  useEffect(() => {
+    const getCategories = async () => {
+      try {
+        const categoriesResponse = await fetchCategories();
+
+        if (
+          "data" in categoriesResponse &&
+          Array.isArray(categoriesResponse.data)
+        ) {
+          setCategories(categoriesResponse.data);
+        } else {
+          console.error(
+            "API error fetching categories:",
+            "error" in categoriesResponse ? categoriesResponse.error : "No data"
+          );
+          setCategories([]); // fallback
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching categories:", err);
+        setCategories([]);
+      }
+    };
+
+    getCategories();
+  }, []);
+
+  const handleCategoryChange = (category: { label: string; value: string }) => {
+    const newCategory = selectedCategory === category.label ? null : category.label;
+
+    setSelectedCategory(newCategory);
+
+    // ✅ Update URL immediately
+    const params = new URLSearchParams(window.location.search);
+    if (newCategory) {
+      params.set("category", newCategory);
+    } else {
+      params.delete("category");
+    }
+    if (searchTerm) {
+      params.set("q", searchTerm);
+    }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+  // useEffect(() => { 
+  //   const params = new URLSearchParams(); 
+  //   // if (selectedCategory) { params.set("category", selectedCategory); } 
+  //   if (searchTerm) { params.set("q", searchTerm); } const query = params.toString(); router.push(query ? ?${query} : "?", { scroll: false }); 
+  // }, [selectedCategory, searchTerm, router]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+
+    const params = new URLSearchParams(window.location.search);
     if (selectedCategory) {
       params.set("category", selectedCategory);
     }
     if (searchTerm) {
       params.set("q", searchTerm);
+    } else {
+      params.delete("q"); // remove query param if input is cleared
     }
 
-    const query = params.toString();
-    router.push(query ? `?${query}` : "?", { scroll: false });
-  }, [selectedCategory, searchTerm, router]);
+    // ✅ Push only once
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
+
 
   const filteredStories = useMemo(
     () =>
@@ -65,32 +189,30 @@ export default function LibraryClient({
   const categoryDisplayName = useMemo(() => {
     if (!selectedCategory) return "All stories";
     return (
-      categories.find((c) => c.value === selectedCategory)?.label ??
+      categories.find((c) => c.label === selectedCategory)?.label ??
       "All stories"
     );
   }, [selectedCategory, categories]);
 
-  const handleCategoryChange = (category: { label: string; value: string }) => {
-    setSelectedCategory(
-      selectedCategory === category.label ? null : category.label
-    );
-  };
-
-  // useEffect(() => {
-  //   authorizationChecker(window.location.pathname);
-  // }, []);
+  // const handleCategoryChange = (category: { label: string; value: string }) => {
+  //   setSelectedCategory(
+  //     selectedCategory === category.label ? null : category.label
+  //   );
+  // };
 
   if (!stories || stories.length === 0) {
+    console.log(stories);
+
     return (
-      <Navigation>
-        <LibrarySkeleton />
-      </Navigation>
+      // <Navigation>
+      <LibrarySkeleton />
+      // </Navigation>
     );
   }
 
   return (
-    <Navigation>
-      <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
+    <>
+      <section className="max-w-7xl mx-auto p-4 lg:p-6 h-full bg-white dark:bg-dark-primary">
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
           <BookCopy className="w-8 h-8 text-shaft dark:text-white fill-current" />
@@ -114,7 +236,7 @@ export default function LibraryClient({
               placeholder="Search stories..."
               className="w-full outline-0 bg-transparent text-gray-900 dark:text-white"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
             />
           </div>
 
@@ -182,7 +304,7 @@ export default function LibraryClient({
           </div>
 
           {/* Featured Sidebar */}
-          <div className="sticky top-[50px] mb-8 w-full lg:w-[300px] lg:mt-20">
+          <div className="sticky top-[50px] mb-8 w-full lg:w-[250px] lg:mt-20">
             <h2 className="text-xl font-bold mb-2">Featured Stories</h2>
             {featuredStories.length > 0 ? (
               <div className="flex flex-wrap">
@@ -190,7 +312,7 @@ export default function LibraryClient({
                   <Link
                     href={`/story/${story.id}`}
                     key={story.id}
-                    className="w-full lg:w-full p-4"
+                    className="w-full lg:w-full py-4"
                   >
                     <StoryCard
                       story={story}
@@ -208,6 +330,6 @@ export default function LibraryClient({
           </div>
         </article>
       </section>
-    </Navigation>
+    </>
   );
 }

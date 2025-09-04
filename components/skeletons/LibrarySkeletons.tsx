@@ -1,3 +1,4 @@
+"use client"
 import { BookCopy, Search } from "lucide-react";
 import React from "react";
 
@@ -36,6 +37,8 @@ export const StoryCardSkeleton = ({ variant = "compact_v2" }: { variant?: "compa
   );
 };
 
+const widths = [70, 80, 90, 100, 85, 95, 75, 65];
+
 // Category Filter Skeleton
 export const CategoryFilterSkeleton = () => {
   return (
@@ -44,7 +47,7 @@ export const CategoryFilterSkeleton = () => {
         <div
           key={idx}
           className="h-8 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"
-          style={{ width: `${Math.floor(Math.random() * 40) + 60}px` }}
+          style={{ width: `${widths[idx % widths.length]}px` }}
         />
       ))}
     </div>
@@ -54,7 +57,7 @@ export const CategoryFilterSkeleton = () => {
 // Main Library Skeleton
 export const LibrarySkeleton = () => {
   return (
-    <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
+    <section className="max-w-7xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
       {/* Header Skeleton */}
       <div className="flex items-start gap-3 mb-8">
         <BookCopy className="w-8 h-8 text-shaft dark:text-white fill-current" />
@@ -117,10 +120,10 @@ export const LibrarySkeleton = () => {
 // Error Component
 export const LibraryError = ({ 
   error, 
-  onRetry 
+  onRetryAction 
 }: { 
   error: string; 
-  onRetry: () => void; 
+  onRetryAction: () => void; 
 }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
@@ -137,7 +140,7 @@ export const LibraryError = ({
           {error}
         </p>
         <button
-          onClick={onRetry}
+          onClick={onRetryAction}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
           Try Again

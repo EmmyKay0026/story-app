@@ -2,8 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
+import { handleThemeChange } from "@/services/user/userAction";
+import { useUserStore } from "@/hooks/useUserStore";
 
 export const ThemeToggle = () => {
+  const user = useUserStore((state) => state.user);
+
   const [theme, setTheme] = useState("light");
 
   const themes = [
@@ -11,26 +15,22 @@ export const ThemeToggle = () => {
     { value: "dark" as const, icon: Moon, label: "Dark" },
   ];
   useEffect(() => {
-    const preferences = localStorage.getItem("theme");
-    // const UserPreferences = preferences ? JSON.parse(preferences) : null;
-    // const UserPreferences = preferences ? JSON.parse(preferences) : null;
-    // console.log(UserPreferences);
+    let storedTheme;
+    if (!user) {
+      const preferences = localStorage.getItem("theme");
 
-    // if (!UserPreferences) {
-    //   localStorage.setItem(
-    //     "theme",
-    //     JSON.stringify({ theme: "light" })
-    //   );
-    //   return;
-    // }
-    if (!preferences) {
-      localStorage.setItem("theme", "light");
-      return;
+      if (!preferences) {
+        localStorage.setItem("theme", "light");
+        return;
+      }
+      storedTheme = preferences || "light";
+      setTheme(storedTheme);
+    } else {
+      storedTheme = user.preferences?.theme;
     }
 
     // const storedTheme = UserPreferences.theme || "light";
-    const storedTheme = preferences || "light";
-    setTheme(storedTheme);
+
     if (storedTheme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
@@ -38,14 +38,18 @@ export const ThemeToggle = () => {
     }
   }, []);
 
-  const toggleTheme = () => {
+  const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", newTheme);
-      document.documentElement.classList.toggle("dark", newTheme === "dark");
+    localStorage.setItem("theme", newTheme);
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
+    if (!user) return;
+    const res = await handleThemeChange(newTheme);
   };
 
   return (

@@ -56,7 +56,6 @@ export function Navigation({ children }: NavigationProps) {
 
   // const phoneNumber = localStorage.getItem("userId");
   // const { resolvedTheme } = useTheme();
-  
 
   const navigationItems = [
     { href: "/library", label: "Library", icon: BookCopy },
@@ -81,7 +80,7 @@ export function Navigation({ children }: NavigationProps) {
   if (!user) {
     return (
       <div className="flex flex-col lg:min-h-screen  bg-gray-50 dark:bg-gray-900 lg:flex-row ">
-        <div className="w-full h-[64px] lg:h-full lg:w-64 animate-pulse bg-gray-300/50"></div>{" "}
+        <div className="w-full h-[64px] lg:h-screen lg:w-64 animate-pulse dark:bg-gray-800"></div>{" "}
         {children}
       </div>
     );

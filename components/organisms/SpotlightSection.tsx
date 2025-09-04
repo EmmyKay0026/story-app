@@ -1,32 +1,60 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import DetailsCard from "../molecules/DetailsCard";
 import { Story } from "@/constants/stories";
 import { fetchHomeData } from "@/services/story/storyActions";
 import { SpotlightSkeleton } from "../skeletons/HomeSkeleton";
 
-const SpotlightSection = async () => {
-  let spotlightStory: Story | null = null;
-  let error: string | null = null;
+const SpotlightSection = () => {
+  // let spotlightStory: Story | null = null;
+  // let error: string | null = null;
 
-  try {
-    const response = await fetchHomeData();
+  const [spotlightStory, setSpotlightStory] = useState<Story | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-    if ("data" in response && response.data) {
-      // Pick the first featured story as spotlight
-      spotlightStory = response.data.featured?.[0] ?? null;
-    } else if ("error" in response && response.error) {
-      console.error(
-        "API error:",
-        response.error.error,
-        "Code:",
-        response.error.code
-      );
-      error = response.error.error;
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    error = "Unexpected error occurred";
-  }
+  useEffect(() => {
+    const getSpotlightSection = async () => {
+      try {
+        const response = await fetchHomeData();
+        if ("data" in response && response.data) {
+          // Pick the first featured story as spotlight
+          setSpotlightStory(response.data.featured?.[0] ?? null);
+        } else if ("error" in response && response.error) {
+          console.error(
+            "API error:",
+            response.error.error,
+            "Code:",
+            response.error.code
+          );
+          setError(response.error.error);
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+        setError("Unexpected error occurred");
+      }
+    };
+
+    getSpotlightSection();
+  }, []);
+  // try {
+  //   const response = await fetchHomeData();
+
+  //   if ("data" in response && response.data) {
+  //     // Pick the first featured story as spotlight
+  //     spotlightStory = response.data.featured?.[0] ?? null;
+  //   } else if ("error" in response && response.error) {
+  //     console.error(
+  //       "API error:",
+  //       response.error.error,
+  //       "Code:",
+  //       response.error.code
+  //     );
+  //     error = response.error.error;
+  //   }
+  // } catch (err) {
+  //   console.error("Unexpected error:", err);
+  //   error = "Unexpected error occurred";
+  // }
 
   return (
     <section className="flex flex-col px-[1rem] py-[3rem] md:px-[3rem] lg:px-0 justify-center w-full mb-[4rem] items-center bg-gray-200 dark:bg-gray-900">

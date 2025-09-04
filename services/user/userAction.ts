@@ -1,4 +1,4 @@
-import { User } from "@/constants/stories";
+import { User, UserProgress } from "@/constants/stories";
 import api, { formatError } from "../../stores/api";
 import axios from "axios";
 // import { useUserStore } from "@/stores/user/userStore";
@@ -8,7 +8,7 @@ import { useUserStore } from "@/hooks/useUserStore";
 
 export const handleLogin = async (phoneNumber: string) => {
   try {
-    const response = await api.post("/auth/login", {
+    const response = await api.post(`/auth/login/`, {
       username: phoneNumber,
     });
     if (response.status == 200 || response.status == 201) {
@@ -44,30 +44,21 @@ export const handleGetMe = async (phoneNumber: string) => {
 // --- Authorization Checker ---
 export const authorizationChecker = async (currentPath: string) => {
   try {
-    // const rpgaej = JSON.parse(localStorage.getItem("accessToken")!);
-    // const rpga ej_token = ;
     const userId = localStorage.getItem("userId");
-    let accessToken: string | null = null;
-    let tokenExpiration: number | null = null;
-
-    // const userId = localStorage.getItem("userId");
-    // console.log(accessToken);
+    // let accessToken: string | null = null;
+    // let tokenExpiration: number | null = null;
 
     if (userId) {
       const res = await useUserStore.getState().getMe(userId);
       if (res === null) {
         redirect("/auth/login");
       }
-      console.log(res);
+
       useUserStore.setState({ user: res, isAuthenticated: true });
     } else {
       window.location.href = `/auth/login?to=${
         encodeURIComponent(currentPath) || `/library`
       }`;
-      //   if (!useUserStore.getState().user) {
-      // const userData = await getUserById(userId!);
-      // useUserStore.getState().setUser(userData);
-      //   }
     }
   } catch (error) {
     window.location.href = `/auth/login?to=${
@@ -76,9 +67,94 @@ export const authorizationChecker = async (currentPath: string) => {
   }
 };
 
-export const handleUpdateUserProgress = async (upadatedUserData: User) => {
+export const handleUpdateBookmark = async (bookmarkedStories: string[]) => {
   try {
-    const response = await api.put("/user/progress", upadatedUserData);
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      redirect("/auth/login");
+    }
+    const bookmarkedStoriesAsString = bookmarkedStories.join(",");
+
+    const response = await api.put(`/user/${userId}`, {
+      bookmarks: bookmarkedStoriesAsString,
+    });
+
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to update user data" };
+    }
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+export const handleUpdateUserProgress = async (
+  upadatedUserProgress: UserProgress
+) => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    redirect("/auth/login");
+  }
+
+  console.log(upadatedUserProgress);
+
+  try {
+    const response = await api.put(`/user/${userId}`, upadatedUserProgress);
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    }
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+export const handleUnlockEpisode = async (
+  unlockedEpisodes: string[],
+  cost: number
+) => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    redirect("/auth/login");
+  }
+  const unlockedEpisodesAsString = unlockedEpisodes.join(",");
+
+  try {
+    const response = await api.put(`/user/${userId}`, {
+      unlockedEpisodes: unlockedEpisodesAsString,
+      points: cost,
+    });
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    }
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+export const handleFontSizeChange = async (fontSize: string) => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    redirect("/auth/login");
+  }
+  try {
+    const response = await api.put(`/user/${userId}`, { fontSize });
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    }
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+export const handleThemeChange = async (theme: string) => {
+  const userId = localStorage.getItem("userId");
+  if (!userId) {
+    return;
+  }
+  try {
+    const response = await api.put(`/user/${userId}`, { theme });
+
     if (response.status == 200 || response.status == 201) {
       return response.data;
     }

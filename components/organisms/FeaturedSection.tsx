@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
 import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
@@ -6,28 +7,37 @@ import { Story } from "@/constants/stories";
 import { fetchHomeData } from "@/services/story/storyActions";
 import HomeSkeleton from "../skeletons/HomeSkeleton";
 
-const FeaturedSection = async () => {
-  let featuredStories: Story[] = [];
-  let error: string | null = null;
+const FeaturedSection = () => {
+  // let featuredStories: Story[] = [];
+  // let error: string | null = null;
 
-  try {
-    const response = await fetchHomeData();
+  const [featuredStories, setFeaturedStories] = useState<Story[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-    if ("data" in response && response.data) {
-      featuredStories = response.data.featured || [];
-    } else if ("error" in response && response.error) {
-      console.error(
-        "API error:",
-        response.error.error,
-        "Code:",
-        response.error.code
-      );
-      error = response.error.error;
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    error = "Unexpected error occurred";
-  }
+  useEffect(() => {
+    const getFeaturedStories = async () => {
+      try {
+        const response = await fetchHomeData();
+
+        if ("data" in response && response.data) {
+          setFeaturedStories(response.data.featured || []);
+        } else if ("error" in response && response.error) {
+          console.error(
+            "API error:",
+            response.error.error,
+            "Code:",
+            response.error.code
+          );
+          setError(response.error.error);
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+        setError("An error occured while getting featured stories.");
+      }
+    };
+
+    getFeaturedStories();
+  }, []);
 
   // if (!featuredStories  || featuredStories .length === 0) {
   //   return (

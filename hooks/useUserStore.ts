@@ -1,8 +1,11 @@
 import { User, UserProgress } from "@/constants/stories";
 // import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
 import {
+  handleFontSizeChange,
   handleGetMe,
   handleLogin,
+  handleUnlockEpisode,
+  handleUpdateBookmark,
   handleUpdateUserProgress,
 } from "@/services/user/userAction";
 // import { User, UserProgress } from "@/stores/user/userTypes";
@@ -21,14 +24,21 @@ interface UserState {
     episodeId: string,
     progress: number
   ) => void;
-  toggleBookmark: (storyId: string) => void;
-  unlockEpisode: (episodeId: string, cost: number) => boolean;
+  toggleBookmark: (storyId: string) => Promise<boolean | undefined>;
+  unlockEpisode: (
+    storyId: string,
+    episodeId: string,
+    cost: number
+  ) => Promise<boolean>;
   getUserProgress: (
     storyId: string,
     episodeId: string
   ) => UserProgress | undefined;
   getStoryProgress: (storyId: string) => UserProgress[];
   isEpisodeUnlocked: (episodeId: string) => boolean;
+  updateFontSize: (
+    fontSize: "small" | "medium" | "large" | "extra-large"
+  ) => Promise<boolean | undefined>;
   getContinueReading: () => { storyId: string; episodeId: string } | null;
 }
 
@@ -92,14 +102,13 @@ export const useUserStore = create<UserState>((set, get) => ({
       return null;
     }
 
-    return response.User;
+    // return response.User;
   },
-
   updateProgress: (storyId, episodeId, progress) => {
     const { user } = get();
     if (!user) return;
 
-    const existingProgressIndex = user.progress.findIndex(
+    const existingIndex = user.progress.findIndex(
       (p) => p.storyId === storyId && p.episodeId === episodeId
     );
 
@@ -112,30 +121,68 @@ export const useUserStore = create<UserState>((set, get) => ({
     };
 
     let updatedProgress;
-    if (existingProgressIndex >= 0) {
+    if (existingIndex >= 0) {
       updatedProgress = [...user.progress];
-      updatedProgress[existingProgressIndex] = newProgress;
+      updatedProgress[existingIndex] = newProgress;
     } else {
       updatedProgress = [...user.progress, newProgress];
     }
-    const updatedUser = {
-      ...user,
-      progress: updatedProgress,
-    };
-    set({
-      user: updatedUser,
-    });
-    // TODO: send progress update to backend
-    setInterval(() => {
-      const response = handleUpdateUserProgress(updatedUser);
 
-      if ("error" in response) {
-        console.error("Failed to update user progress:", response.error);
-      }
-    }, 60000);
+    set({
+      user: {
+        ...user,
+        progress: updatedProgress,
+      },
+    });
+
+    // one-shot backend sync
+    handleUpdateUserProgress(newProgress).catch((err) =>
+      console.error("Failed to update progress:", err)
+    );
   },
 
-  toggleBookmark: (storyId) => {
+  // updateProgress: (storyId, episodeId, progress) => {
+  //   const { user } = get();
+  //   if (!user) return;
+
+  //   const existingProgressIndex = user.progress.findIndex(
+  //     (p) => p.storyId === storyId && p.episodeId === episodeId
+  //   );
+
+  //   const newProgress: UserProgress = {
+  //     storyId,
+  //     episodeId,
+  //     progress,
+  //     lastReadAt: new Date(),
+  //     isCompleted: progress >= 100,
+  //   };
+
+  //   let updatedProgress;
+  //   if (existingProgressIndex >= 0) {
+  //     updatedProgress = [...user.progress];
+  //     updatedProgress[existingProgressIndex] = newProgress;
+  //   } else {
+  //     updatedProgress = [...user.progress, newProgress];
+  //   }
+  //   const updatedUser = {
+  //     ...user,
+  //     progress: updatedProgress,
+  //   };
+
+  //   // TODO: send progress update to backend
+  //   setInterval(() => {
+  //     const response = handleUpdateUserProgress(newProgress);
+
+  //     if ("error" in response) {
+  //       console.error("Failed to update user progress:", response.error);
+  //     }
+  //   }, 2000);
+  //   set({
+  //     user: updatedUser,
+  //   });
+  // },
+
+  toggleBookmark: async (storyId) => {
     const { user } = get();
     if (!user) return;
 
@@ -144,52 +191,104 @@ export const useUserStore = create<UserState>((set, get) => ({
       ? user.bookmarks.filter((id) => id !== storyId)
       : [...user.bookmarks, storyId];
 
-    set({
-      user: {
-        ...user,
-        bookmarks: updatedBookmarks,
-      },
-    });
+    const updatedUser = {
+      ...user,
+      bookmarks: updatedBookmarks,
+    };
 
     // TODO: sync with backend
+    const response = await handleUpdateBookmark(updatedBookmarks);
+
+    if ("error" in response) {
+      console.error("Failed to update user data:", response.error);
+      return isBookmark;
+    }
+    if (response.success) {
+      set({
+        user: response.user,
+      });
+      return !isBookmark;
+    }
   },
 
-  unlockEpisode: (episodeId, cost) => {
+  unlockEpisode: async (storyId, episodeId, cost) => {
     const { user } = get();
     if (
       !user ||
-      user.points < cost ||
+      Number(user.points) < cost ||
       user.unlockedEpisodes.includes(episodeId)
     ) {
       return false;
     }
 
-    set({
-      user: {
-        ...user,
-        points: user.points - cost,
-        unlockedEpisodes: [...user.unlockedEpisodes, episodeId],
-      },
-    });
-
+    const updatedUnlockedEpisodes = [
+      ...user.unlockedEpisodes,
+      `${storyId}-${episodeId}`,
+    ];
     // TODO: sync with backend
+    const response = await handleUnlockEpisode(updatedUnlockedEpisodes, cost);
+    console.log(response);
+
+    if ("error" in response) {
+      console.error("Failed to update user data:", response.error);
+      return false;
+    }
+    if (response.success) {
+      set({
+        user: {
+          ...user, // RESPONSE FROM BACKEND
+          points: Number(user.points) - cost,
+          unlockedEpisodes: updatedUnlockedEpisodes,
+        },
+      });
+    }
+
     return true;
   },
 
   getUserProgress: (storyId, episodeId) => {
+    if (!get().user?.progress) return undefined;
     return get().user?.progress.find(
       (p) => p.storyId === storyId && p.episodeId === episodeId
     );
   },
 
   getStoryProgress: (storyId) => {
+    if (!get().user?.progress) return [];
     return get().user?.progress.filter((p) => p.storyId === storyId) || [];
   },
 
   isEpisodeUnlocked: (episodeId) => {
+    if (!get().user) return false;
     return get().user?.unlockedEpisodes.includes(episodeId) || false;
   },
 
+  updateFontSize: async (
+    fontSize: "small" | "medium" | "large" | "extra-large"
+  ) => {
+    const { user } = get();
+    if (!user) return;
+    const updatedUser = {
+      ...user,
+      preferences: {
+        ...user.preferences,
+        fontSize,
+      },
+    };
+
+    const res = await handleFontSizeChange(fontSize);
+    if ("data" in res) {
+      console.log(res);
+
+      set({
+        user: updatedUser,
+      });
+      return res.success;
+    } else if ("error" in res) {
+      console.error("Failed to update user data:", res.error);
+      return false;
+    }
+  },
   getContinueReading: () => {
     const { user } = get();
     if (!user || user.progress.length === 0) return null;

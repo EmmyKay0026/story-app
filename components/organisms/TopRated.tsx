@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
 import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
@@ -6,38 +7,74 @@ import { fetchHomeData } from "@/services/story/storyActions";
 import { Story } from "@/constants/stories";
 import HomeSkeleton from "../skeletons/HomeSkeleton";
 
-const TopRated = async () => {
-  let topRatedStories: Story[] = [];
-  let error: string | null = null;
+const TopRated = () => {
+  // let topRatedStories: Story[] = [];
+  // let error: string | null = null;
 
-  try {
-    const response = await fetchHomeData();
+  const [topRatedStories, setTopRatedStories] = useState<Story[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-    if ("data" in response && response.data) {
-      // Option A: Use trending stories directly
-      // topRatedStories = response.data.trending || []
+  useEffect(() => {
+    const getTopStories = async () => {
+      try {
+        const response = await fetchHomeData();
+        if ("data" in response && response.data) {
+          // Option A: Use trending stories directly
+          // topRatedStories = response.data.trending || []
+          // Option B: Sort all featured + trending by rating
+          const combined = [
+            ...(response.data.featured || []),
+            ...(response.data.trending || []),
+          ];
+          setTopRatedStories(
+            combined.sort((a, b) => b.rating - a.rating).slice(0, 6)
+          );
+        } else if ("error" in response && response.error) {
+          console.error(
+            "API error:",
+            response.error.error,
+            "Code:",
+            response.error.code
+          );
+          setError(response.error.error);
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+        setError("Unexpected error occurred");
+      }
+    };
 
-      // Option B: Sort all featured + trending by rating
-      const combined = [
-        ...(response.data.featured || []),
-        ...(response.data.trending || []),
-      ];
-      topRatedStories = combined
-        .sort((a, b) => b.rating - a.rating)
-        .slice(0, 6);
-    } else if ("error" in response && response.error) {
-      console.error(
-        "API error:",
-        response.error.error,
-        "Code:",
-        response.error.code
-      );
-      error = response.error.error;
-    }
-  } catch (err) {
-    console.error("Unexpected error:", err);
-    error = "Unexpected error occurred";
-  }
+    getTopStories();
+  }, []);
+
+  // try {
+  //   const response = await fetchHomeData();
+
+  //   if ("data" in response && response.data) {
+  //     // Option A: Use trending stories directly
+  //     // topRatedStories = response.data.trending || []
+
+  //     // Option B: Sort all featured + trending by rating
+  //     const combined = [
+  //       ...(response.data.featured || []),
+  //       ...(response.data.trending || []),
+  //     ];
+  //     topRatedStories = combined
+  //       .sort((a, b) => b.rating - a.rating)
+  //       .slice(0, 6);
+  //   } else if ("error" in response && response.error) {
+  //     console.error(
+  //       "API error:",
+  //       response.error.error,
+  //       "Code:",
+  //       response.error.code
+  //     );
+  //     error = response.error.error;
+  //   }
+  // } catch (err) {
+  //   console.error("Unexpected error:", err);
+  //   error = "Unexpected error occurred";
+  // }
 
   return (
     <section className="max-w-7xl mx-[1rem] md:mx-[3rem] lg:mx-[3rem] top-[20%] py-[3rem] mb-[4rem] px-[2rem] md:px-[3.5rem] bg-white dark:bg-black rounded-xl relative">

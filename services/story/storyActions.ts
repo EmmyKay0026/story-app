@@ -1,6 +1,7 @@
 import api from "../../stores/api";
 import axios from "axios";
-import { Story, Episode, ApiError } from "@/constants/stories";
+import { Story, ApiError, Episode } from "@/constants/stories";
+import { redirect } from "next/navigation";
 
 // Utility: formats error into ApiError shape
 export const formatError = (error: unknown): ApiError => {
@@ -31,18 +32,18 @@ export const fetchStories = async (
   limit = 10
 ): Promise<ApiResponse<{ stories: Story[]; pagination: any }>> => {
   try {
-    const response = await api.get<{
-      data: Story[];
-      pagination: { page: number; record_count: number; total_records: number };
-    }>("/stories", {
-      params: {
-        search,
-        tag,
-        limit_start: page,
-        limit_count: limit,
-      },
-    });
-
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/stories`,
+      {
+        params: {
+          search,
+          tag,
+          limit_start: page,
+          limit_count: limit,
+        },
+      }
+    );
+    // console.log(response);
     return {
       data: {
         stories: response.data.data,
@@ -59,11 +60,11 @@ export const fetchHomeData = async (): Promise<
   ApiResponse<{ featured: Story[]; trending: Story[]; categories: string[] }>
 > => {
   try {
-    const response = await api.get<{
+    const response = await axios.get<{
       featured: Story[];
       trending: Story[];
       categories: string[];
-    }>("/home");
+    }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/home`);
 
     return { data: response.data };
   } catch (error) {
@@ -120,7 +121,7 @@ export const fetchCategories = async (): Promise<
 
 // Client-side filtering helper
 export const filterStories = (
-  stories: Story[],
+  stories: Story[] = [],
   searchTerm: string,
   categories: string[]
 ): Story[] => {
@@ -166,6 +167,53 @@ export const filterStories = (
   return filtered;
 };
 
+//Get episode details
+export const fetchEpisodeDetails = async (
+  storyId: string,
+  episodeId: string
+): Promise<ApiResponse<Episode>> => {
+  try {
+    const response = await api.get<{ data: Episode }>(
+      `/stories/${storyId}/${episodeId}`
+    );
+
+    // console.log(response);
+
+    const episode = response.data.data;
+
+    return { data: episode };
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
+export const submitReview = async (
+  rating: number,
+  comment: string,
+  storyId: string
+) => {
+  try {
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      redirect("/auth/login");
+    }
+
+    const response = await api.post(`/reviews/${storyId}`, {
+      rating: rating,
+      comment: comment,
+      user: userId,
+    });
+
+    if (response.status == 200 || response.status == 201) {
+      return response.data;
+    } else {
+      return { error: "Failed to update user data" };
+    }
+  } catch (error) {
+    return { error: formatError(error) };
+  }
+};
+
 // Cover image utility
 export const getCoverImageUrl = (
   coverImage: string | { url: string } | undefined,
@@ -174,3 +222,17 @@ export const getCoverImageUrl = (
   if (typeof coverImage === "string") return coverImage;
   return coverImage?.url || fallback;
 };
+
+export function formatNumber(num: number): string {
+  if (num < 1000) {
+    return num.toString();
+  } else if (num < 1_000_000) {
+    return (num / 1000).toFixed(num % 1000 === 0 ? 0 : 1) + "k";
+  } else if (num < 1_000_000_000) {
+    return (num / 1_000_000).toFixed(num % 1_000_000 === 0 ? 0 : 1) + "M";
+  } else {
+    return (
+      (num / 1_000_000_000).toFixed(num % 1_000_000_000 === 0 ? 0 : 1) + "B"
+    );
+  }
+}

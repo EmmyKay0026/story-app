@@ -1,20 +1,23 @@
 "use client";
-
-import { useEffect, useState } from "react";
-import { Navigation } from "@/components/templates/NavigationMenu";
-import { Edit3, BookOpen, Bookmark, Coins, SunMoon, Box } from "lucide-react";
 import { Story } from "@/constants/stories";
-import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
-import { StoryCard } from "@/components/molecules/StoryCard";
-import Image from "next/image";
-// import { useUserStore } from "@/stores/user/userStore";
-import NoIndex from "@/components/atoms/NoIndex";
-import { fetchStories } from "@/services/story/storyActions";
-import { authorizationChecker } from "@/services/user/userAction";
-import { useUserStore } from "@/hooks/useUserStore";
 
-export default function ProfilePage() {
+import { useUserStore } from "@/hooks/useUserStore";
+import React, { useEffect, useState } from "react";
+import NoIndex from "../atoms/NoIndex";
+import Image from "next/image";
+import { Bookmark, BookOpen, Box, Coins, Edit3, SunMoon } from "lucide-react";
+import { StoryCard } from "../molecules/StoryCard";
+import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
+import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
+import { handleThemeChange } from "@/services/user/userAction";
+import { fetchStories } from "@/services/story/storyActions";
+
+const ProfileClient = () => {
+  // console.log(allStories);
+
   const user = useUserStore((state) => state.user);
+  const router = useRouter();
   // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   // const getMe = useUserStore((state) => state.getMe);
   // console.log(getMe);
@@ -25,27 +28,6 @@ export default function ProfilePage() {
   const [allStories, setAllStories] = useState<Story[] | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
-  // Redirect if not logged in
-  useEffect(() => {
-    authorizationChecker(window.location.pathname);
-    // const isAuthenticated = localStorage.getItem("userId") ? true : false;
-    // const phoneNumber = localStorage.getItem("userId");
-    // const fetchUserData = async () => {
-    //   if (phoneNumber) {
-    //     const res = await getMe(phoneNumber);
-    //     if (res === null) {
-    //       router.push("/auth/login");
-    //     }
-    //     setUser(res);
-    //   } else {
-    //     router.push("/auth/login");
-    //   }
-    //   return null;
-    // };
-    // fetchUserData();
-  }, []);
-
-  // Load theme on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedTheme =
@@ -57,51 +39,42 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const getStories = async () => {
-      const response = await fetchStories();
-
-      if ("data" in response && response.data) {
-        setAllStories(response.data.stories);
-      } else if ("error" in response && response.error) {
-        console.error(
-          "API error:",
-          response.error.error,
-          "Code:",
-          response.error.code
-        );
+      try {
+        const response = await fetchStories();
+        if ("data" in response && response.data) {
+          console.log(response);
+          setAllStories(response.data.stories);
+        } else if ("error" in response && response.error) {
+          console.error(
+            "API error:",
+            response.error.error,
+            "Code:",
+            response.error.code
+          );
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching stories:", err);
       }
     };
-
     getStories();
   }, []);
 
-  // Toggle theme
-  const toggleTheme = () => {
+  const toggleTheme = async () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("theme", newTheme);
-      if (newTheme === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
+    localStorage.setItem("theme", newTheme);
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
+    await handleThemeChange(newTheme);
   };
 
-  if (!user) return null;
-
-  // Story progress logic
-  if (!Array.isArray(user.progress)) {
-    user.progress = [
-      {
-        storyId: "3",
-        episodeId: "2",
-        progress: 60,
-        lastReadAt: new Date("2023-10-01T12:00:00Z"),
-        isCompleted: false,
-      },
-    ];
+  if (!user) {
+    router.push("/auth/login");
+    return null;
   }
   const storiesWithProgress = allStories
     ?.filter((story) => user?.progress.some((p) => p.storyId === story.id))
@@ -124,12 +97,10 @@ export default function ProfilePage() {
   const totalReads = completedStories.length + currentlyReading.length;
   const bookmarkStories =
     allStories?.filter((story) => user.bookmarks.includes(story.id)) ?? [];
+  // console.log(user.bookmarks, allStories);
 
-  if (!allStories) {
-    return <div>Loading...</div>;
-  }
   return (
-    <Navigation>
+    <>
       <NoIndex />
       <section className="relative max-w-4xl mx-auto min-h-screen">
         {/* Cover Banner */}
@@ -178,7 +149,7 @@ export default function ProfilePage() {
             {
               icon: SunMoon,
               label: "Mode",
-              value: localStorage.getItem("theme") || "Light",
+              value: theme,
             },
           ].map((stat, idx) => (
             <div
@@ -240,7 +211,7 @@ export default function ProfilePage() {
 
           {activeTab === "bookmark" && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {bookmarkStories.length > 0 ? (
+              {bookmarkStories?.length > 0 ? (
                 bookmarkStories.map((item, index) => (
                   <StoryCard story={item} key={(item.id, index)} />
                 ))
@@ -254,6 +225,8 @@ export default function ProfilePage() {
           )}
         </div>
       </section>
-    </Navigation>
+    </>
   );
-}
+};
+
+export default ProfileClient;

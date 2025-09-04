@@ -101,9 +101,9 @@ export default function MyReadsPage() {
   }, 0);
 
   return (
-    <Navigation>
+    <>
       <NoIndex />
-      <div className="max-w-7xl mx-auto p-4 lg:p-6">
+      <div className="max-w-7xl mx-auto w-full p-4 lg:p-6">
         {/* Header */}
         <div className="flex items-center gap-3 mb-8">
           <BookOpen className="w-8 h-8 text-primary" />
@@ -292,6 +292,6 @@ export default function MyReadsPage() {
           </>
         )}
       </div>
-    </Navigation>
+    </>
   );
 }

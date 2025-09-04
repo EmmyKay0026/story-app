@@ -81,7 +81,7 @@ StoryCardProps) {
             </button> */}
           </div>
 
-          <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed line-clamp-4">
+          <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed line-clamp-3">
             {story.description}
           </p>
 

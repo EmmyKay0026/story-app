@@ -108,7 +108,7 @@ const NavBar = () => {
               </Link>
             </div>
           </ul>
-          <h2 className=" absolute z-20 w-full bottom-0 text-transparent text-center text-[3rem] md:text-[5rem] font-bold opacity-50 my-0 mt-8 bg-clip-text bg-gradient-to-r from-faded-primary to-primary dark:from-dark-primary dark:to-primary">
+          <h2 className=" fixed z-20 w-full bottom-0 text-transparent text-center text-[3rem] md:text-[5rem] font-bold opacity-50 my-0 mt-8 bg-clip-text bg-gradient-to-r from-faded-primary to-primary dark:from-dark-primary dark:to-primary">
             Story App
           </h2>
         </article>

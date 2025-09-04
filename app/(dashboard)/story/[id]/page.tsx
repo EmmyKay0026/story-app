@@ -10,11 +10,12 @@ import { useRouter, useParams } from "next/navigation";
 // import { useUserStore } from "@/hooks/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
 import { fetchStoryDetails } from "@/services/story/storyActions"; // ✅ import your API
-
 import { Story } from "@/constants/stories";
 import { authorizationChecker } from "@/services/user/userAction";
 // import { fetchStories } from "@/services/story/storyActions";
 import { useUserStore } from "@/hooks/useUserStore";
+import PageLoader from "@/components/atoms/PageLoader";
+import Button from "@/components/atoms/Button";
 // import { useUserStore } from "@/hooks/store";
 // import { useUserStore } from "@/stores/user/userStore";
 // import { calculateStoryProgress } from "@/utils/storyUtils";
@@ -29,15 +30,21 @@ const StoryDetailPage = () => {
   const { id } = useParams<{ id: string }>(); // ✅ get story ID from route
   const user = useUserStore((state) => state.user);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const toggleBookmark = useUserStore((state) => state.toggleBookmark);
+  const isBookmark = (user?.bookmarks ?? []).includes(id) || false;
+
   const router = useRouter();
 
   const [story, setStory] = useState<Story | null>(null);
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
+  const [bookmarkIsLoading, setBookmarkIsLoading] = useState(false);
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
+  }, []);
 
+  useEffect(() => {
     const loadStory = async () => {
       setLoading(true);
       const response = await fetchStoryDetails(id);
@@ -54,13 +61,20 @@ const StoryDetailPage = () => {
     if (id) loadStory();
   }, [id, isAuthenticated, router]);
 
+  const handleBookmarkToggle = async (id: string) => {
+    setBookmarkIsLoading(true);
+
+    await toggleBookmark(id);
+
+    setBookmarkIsLoading(false);
+  };
   if (!isAuthenticated || !user) return null;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <p>Loading story...</p>
-      </div>
+      <section className="relative w-full h-screen flex justify-center items-center">
+        <PageLoader />
+      </section>
     );
   }
 
@@ -77,7 +91,7 @@ const StoryDetailPage = () => {
   };
 
   return (
-    <Navigation>
+    <>
       <NoIndex />
       <section className="relative max-w-4xl mx-auto">
         <div
@@ -88,7 +102,7 @@ const StoryDetailPage = () => {
         />
         <div className="relative pt-[29vh] w-full">
           <article className="relative px-4 sm:px-6 lg:px-8 text-fg-dark dark:text-fg z-10 mb-8">
-            <div className="flex items-center mb-2 gap-5">
+            {/* <div className="flex items-center mb-2 gap-5">
               <div className="flex items-center gap-1 text-[#c3c3c3]">
                 <Bookmark className="w-4 h-4" />
                 <span className="font-thin">{story.rating}k</span>
@@ -101,11 +115,21 @@ const StoryDetailPage = () => {
                 <Eye className="w-4 h-4" />
                 <span className="font-thin">{story.rating}k</span>
               </div>
+            </div> */}
+            <div className="flex items-center gap-8 mb-2">
+              <h2 className="text-3xl font-semibold  dark:text-fg-dark">
+                {story.title}
+              </h2>
+              <Bookmark
+                onClick={() => handleBookmarkToggle(id)}
+                className={`w-7 h-7 cursor-pointer ${
+                  isBookmark
+                    ? "fill-white text-white dark:text-white dark:fill-white"
+                    : "text-white dark:text-gray-300"
+                }`}
+              />
             </div>
-
-            <h2 className="text-3xl font-semibold mb-2 dark:text-fg-dark">
-              {story.title}
-            </h2>
+            <div className="flex items-center gap-4 mb-4"></div>
             <div className="hidden md:block">
               <p className="line-clamp-3 text-[15px] mb-4 dark:text-fg-dark">
                 {story.description}
@@ -199,7 +223,7 @@ const StoryDetailPage = () => {
           </article>
         </div>
       </section>
-    </Navigation>
+    </>
   );
 };
 

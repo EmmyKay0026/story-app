@@ -16,7 +16,7 @@ const PreferencesSetting = () => {
         <Settings className="w-5 h-5 cursor-pointer" />
       </button>
       {showPreferences && (
-        <article className="fixed h-screen inset-0 bg-black/50  z-50 flex items-center justify-center p-4">
+        <article className="fixed h-screen inset-0 bg-black/90   z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <div className="flex  justify-between mb-4">
               <div className="">

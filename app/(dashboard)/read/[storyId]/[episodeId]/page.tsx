@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Star } from "lucide-react";
+// import { Episode, mockStories } from "@/constants/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   estimateTimeRemaining,
@@ -13,15 +14,23 @@ import {
 import { useFontSizeStore } from "@/hooks/store";
 import PreferencesSetting from "@/components/molecules/PreferencesSetting";
 import { useUserStore } from "@/hooks/useUserStore";
-import { fetchStoryDetails, fetchEpisode } from "@/services/story/storyActions"; 
+import {
+  fetchStoryDetails,
+  fetchEpisode,
+  fetchEpisodeDetails,
+  submitReview,
+} from "@/services/story/storyActions";
 import { Story, Episode, ApiError } from "@/constants/stories"; // ✅ adjust paths if needed
+import { authorizationChecker } from "@/services/user/userAction";
+import { debounce } from "@/utils/debounce";
 
 interface EpisodeReaderProps {
-  params: Promise<{ storyId: string; episodeId: string }>;
+  params: Promise<{ episodeId: string; storyId: string }>;
 }
 
 export default function EpisodeReader({ params }: EpisodeReaderProps) {
-  const { storyId, episodeId } = React.use(params);
+  const { episodeId, storyId } = React.use(params);
+  // const { dynamicSlug } = React.use(params);
 
   const user = useUserStore((state) => state.user);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
@@ -37,13 +46,23 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // const [storyId, setStoryId] = useState<string | null>(null);
+  // const [episodeId, setEpisodeId] = useState<string | null>(null);
 
   const [readingProgress, setReadingProgress] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showRating, setShowRating] = useState(false);
-  const [userRating, setUserRating] = useState(0);
+  const [userRating, setUserRating] = useState<number>(0);
+  const [reviewComment, setReviewComment] = useState<string>("");
   const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
 
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
+  // const episodeId = dynamicSlug;
+  // const [story_Id, episodeId] = dynamicSlug.split("-");
+  // setStoryId(story_id);
+  // setEpisodeId(episode_id);
   // ✅ Fetch story + episode
   useEffect(() => {
     async function loadEpisodeAndStory() {
@@ -62,23 +81,32 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
     loadEpisodeAndStory();
   }, [storyId, episodeId]);
 
-
-
   // ✅ Redirect if not logged in
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
-  }, [isAuthenticated, router]);
+
+  // useEffect(() => {
+  //   const fetchEpisode = async () => {
+  //     const episode = await fetchEpisodeDetails("2", episodeId);
+  //     setEpisode(episode.data || null);
+  //     setLoading(false);
+  //     console.log(episode);
+  //   };
+
+  //   fetchEpisode();
+  // }, []);
 
   // ✅ Track scroll progress
   useEffect(() => {
     if (!episode || !user) return;
 
-    const handleScroll = () => {
-      if (!contentRef.current) return;
+    const container = contentRef.current;
+    if (!container) return;
 
-      const container = contentRef.current;
+    // Debounced backend update
+    const debouncedUpdate = debounce((progress: number) => {
+      updateProgress(storyId, episode.id, Math.ceil(progress));
+    }, 1500); // 1.5s after scrolling stops
+
+    const handleScroll = () => {
       const scrollTop = container.scrollTop;
       const scrollHeight = container.scrollHeight - container.clientHeight;
       const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
@@ -90,23 +118,54 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
       );
       setTimeRemaining(estimateTimeRemaining(remainingContent, 0));
 
-      clearTimeout(
-        (window as unknown as { progressTimeout?: NodeJS.Timeout })
-          .progressTimeout
-      );
-      (
-        window as unknown as { progressTimeout?: NodeJS.Timeout }
-      ).progressTimeout = setTimeout(() => {
-        updateProgress(storyId, episode.id, Math.ceil(progress));
-      }, 1000);
+      // Trigger debounced backend update
+      debouncedUpdate(progress);
     };
 
-    const container = contentRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
-    }
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [episode, user, storyId, updateProgress]);
+  // useEffect(() => {
+  //   if (!episode || !user) return;
+
+  //   const handleScroll = () => {
+  //     if (!contentRef.current) return;
+
+  //     // Debounced backend update
+  //     const debouncedUpdate = debounce((progress: number) => {
+  //       updateProgress(storyId, episode.id, Math.ceil(progress));
+  //     }, 1500);
+
+  //     const container = contentRef.current;
+  //     const scrollTop = container.scrollTop;
+  //     const scrollHeight = container.scrollHeight - container.clientHeight;
+  //     const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+  //     updateProgress(storyId, episode.id, Math.ceil(progress));
+  //     setReadingProgress(Math.min(100, Math.max(0, progress)));
+
+  //     const remainingContent = episode.content.slice(
+  //       Math.round((progress / 100) * episode.content.length)
+  //     );
+  //     setTimeRemaining(estimateTimeRemaining(remainingContent, 0));
+
+  //     clearTimeout(
+  //       (window as unknown as { progressTimeout?: NodeJS.Timeout })
+  //         .progressTimeout
+  //     );
+  //     (
+  //       window as unknown as { progressTimeout?: NodeJS.Timeout }
+  //     ).progressTimeout = setTimeout(() => {
+  //       updateProgress(storyId, episode.id, Math.ceil(progress));
+  //     }, 1000);
+  //   };
+  //
+  //   const container = contentRef.current;
+  //   if (container) {
+  //     container.addEventListener("scroll", handleScroll);
+  //     return () => container.removeEventListener("scroll", handleScroll);
+  //   }
+  // }, [episode, user, storyId]);
 
   if (loading) return <p className="p-6">Loading episode...</p>;
   if (error) return <p className="p-6 text-red-500">Error: {error}</p>;
@@ -132,7 +191,6 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
   //   console.log("Balance:", balance, typeof balance, "Cost:", cost, typeof cost);
 
-
   //   if (balance < cost) {
   //     alert("Not enough points to unlock this episode!");
   //     return;
@@ -145,13 +203,11 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   //   }
   // };
 
-
   const handleNextEpisode = () => {
     if (nextEpisode) {
-      router.push(`/read/${nextEpisode.id}`);
+      router.push(`/read/${story.id}/${nextEpisode.id}`);
     }
   };
-
 
   // const handleNextEpisode = () => {
   //   if (nextEpisode) {
@@ -166,14 +222,22 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
   const handlePreviousEpisode = () => {
     if (previousEpisode) {
-      router.push(`/read/${previousEpisode.id}`);
+      router.push(`/read/${story.id}/${previousEpisode.id}`);
     }
   };
 
-  const submitRating = (rating: number) => {
+  const submitRating = async (rating: number) => {
     setUserRating(rating);
+    console.log("Rating:", rating);
+
+    console.log("Comment:", reviewComment);
+
     setShowRating(false);
     // In a real app, you'd save this rating to the backend
+
+    const res = await submitReview(rating, reviewComment, story.id);
+
+    console.log(res);
   };
 
   return (
@@ -207,6 +271,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 <span>{Math.round(readingProgress)}% complete</span>
                 <span>{formatReadTime(timeRemaining)} left</span>
               </div>
+
               <PreferencesSetting />
             </div>
           </div>
@@ -250,7 +315,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
             {/* Episode Content */}
             <article className="reading-content text-gray-900 dark:text-gray-100 leading-read">
-              {episode.content.split("\n\n").map((paragraph, index) => (
+              {episode.content.split("\n").map((paragraph, index) => (
                 <p key={index} className={`mb-6 ${fontSize}`}>
                   {paragraph.trim()}
                 </p>
@@ -381,6 +446,12 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 ))}
               </div>
               <textarea
+                name="review"
+                id="review"
+                value={reviewComment}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setReviewComment(e.target.value)
+                }
                 className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg mb-4 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                 placeholder="Leave a comment (optional)"
               />
@@ -389,7 +460,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   onClick={() => setShowRating(false)}
                   className="flex-1 cursor-pointer  py-2 px-4 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  Skip
+                  Cancel
                 </button>
                 <button
                   onClick={() => submitRating(userRating || 5)}

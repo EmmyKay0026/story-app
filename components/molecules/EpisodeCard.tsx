@@ -26,27 +26,42 @@ const EpisodeCard = ({
   const router = useRouter();
   // const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
+
   const handleEpisodeClick = (
     episodeId: string,
     isPremium: boolean
     // pointsCost: number
   ) => {
-    const isUnlocked = isEpisodeUnlocked(episodeId);
+    const isUnlocked = isEpisodeUnlocked(`${story.id}-${episodeId}`);
 
     if (!isPremium || isUnlocked) {
-      router.push(`/read/${episodeId}`);
+      router.push(`/read/${story.id}/${episodeId}`);
     } else {
       setSelectedEpisode(episodeId);
       // setShowUnlockModal(true);
     }
   };
 
-
-  const handleUnlockEpisode = () => {
+  const handleUnlockEpisode = async (episodeCost: number) => {
     if (!selectedEpisode) return;
-    router.push(`/read/${selectedEpisode}`);
+
+    const response = await unlockEpisode(
+      story.id,
+      selectedEpisode,
+      episodeCost
+    );
+    console.log(response);
+
+    if (!response) {
+      alert("Not enough points to unlock this episode!");
+      return;
+    }
+    router.push(`/read/${story.id}/${selectedEpisode}`);
   };
 
+  const getEpisodeById = (episodeId: string) => {
+    return story.episodes.find((ep) => ep.id === episodeId);
+  };
   // const handleUnlockEpisode = () => {
   //   if (!selectedEpisode) return;
 
@@ -66,7 +81,7 @@ const EpisodeCard = ({
     <>
       <div className="space-y-4 md:w-full">
         {story.episodes.map((episode) => {
-          const isUnlocked = isEpisodeUnlocked(episode.id);
+          const isUnlocked = isEpisodeUnlocked(`${story.id}-${episode.id}`);
           const progress = getUserProgress(story.id, episode.id);
           const canRead = !episode.isPremium || isUnlocked;
 
@@ -155,9 +170,7 @@ const EpisodeCard = ({
           );
         })}
       </div>
-
       {/* Unlock Modal */}
-      {/* showUnlockModal &&  */}
       {selectedEpisode && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
@@ -197,20 +210,26 @@ const EpisodeCard = ({
             </div>
 
             <div className="flex gap-3">
-              {/* <button
-                onClick={() => setShowUnlockModal(false)}
+              <button
+                onClick={() => setSelectedEpisode(null)}
                 className="flex-1 py-2 px-4 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 Cancel
-              </button> */}
+              </button>
               <button
-                onClick={() => handleUnlockEpisode()}
-                // disabled={(() => {
-                //   const episode = story.episodes.find(
-                //     (ep) => ep.id === selectedEpisode
-                //   );
-                //   return !episode || (user?.points ?? 0) < episode.pointsCost;
-                // })()}
+                onClick={() =>
+                  handleUnlockEpisode(
+                    getEpisodeById(selectedEpisode)?.pointsCost || 0
+                  )
+                }
+                disabled={(() => {
+                  const episode = story.episodes.find(
+                    (ep) => ep.id === selectedEpisode
+                  );
+                  return (
+                    !episode || (Number(user?.points) ?? 0) < episode.pointsCost
+                  );
+                })()}
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >
                 Unlock Episode
