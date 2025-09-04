@@ -162,20 +162,19 @@ export default function LibraryClient() {
     const searchTerm = e.target.value;
     setSearchTerm(searchTerm);
 
-    const params = new URLSearchParams(window.location.search);
-    if (selectedCategory) {
-      params.set("category", selectedCategory);
-    }
-    if (searchTerm) {
-      params.set("q", searchTerm);
-    } else {
-      params.delete("q"); // remove query param if input is cleared
-    }
-
-    // ✅ Push only once
-    router.push(`?${params.toString()}`, { scroll: false });
+    // Auto-trigger category change if ≥ 3 letters match
+    if (searchTerm.length >= 3) {
+      const match = categories.find((c) =>
+        c.label.toLowerCase().startsWith(searchTerm.toLowerCase())
+      );
+      if (match) {
+        handleCategoryChange(match);
+      }
+    } 
+    // else {
+    //   handleCategoryChange(null);
+    // }
   };
-
 
 
   const filteredStories = useMemo(
