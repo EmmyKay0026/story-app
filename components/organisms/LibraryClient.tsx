@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BookCopy, Box, Search, AlertCircle } from "lucide-react";
 import { authorizationChecker } from "@/services/user/userAction";
-import { Story, ApiError } from "@/constants/stories";
+import { Story, ApiError } from "@/types/stories";
 import { StoryCard } from "@/components/molecules/StoryCard";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";

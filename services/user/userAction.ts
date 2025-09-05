@@ -1,9 +1,9 @@
-import { User, UserProgress } from "@/constants/stories";
+import { User, UserProgress } from "@/types/stories";
 import api, { formatError } from "../../stores/api";
 import axios from "axios";
 // import { useUserStore } from "@/stores/user/userStore";
 import { redirect } from "next/navigation";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { convertDateFormat } from "@/utils/dateTimeConverter";
 // import { useUserStore } from "@/hooks/userStore";
 

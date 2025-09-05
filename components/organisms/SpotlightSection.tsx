@@ -1,36 +1,23 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import DetailsCard from "../molecules/DetailsCard";
-import { Story } from "@/constants/stories";
-import { fetchHomeData } from "@/services/story/storyActions";
+import { Story } from "@/types/stories";
 
-const SpotlightSection = () => {
+const SpotlightSection = ({
+  featuredStories,
+  error,
+}: {
+  featuredStories: Story[];
+  error: string | null;
+}) => {
   // let spotlightStory: Story | null = null;
   // let error: string | null = null;
 
   const [spotlightStory, setSpotlightStory] = useState<Story | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getSpotlightSection = async () => {
-      try {
-        const response = await fetchHomeData();
-        if ("data" in response && response.data) {
-          // Pick the first featured story as spotlight
-          setSpotlightStory(response.data.featured?.[0] ?? null);
-        } else if ("error" in response && response.error) {
-          console.error(
-            "API error:",
-            response.error.error,
-            "Code:",
-            response.error.code
-          );
-          setError(response.error.error);
-        }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        setError("Unexpected error occurred");
-      }
+      setSpotlightStory(featuredStories[0] ?? null);
     };
 
     getSpotlightSection();

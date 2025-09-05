@@ -1,9 +1,13 @@
 "use client";
-import { ALLCATEGORIES } from "@/constants/stories";
+// import { ALLCATEGORIES } from "@/types/stories";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const Footer = () => {
+const Footer = ({
+  categories,
+}: {
+  categories: { label: string; value: string }[];
+}) => {
   const [name, setName] = useState("");
   return (
     <footer className="dark:bg-gray-900 dark:text-gray-500 py-12 px-12  pb-0 w-full bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)] dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)]">
@@ -59,7 +63,7 @@ const Footer = () => {
               Genres
             </h4>
             <ul className="space-y-2">
-              {ALLCATEGORIES.slice(0, 4).map((category) => (
+              {categories.slice(0, 4).map((category) => (
                 <li key={category.value}>
                   <Link
                     href={`/library?tag=${category.value}`}

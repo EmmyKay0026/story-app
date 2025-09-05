@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Book, Phone, ArrowRight } from "lucide-react";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import PageLoader from "@/components/atoms/PageLoader";
 // import { useUserStore } from "@/stores/user/userStore";
 
@@ -207,7 +207,6 @@ export default function Login() {
                 <li>• Enter any phone number to econtinue</li>
                 <li>• You&apos;ll start with 100 points</li>
                 <li>• Premium episodes cost 6-12 points</li>
-                <li>• All preferences are saved locally</li>
               </ul>
             </div>
           </div>

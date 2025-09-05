@@ -1,42 +1,46 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
-import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
-import { Story } from "@/constants/stories";
-import { fetchHomeData } from "@/services/story/storyActions";
+import { StoryCard } from "@/components/molecules/StoryCard";
+import { Story } from "@/types/stories";
 
-const FeaturedSection = () => {
+const FeaturedSection = ({
+  featuredStories,
+  error,
+}: {
+  featuredStories: Story[];
+  error: string | null;
+}) => {
   // let featuredStories: Story[] = [];
   // let error: string | null = null;
 
-  const [featuredStories, setFeaturedStories] = useState<Story[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  // const [featuredStories, setFeaturedStories] = useState<Story[]>([]);
+  // const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getFeaturedStories = async () => {
-      try {
-        const response = await fetchHomeData();
+  // useEffect(() => {
+  //   const getFeaturedStories = async () => {
+  //     try {
+  //       const response = await fetchHomeData();
 
-        if ("data" in response && response.data) {
-          setFeaturedStories(response.data.featured || []);
-        } else if ("error" in response && response.error) {
-          console.error(
-            "API error:",
-            response.error.error,
-            "Code:",
-            response.error.code
-          );
-          setError(response.error.error);
-        }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        setError("An error occured while getting featured stories.");
-      }
-    };
+  //       if ("data" in response && response.data) {
+  //         setFeaturedStories(response.data.featured || []);
+  //       } else if ("error" in response && response.error) {
+  //         console.error(
+  //           "API error:",
+  //           response.error.error,
+  //           "Code:",
+  //           response.error.code
+  //         );
+  //         setError(response.error.error);
+  //       }
+  //     } catch (err) {
+  //       console.error("Unexpected error:", err);
+  //       setError("An error occured while getting featured stories.");
+  //     }
+  //   };
 
-    getFeaturedStories();
-  }, []);
+  //   getFeaturedStories();
+  // }, []);
 
   return (
     <div className="px-[1rem] md:px-[3rem]">
@@ -58,7 +62,7 @@ const FeaturedSection = () => {
                 key={story.id}
                 className="group"
               >
-                <StoryCardV2
+                <StoryCard
                   story={story}
                   showProgress={false}
                   showDescription={false}

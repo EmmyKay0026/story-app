@@ -1,4 +1,4 @@
-import { User, UserProgress } from "@/constants/stories";
+import { User, UserProgress } from "@/types/stories";
 // import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
 import {
   handleFontSizeChange,
@@ -79,6 +79,8 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   logout: () => {
+    localStorage.removeItem("theme");
+    localStorage.removeItem("fontSize");
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
     set({ user: null, isAuthenticated: false });

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Story } from "@/constants/stories";
+import { Story } from "@/types/stories";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 
 interface StoryCardProps {
@@ -10,9 +10,7 @@ interface StoryCardProps {
 
 export default function HeroCard({ story }: StoryCardProps) {
   return (
-    <div
-      className="relative cursor-pointer w-full h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition group"
-    >
+    <div className="relative cursor-pointer w-full h-full rounded-xl overflow-hidden shadow-md hover:shadow-xl transition group">
       {/* Background Image */}
       <Image
         src={getCoverImageUrl(story.coverImage)}

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import { handleThemeChange } from "@/services/user/userAction";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 export const ThemeToggle = () => {
   const user = useUserStore((state) => state.user);

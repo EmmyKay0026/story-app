@@ -2,45 +2,31 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
-import { StoryCard as StoryCardV2 } from "@/components/molecules/StoryCard";
-import { fetchHomeData } from "@/services/story/storyActions";
-import { Story } from "@/constants/stories";
+import { StoryCard } from "@/components/molecules/StoryCard";
+import { FetchedResponse, Story } from "@/types/stories";
 
-const TopRated = () => {
+const TopRated = ({
+  fetchedData,
+  error,
+}: {
+  fetchedData: FetchedResponse;
+  error: string | null;
+}) => {
   // let topRatedStories: Story[] = [];
   // let error: string | null = null;
 
   const [topRatedStories, setTopRatedStories] = useState<Story[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const getTopStories = async () => {
-      try {
-        const response = await fetchHomeData();
-        if ("data" in response && response.data) {
-          // Option A: Use trending stories directly
-          // topRatedStories = response.data.trending || []
-          // Option B: Sort all featured + trending by rating
-          const combined = [
-            ...(response.data.featured || []),
-            ...(response.data.trending || []),
-          ];
-          setTopRatedStories(
-            combined.sort((a, b) => b.rating - a.rating).slice(0, 6)
-          );
-        } else if ("error" in response && response.error) {
-          console.error(
-            "API error:",
-            response.error.error,
-            "Code:",
-            response.error.code
-          );
-          setError(response.error.error);
-        }
-      } catch (err) {
-        console.error("Unexpected error:", err);
-        setError("Unexpected error occurred");
-      }
+      const combined = [
+        ...(fetchedData.featured || []),
+        ...(fetchedData.trending || []),
+      ];
+      setTopRatedStories(
+        combined.sort((a, b) => b.rating - a.rating).slice(0, 6)
+      );
     };
 
     getTopStories();
@@ -96,7 +82,7 @@ const TopRated = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {topRatedStories.map((story) => (
             <Link href={`/story/${story.id}`} key={story.id} className="group">
-              <StoryCardV2
+              <StoryCard
                 story={story}
                 showProgress={false}
                 showDescription={false}

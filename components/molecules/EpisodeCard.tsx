@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { Story } from "@/constants/stories";
+import { Story } from "@/types/stories";
 import { formatReadTime } from "@/utils/storyUtils";
 import { Clock, Lock } from "lucide-react";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 // import { useUserStore } from "@/stores/user/userStore";
 
 const EpisodeCard = ({

@@ -1,6 +1,6 @@
 import api from "../../stores/api";
 import axios from "axios";
-import { Story, ApiError, Episode } from "@/constants/stories";
+import { Story, ApiError, Episode } from "@/types/stories";
 import { redirect } from "next/navigation";
 
 // Utility: formats error into ApiError shape

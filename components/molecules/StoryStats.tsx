@@ -1,4 +1,4 @@
-import { Story } from "@/constants/stories";
+import { Story } from "@/types/stories";
 import { formatReadTime } from "@/utils/storyUtils";
 import { BookOpen, Clock, Star } from "lucide-react";
 import React from "react";

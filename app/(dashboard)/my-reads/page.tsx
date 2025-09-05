@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
-import { Episode, Story, UserProgress } from "@/constants/stories";
+import { Episode, Story, UserProgress } from "@/types/stories";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   calculateStoryProgress,
@@ -15,7 +15,7 @@ import { StoryCard } from "@/components/molecules/StoryCard";
 // import { useUserStore } from "@/stores/user/userStore";
 import { authorizationChecker } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   // convertDateFormat,
   convertDateToDateType,

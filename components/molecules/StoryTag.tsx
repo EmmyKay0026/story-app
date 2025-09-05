@@ -1,4 +1,4 @@
-import { Story } from "@/constants/stories";
+import { Story } from "@/types/stories";
 import Link from "next/link";
 import React from "react";
 
@@ -12,7 +12,6 @@ const StoryTag = ({ story }: { story: Story }) => {
       {story.category?.label && (
         <span className="inline-block px-3 py-1 bg-[#ccffd0c5] dark:bg-faded-primary text-primary dark:text-dark-primary text-sm font-medium rounded-full">
           {story.category?.label}
- 
         </span>
       )}
 

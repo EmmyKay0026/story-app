@@ -1,40 +1,42 @@
 "use client";
 import Link from "next/link";
-import { fetchCategories } from "@/services/story/storyActions";
-import { useEffect, useState } from "react";
 
-export default function Tags() {
+export default function Tags({
+  categories,
+}: {
+  categories: { label: string; value: string }[];
+}) {
   // let categories: { label: string; value: string }[] = [];
 
-  const [categories, setCategories] = useState<
-    { label: string; value: string }[]
-  >([]);
+  // const [categories, setCategories] = useState<
+  //   { label: string; value: string }[]
+  // >([]);
   // const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getSpotlightSection = async () => {
-      try {
-        const categoriesResponse = await fetchCategories();
-        if (
-          "data" in categoriesResponse &&
-          Array.isArray(categoriesResponse.data)
-        ) {
-          setCategories(categoriesResponse.data);
-        } else {
-          console.error(
-            "API error fetching categories:",
-            "error" in categoriesResponse ? categoriesResponse.error : "No data"
-          );
-          setCategories([]); // fallback
-        }
-      } catch (err) {
-        console.error("Unexpected error fetching categories:", err);
-        setCategories([]); // fallback
-      }
-    };
+  // useEffect(() => {
+  //   const getCategories = async () => {
+  //     try {
+  //       const categoriesResponse = await fetchCategories();
+  //       if (
+  //         "data" in categoriesResponse &&
+  //         Array.isArray(categoriesResponse.data)
+  //       ) {
+  //         setCategories(categoriesResponse.data);
+  //       } else {
+  //         console.error(
+  //           "API error fetching categories:",
+  //           "error" in categoriesResponse ? categoriesResponse.error : "No data"
+  //         );
+  //         setCategories([]); // fallback
+  //       }
+  //     } catch (err) {
+  //       console.error("Unexpected error fetching categories:", err);
+  //       setCategories([]); // fallback
+  //     }
+  //   };
 
-    getSpotlightSection();
-  }, []);
+  //   getCategories();
+  // }, []);
 
   // ✅ Fetch categories (same pattern as LibraryPage)
   // try {

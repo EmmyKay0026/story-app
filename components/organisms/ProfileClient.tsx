@@ -1,7 +1,7 @@
 "use client";
-import { Story } from "@/constants/stories";
+import { Story } from "@/types/stories";
 
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import React, { useEffect, useState } from "react";
 import NoIndex from "../atoms/NoIndex";
 import Image from "next/image";

@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
-import { Story } from "@/constants/stories";
+import { Story } from "@/types/stories";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import Link from "next/link";
 import NoIndex from "@/components/atoms/NoIndex";
 import { authorizationChecker } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 
 export default function BookmarksPage() {
   const user = useUserStore((state) => state.user);

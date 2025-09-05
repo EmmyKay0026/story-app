@@ -11,7 +11,6 @@ const config = {
         userAgent: "*",
         disallow: [
           "/login",
-          "/signup",
           "/bookmark",
           "/my-reads",
           "/profile",

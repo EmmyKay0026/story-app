@@ -13,14 +13,14 @@ import {
 } from "@/utils/storyUtils";
 import { useFontSizeStore } from "@/hooks/store";
 import PreferencesSetting from "@/components/molecules/PreferencesSetting";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import {
   fetchStoryDetails,
   fetchEpisode,
   // fetchEpisodeDetails,
   submitReview,
 } from "@/services/story/storyActions";
-import { Story, Episode } from "@/constants/stories"; // ✅ adjust paths if needed
+import { Story, Episode } from "@/types/stories"; // ✅ adjust paths if needed
 import { authorizationChecker } from "@/services/user/userAction";
 import { debounce } from "@/utils/debounce";
 import PageLoader from "@/components/atoms/PageLoader";

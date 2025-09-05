@@ -1,7 +1,7 @@
 "use client";
 
-import { Story } from "@/constants/stories";
-import { useUserStore } from "@/hooks/useUserStore";
+import { Story } from "@/types/stories";
+import { useUserStore } from "@/stores/useUserStore";
 // import { useUserStore } from "@/stores/user/userStore";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";

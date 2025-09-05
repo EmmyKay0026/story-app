@@ -14,8 +14,8 @@ import {
 
 // import { useUserStore } from "@/stores/user/userStore";
 import { useEffect, useState } from "react";
-import { User } from "@/constants/stories";
-import { useUserStore } from "@/hooks/useUserStore";
+import { User } from "@/types/stories";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface NavigationProps {
   children: React.ReactNode;
@@ -147,7 +147,8 @@ export function Navigation({ children }: NavigationProps) {
                     {user.points} Points
                   </div>
                   <Link
-                    href="/subscription"
+                    href="tel:*2345#"
+                    target="_blank"
                     className="text-xs text-amber-600 hover:text-amber-700 dark:text-yellow-400 dark:hover:text-yellow-300"
                   >
                     Get more points
@@ -160,12 +161,15 @@ export function Navigation({ children }: NavigationProps) {
                   <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                     <UserIcon className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <Link
+                    href={"/profile"}
+                    className="flex-1 min-w-0 cursor-pointer"
+                  >
                     <div className="font-medium truncate">User</div>
                     <div className="text-xs text-gray-500 truncate">
                       {user.phoneNumber}
                     </div>
-                  </div>
+                  </Link>
                 </div>
 
                 <button
