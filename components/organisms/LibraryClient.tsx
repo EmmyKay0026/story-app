@@ -55,6 +55,7 @@ export default function LibraryClient() {
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
+    console.log(window.location);
   }, []);
 
   useEffect(() => {
