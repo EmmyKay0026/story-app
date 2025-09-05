@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DetailsCard from "../molecules/DetailsCard";
 import { Story } from "@/types/stories";
+import { SpotlightSkeleton } from "../skeletons/HomeSkeleton";
 
 const SpotlightSection = ({
   featuredStories,
@@ -51,7 +52,7 @@ const SpotlightSection = ({
 
       <div className="justify-center w-full lg:w-[60%] border border-prime rounded-xl items-center">
         {error ? (
-          <div className="text-center py-12 px-6 text-red-500">{error}</div>
+          <SpotlightSkeleton />
         ) : spotlightStory ? (
           <DetailsCard story={spotlightStory} />
         ) : (

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import { Story } from "@/types/stories";
+import HomeSkeleton from "../skeletons/HomeSkeleton";
 
 const FeaturedSection = ({
   featuredStories,
@@ -54,7 +55,7 @@ const FeaturedSection = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {error ? (
-            <p className="col-span-full text-center text-red-500">{error}</p>
+            <HomeSkeleton />
           ) : featuredStories.length > 0 ? (
             featuredStories.slice(0, 5).map((story) => (
               <Link

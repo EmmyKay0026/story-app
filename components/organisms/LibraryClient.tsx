@@ -135,19 +135,48 @@ export default function LibraryClient() {
     getCategories();
   }, []);
 
-  useEffect(() => {
-    const params = new URLSearchParams();
+  const handleCategoryChange = (category: { label: string; value: string }) => {
+    const newCategory = selectedCategory === category.label ? null : category.label;
 
-    if (selectedCategory) {
-      params.set("category", selectedCategory);
+    setSelectedCategory(newCategory);
+
+    // ✅ Update URL immediately
+    const params = new URLSearchParams(window.location.search);
+    if (newCategory) {
+      params.set("category", newCategory);
+    } else {
+      params.delete("category");
     }
     if (searchTerm) {
       params.set("q", searchTerm);
     }
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
-    const query = params.toString();
-    router.push(query ? `?${query}` : "?", { scroll: false });
-  }, [selectedCategory, searchTerm, router]);
+  // useEffect(() => { 
+  //   const params = new URLSearchParams(); 
+  //   // if (selectedCategory) { params.set("category", selectedCategory); } 
+  //   if (searchTerm) { params.set("q", searchTerm); } const query = params.toString(); router.push(query ? ?${query} : "?", { scroll: false }); 
+  // }, [selectedCategory, searchTerm, router]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchTerm = e.target.value;
+    setSearchTerm(searchTerm);
+
+    // Auto-trigger category change if ≥ 3 letters match
+    if (searchTerm.length >= 3) {
+      const match = categories.find((c) =>
+        c.label.toLowerCase().startsWith(searchTerm.toLowerCase())
+      );
+      if (match) {
+        handleCategoryChange(match);
+      }
+    } 
+    // else {
+    //   handleCategoryChange(null);
+    // }
+  };
+
 
   const filteredStories = useMemo(
     () =>
@@ -162,16 +191,16 @@ export default function LibraryClient() {
   const categoryDisplayName = useMemo(() => {
     if (!selectedCategory) return "All stories";
     return (
-      categories.find((c) => c.value === selectedCategory)?.label ??
+      categories.find((c) => c.label === selectedCategory)?.label ??
       "All stories"
     );
   }, [selectedCategory, categories]);
 
-  const handleCategoryChange = (category: { label: string; value: string }) => {
-    setSelectedCategory(
-      selectedCategory === category.label ? null : category.label
-    );
-  };
+  // const handleCategoryChange = (category: { label: string; value: string }) => {
+  //   setSelectedCategory(
+  //     selectedCategory === category.label ? null : category.label
+  //   );
+  // };
 
   if (!stories || stories.length === 0) {
     // console.log(stories);
@@ -185,7 +214,7 @@ export default function LibraryClient() {
 
   return (
     <>
-      <section className="max-w-4xl h-full mx-auto bg-white dark:bg-dark-primary p-4 lg:p-6">
+      <section className="max-w-7xl mx-auto p-4 lg:p-6 h-full bg-white dark:bg-dark-primary">
         {/* Header */}
         <div className="flex items-start gap-3 mb-8">
           <BookCopy className="w-8 h-8 text-shaft dark:text-white fill-current" />
@@ -209,7 +238,7 @@ export default function LibraryClient() {
               placeholder="Search stories..."
               className="w-full outline-0 bg-transparent text-gray-900 dark:text-white"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
             />
           </div>
 
@@ -277,7 +306,7 @@ export default function LibraryClient() {
           </div>
 
           {/* Featured Sidebar */}
-          <div className="sticky top-[50px] mb-8 w-full lg:w-[300px] lg:mt-20">
+          <div className="sticky top-[50px] mb-8 w-full lg:w-[250px] lg:mt-20">
             <h2 className="text-xl font-bold mb-2">Featured Stories</h2>
             {featuredStories.length > 0 ? (
               <div className="flex flex-wrap">
@@ -285,7 +314,7 @@ export default function LibraryClient() {
                   <Link
                     href={`/story/${story.id}`}
                     key={story.id}
-                    className="w-full lg:w-full p-4"
+                    className="w-full lg:w-full py-4"
                   >
                     <StoryCard
                       story={story}

@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { handleThemeChange } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
 import { convertDateToDateType } from "@/utils/dateTimeConverter";
+import { StoryCardSkeleton } from "../skeletons/LibrarySkeletons";
 
 const ProfileClient = () => {
   // console.log(allStories);
@@ -107,7 +108,7 @@ const ProfileClient = () => {
   return (
     <>
       <NoIndex />
-      <section className="relative max-w-4xl mx-auto min-h-screen">
+      <section className="relative max-w-7xl mx-auto min-h-screen">
         {/* Cover Banner */}
         <div
           className="h-48 sm:h-64 bg-cover bg-center relative"
@@ -134,10 +135,10 @@ const ProfileClient = () => {
                 <p className="text-sm text-gray-300">{user?.phoneNumber}</p>
               </div>
             </div>
-            <button className="flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-lg text-sm shadow hover:opacity-90 transition">
+            {/* <button className="flex items-center gap-1 bg-primary text-white px-3 py-1.5 rounded-lg text-sm shadow hover:opacity-90 transition">
               <Edit3 className="w-4 h-4" />
               Edit
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -196,39 +197,58 @@ const ProfileClient = () => {
         {/* Tab Content */}
         <div className="p-4 sm:p-6">
           {activeTab === "stories" && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {currentlyReading.length > 0 ? (
-                currentlyReading.map((item, index) => (
-                  <StoryCard
-                    story={item}
-                    key={`${item.id}-${index}`}
-                    variant="continue"
-                  />
-                ))
+            <>
+              {!allStories ? (
+                // 👉 Loading skeleton for stories
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: 6 }).map((_, idx) => (
+                    <StoryCardSkeleton key={idx} variant="compact_v2" />
+                  ))}
+                </div>
+              ) : currentlyReading.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {currentlyReading.map((item, index) => (
+                    <StoryCard
+                      story={item}
+                      key={`${item.id}-${index}`}
+                      variant="continue"
+                    />
+                  ))}
+                </div>
               ) : (
                 <div className="flex flex-col items-center text-gray-500 py-16">
                   <Box className="w-16 h-16 mb-4 opacity-50" />
                   <h3 className="text-lg font-medium">No stories found</h3>
                 </div>
               )}
-            </div>
+            </>
           )}
 
           {activeTab === "bookmark" && (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {bookmarkStories?.length > 0 ? (
-                bookmarkStories.map((item, index) => (
-                  <StoryCard story={item} key={(item.id, index)} />
-                ))
+            <>
+              {!allStories ? (
+                // 👉 Loading skeleton for bookmarks
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: 6 }).map((_, idx) => (
+                    <StoryCardSkeleton key={idx} variant="compact_v2" />
+                  ))}
+                </div>
+              ) : bookmarkStories?.length > 0 ? (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {bookmarkStories.map((item, index) => (
+                    <StoryCard story={item} key={`${item.id}-${index}`} />
+                  ))}
+                </div>
               ) : (
                 <div className="flex flex-col items-center text-gray-500 py-16">
                   <Box className="w-16 h-16 mb-4 opacity-50" />
                   <h3 className="text-lg font-medium">No stories found</h3>
                 </div>
               )}
-            </div>
+            </>
           )}
         </div>
+
       </section>
     </>
   );

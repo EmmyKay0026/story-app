@@ -20,6 +20,8 @@ import {
   // convertDateFormat,
   convertDateToDateType,
 } from "@/utils/dateTimeConverter";
+import { StoryCardSkeleton } from "@/components/skeletons/LibrarySkeletons";
+import { MyReadsSkeleton } from "@/components/skeletons/myReadsSkeleton";
 
 interface StoryWithProgress extends Story {
   isCompleted: boolean;
@@ -36,28 +38,28 @@ export default function MyReadsPage() {
     "reading"
   );
   const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
   const [storiesWithProgress, setStoriesWithProgress] = useState<
     StoryWithProgress[]
   >([]);
 
   useEffect(() => {
     const fetchStoriesData = async () => {
+      setLoading(true);
       const response = await fetchStories();
 
       if ("data" in response && response.data) {
         setStories(response.data.stories);
       } else if ("error" in response && response.error) {
-        console.error(
-          "API error:",
-          response.error.error,
-          "Code:",
-          response.error.code
-        );
+        console.error("API error:", response.error.error, "Code:", response.error.code);
       }
+
+      setLoading(false);
     };
 
     fetchStoriesData();
   }, []);
+
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
@@ -143,7 +145,11 @@ export default function MyReadsPage() {
           </div>
         </div>
 
-        {storiesWithProgress.length === 0 ? (
+        {loading ? (
+          // 🔹 Show skeletons while fetching
+          <MyReadsSkeleton/>
+        ) : storiesWithProgress.length === 0 ? (
+          // 🔹 Empty state
           <div className="text-center py-16">
             <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
               <BookOpen className="w-12 h-12 text-gray-400" />
@@ -163,6 +169,7 @@ export default function MyReadsPage() {
             </button>
           </div>
         ) : (
+          // 🔹 Normal content
           <>
             {/* Stats */}
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
@@ -234,7 +241,7 @@ export default function MyReadsPage() {
               </button>
             </div>
 
-            {/* Content */}
+            {/* Tab Content */}
             {activeTab === "reading" ? (
               <div>
                 {currentlyReading.length === 0 ? (
@@ -323,6 +330,7 @@ export default function MyReadsPage() {
             )}
           </>
         )}
+
       </div>
     </>
   );
