@@ -4,21 +4,10 @@ import Button from "../atoms/Button";
 import { ThemeToggle } from "../atoms/ThemeToggle";
 import Link from "next/link";
 import { BookCopy, Bookmark, BookOpen, Home, Menu, X } from "lucide-react";
-// import { Hamburger } from "lucide-react";
-// import { LoginModal } from "./LoginModal"
-// import Link from "next/link";
-// import CustomLink from "../atoms/CustomLink";
 
 const NavBar = () => {
   const [openMenu, setOpenMenu] = useState(false);
 
-  // const openModal = () => setIsModalOpen(true);
-  // const closeModal = () => setIsModalOpen(false);
-
-  // const handleLoginSuccess = () => {
-  //   alert("Succesful!");
-  //   closeModal;
-  // };
   const navigationItems = [
     { href: "/home", label: "Home", icon: Home },
     { href: "/library", label: "Library", icon: BookCopy },

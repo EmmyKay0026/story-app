@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, CheckCircle, PlayCircle } from "lucide-react";
-import { Episode, Story, UserProgress } from "@/types/stories";
+import { Episode, Story, UserProgress } from "@/types";
 import NoIndex from "@/components/atoms/NoIndex";
 import {
   calculateStoryProgress,
@@ -51,7 +51,12 @@ export default function MyReadsPage() {
       if ("data" in response && response.data) {
         setStories(response.data.stories);
       } else if ("error" in response && response.error) {
-        console.error("API error:", response.error.error, "Code:", response.error.code);
+        console.error(
+          "API error:",
+          response.error.error,
+          "Code:",
+          response.error.code
+        );
       }
 
       setLoading(false);
@@ -59,7 +64,6 @@ export default function MyReadsPage() {
 
     fetchStoriesData();
   }, []);
-
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
@@ -147,7 +151,7 @@ export default function MyReadsPage() {
 
         {loading ? (
           // 🔹 Show skeletons while fetching
-          <MyReadsSkeleton/>
+          <MyReadsSkeleton />
         ) : storiesWithProgress.length === 0 ? (
           // 🔹 Empty state
           <div className="text-center py-16">
@@ -330,7 +334,6 @@ export default function MyReadsPage() {
             )}
           </>
         )}
-
       </div>
     </>
   );

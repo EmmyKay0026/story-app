@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import { formatReadTime } from "@/utils/storyUtils";
 import { Clock, Lock } from "lucide-react";
 import { getCoverImageUrl } from "@/services/story/storyActions";

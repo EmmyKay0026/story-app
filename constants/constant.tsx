@@ -1,4 +1,4 @@
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 
 // lib/constants.ts
 export const SITE_URL =

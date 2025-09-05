@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BookCopy, Box, Search, AlertCircle } from "lucide-react";
 import { authorizationChecker } from "@/services/user/userAction";
-import { Story, ApiError } from "@/types/stories";
+import { Story, ApiError } from "@/types";
 import { StoryCard } from "@/components/molecules/StoryCard";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
@@ -55,7 +55,6 @@ export default function LibraryClient() {
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
-    console.log(window.location);
   }, []);
 
   useEffect(() => {
@@ -136,7 +135,8 @@ export default function LibraryClient() {
   }, []);
 
   const handleCategoryChange = (category: { label: string; value: string }) => {
-    const newCategory = selectedCategory === category.label ? null : category.label;
+    const newCategory =
+      selectedCategory === category.label ? null : category.label;
 
     setSelectedCategory(newCategory);
 
@@ -153,10 +153,10 @@ export default function LibraryClient() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  // useEffect(() => { 
-  //   const params = new URLSearchParams(); 
-  //   // if (selectedCategory) { params.set("category", selectedCategory); } 
-  //   if (searchTerm) { params.set("q", searchTerm); } const query = params.toString(); router.push(query ? ?${query} : "?", { scroll: false }); 
+  // useEffect(() => {
+  //   const params = new URLSearchParams();
+  //   // if (selectedCategory) { params.set("category", selectedCategory); }
+  //   if (searchTerm) { params.set("q", searchTerm); } const query = params.toString(); router.push(query ? ?${query} : "?", { scroll: false });
   // }, [selectedCategory, searchTerm, router]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -171,12 +171,11 @@ export default function LibraryClient() {
       if (match) {
         handleCategoryChange(match);
       }
-    } 
+    }
     // else {
     //   handleCategoryChange(null);
     // }
   };
-
 
   const filteredStories = useMemo(
     () =>

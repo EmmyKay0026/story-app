@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
@@ -188,7 +188,7 @@ export default function BookmarksPage() {
               <div>
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {bookmarkStories.reduce(
-                    (sum, story) => sum + story.totalEpisodes,
+                    (sum, story) => sum + Number(story.totalEpisodes),
                     0
                   )}
                 </div>
@@ -200,7 +200,7 @@ export default function BookmarksPage() {
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {Math.round(
                     (bookmarkStories.reduce(
-                      (sum, story) => sum + story.rating,
+                      (sum, story) => sum + Number(story.rating),
                       0
                     ) /
                       bookmarkStories.length) *

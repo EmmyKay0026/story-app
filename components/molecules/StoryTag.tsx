@@ -1,4 +1,4 @@
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import Link from "next/link";
 import React from "react";
 

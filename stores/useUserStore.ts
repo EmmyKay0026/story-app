@@ -1,4 +1,4 @@
-import { User, UserProgress } from "@/types/stories";
+import { User, UserProgress } from "@/types";
 // import { UserState, User, UserProgress, UserPreferences } from "./userTypes";
 import {
   handleFontSizeChange,

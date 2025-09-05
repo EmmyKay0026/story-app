@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DetailsCard from "../molecules/DetailsCard";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import { SpotlightSkeleton } from "../skeletons/HomeSkeleton";
 
 const SpotlightSection = ({

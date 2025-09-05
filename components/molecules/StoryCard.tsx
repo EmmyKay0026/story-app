@@ -1,6 +1,6 @@
 "use client";
 
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import { useUserStore } from "@/stores/useUserStore";
 // import { useUserStore } from "@/stores/user/userStore";
 import { getCoverImageUrl } from "@/services/story/storyActions";
@@ -127,7 +127,7 @@ export function StoryCard({
             }`}
           />
         </button>
-        {story.isFeatured && (
+        {story.isFeatured !== "0" && (
           <div className="absolute top-2 left-2 px-2 py-1 bg-amber-500 text-white text-xs font-medium rounded">
             Featured
           </div>

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
 import { StoryCard } from "@/components/molecules/StoryCard";
-import { FetchedResponse, Story } from "@/types/stories";
+import { FetchedResponse, Story } from "@/types";
 import HomeSkeleton from "../skeletons/HomeSkeleton";
 
 const TopRated = ({

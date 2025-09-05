@@ -10,7 +10,7 @@ import { useRouter, useParams } from "next/navigation";
 // import { useUserStore } from "@/hooks/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
 import { fetchStoryDetails } from "@/services/story/storyActions"; // ✅ import your API
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import { authorizationChecker } from "@/services/user/userAction";
 // import { fetchStories } from "@/services/story/storyActions";
 import { useUserStore } from "@/stores/useUserStore";

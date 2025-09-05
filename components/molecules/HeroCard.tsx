@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 
 interface StoryCardProps {

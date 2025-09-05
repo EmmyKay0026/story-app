@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ButtonNew } from "../atoms/Button";
 import { StoryCard } from "@/components/molecules/StoryCard";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import HomeSkeleton from "../skeletons/HomeSkeleton";
 
 const FeaturedSection = ({

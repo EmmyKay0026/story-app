@@ -1,5 +1,5 @@
 // store/api.ts
-import { ApiError } from "@/types/stories";
+import { ApiError } from "@/types";
 import axios from "axios";
 
 const baseURL = new URL(

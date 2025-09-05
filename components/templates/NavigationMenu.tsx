@@ -14,7 +14,7 @@ import {
 
 // import { useUserStore } from "@/stores/user/userStore";
 import { useEffect, useState } from "react";
-import { User } from "@/types/stories";
+import { User } from "@/types";
 import { useUserStore } from "@/stores/useUserStore";
 
 interface NavigationProps {

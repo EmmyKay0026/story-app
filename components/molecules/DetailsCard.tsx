@@ -9,7 +9,7 @@ import { calculateStoryProgress } from "@/utils/storyUtils";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import StoryStats from "@/components/molecules/StoryStats";
 import StoryTag from "@/components/molecules/StoryTag";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 import Image from "next/image";
 import { useUserStore } from "@/stores/useUserStore";
 // import { useUserStore } from "@/stores/user/userStore";

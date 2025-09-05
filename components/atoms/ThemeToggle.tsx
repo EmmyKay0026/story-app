@@ -27,6 +27,7 @@ export const ThemeToggle = () => {
       setTheme(storedTheme);
     } else {
       storedTheme = user.preferences?.theme;
+      setTheme(storedTheme);
     }
 
     // const storedTheme = UserPreferences.theme || "light";

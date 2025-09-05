@@ -1,4 +1,4 @@
-import { User, UserProgress } from "@/types/stories";
+import { User, UserProgress } from "@/types";
 import api, { formatError } from "../../stores/api";
 import axios from "axios";
 // import { useUserStore } from "@/stores/user/userStore";
@@ -106,6 +106,9 @@ export const handleUpdateUserProgress = async (
   try {
     const response = await api.put(`/userprogress/${userId}`, {
       ...upadatedUserProgress,
+      episodeId: upadatedUserProgress.episode_id,
+      storyId: upadatedUserProgress.story_id,
+      user_id: userId,
       lastReadAt: convertDateFormat(upadatedUserProgress.lastReadAt.toString()),
     });
 

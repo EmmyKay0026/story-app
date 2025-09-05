@@ -1,6 +1,6 @@
 import api from "../../stores/api";
 import axios from "axios";
-import { Story, ApiError, Episode } from "@/types/stories";
+import { Story, ApiError, Episode } from "@/types";
 import { redirect } from "next/navigation";
 
 // Utility: formats error into ApiError shape
@@ -146,20 +146,24 @@ export const filterStories = (
       let storyCategory = "";
 
       if (typeof s.category === "string") {
-        storyCategory = s.category.toLowerCase().trim();
-      } else if (s.category && typeof s.category === "object") {
-        storyCategory = s.category.label.toLowerCase().trim();
+        storyCategory = (s.category as string).toLowerCase().trim();
+      } else if (
+        s.category &&
+        typeof s.category === "object" &&
+        "label" in s.category &&
+        typeof (s.category as { label?: unknown }).label === "string"
+      ) {
+        storyCategory = (s.category as { label: string }).label
+          .toLowerCase()
+          .trim();
       }
 
-      return categories.some(
-        (c) => c.toLowerCase().trim() === storyCategory
-      );
+      return categories.some((c) => c.toLowerCase().trim() === storyCategory);
     });
   }
 
   return filtered;
 };
-
 
 //Get episode details
 export const fetchEpisodeDetails = async (

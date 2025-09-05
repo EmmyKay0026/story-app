@@ -8,7 +8,7 @@ import SpotlightSection from "@/components/organisms/SpotlightSection";
 import TopRated from "@/components/organisms/TopRated";
 import Tags from "@/components/organisms/Tags";
 import { fetchCategories, fetchHomeData } from "@/services/story/storyActions";
-import { FetchedResponse } from "@/types/stories";
+import { FetchedResponse } from "@/types";
 
 export default function Home() {
   const [fetchedStories, setFetchedStories] = useState<FetchedResponse>({

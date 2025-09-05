@@ -1,6 +1,6 @@
 // import { Story, Episode, UserProgress } from "../data/mockData";
 
-import { Story, Episode, UserProgress } from "@/types/stories";
+import { Story, Episode, UserProgress } from "@/types";
 
 export function calculateReadTime(text: string): number {
   const wordsPerMinute = 200;

@@ -80,7 +80,7 @@ export interface Story {
   totalEpisodes: number;
   totalReadTime: number; // in minutes
   episodes: Episode[];
-  isFeatured: boolean;
+  isFeatured: boolean | string;
   reviews?: Review[];
 }
 

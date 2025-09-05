@@ -1,5 +1,5 @@
 "use client";
-import { Story } from "@/types/stories";
+import { Story } from "@/types";
 
 import { useUserStore } from "@/stores/useUserStore";
 import React, { useEffect, useState } from "react";
@@ -14,6 +14,7 @@ import { handleThemeChange } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
 import { convertDateToDateType } from "@/utils/dateTimeConverter";
 import { StoryCardSkeleton } from "../skeletons/LibrarySkeletons";
+import { ThemeToggle } from "../atoms/ThemeToggle";
 
 const ProfileClient = () => {
   // console.log(allStories);
@@ -28,16 +29,6 @@ const ProfileClient = () => {
   const [activeTab, setActiveTab] = useState<"stories" | "bookmark">("stories");
   // const [user, setUser] = useState<User | null>(null);
   const [allStories, setAllStories] = useState<Story[] | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedTheme =
-        (localStorage.getItem("theme") as "light" | "dark") || "light";
-      setTheme(storedTheme);
-      document.documentElement.classList.toggle("dark", storedTheme === "dark");
-    }
-  }, []);
 
   useEffect(() => {
     const getStories = async () => {
@@ -61,19 +52,6 @@ const ProfileClient = () => {
     getStories();
   }, []);
 
-  const toggleTheme = async () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-
-    localStorage.setItem("theme", newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    await handleThemeChange(newTheme);
-  };
-
   if (!user) {
     router.push("/auth/login");
     return null;
@@ -92,7 +70,11 @@ const ProfileClient = () => {
             convertDateToDateType(a.lastReadAt.toString()).getTime()
         )[0]?.lastReadAt,
     }))
-    .sort((a, b) => b.lastRead!.getTime() - a.lastRead!.getTime());
+    .sort(
+      (a, b) =>
+        convertDateToDateType(b.lastRead!.toString()).getTime() -
+        convertDateToDateType(a.lastRead!.toString()).getTime()
+    );
   // console.log(storiesWithProgress);
 
   const currentlyReading =
@@ -153,15 +135,17 @@ const ProfileClient = () => {
             },
             { icon: Coins, label: "Points", value: user.points },
             {
-              icon: SunMoon,
+              icon: ThemeToggle,
               label: "Mode",
-              value: theme,
+              value: "Theme",
             },
           ].map((stat, idx) => (
             <div
               key={idx}
-              onClick={stat.label === "Mode" ? toggleTheme : undefined}
-              className={`p-4 ${stat.label === "Mode" ? "cursor-pointer" : ""}`}
+              // onClick={stat.label === "Mode" ? toggleTheme : undefined}
+              className={`p-4 flex flex-col items-center ${
+                stat.label === "Mode" ? "cursor-pointer" : ""
+              }`}
             >
               <stat.icon className="w-5 h-5 mx-auto text-primary mb-1" />
               <p className="text-lg font-semibold text-gray-900 dark:text-white capitalize">
@@ -248,7 +232,6 @@ const ProfileClient = () => {
             </>
           )}
         </div>
-
       </section>
     </>
   );
