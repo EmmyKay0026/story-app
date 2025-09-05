@@ -74,7 +74,7 @@ export interface Story {
   description: string;
   author: string;
   coverImage?: string | { url: string };
-  category: Category;
+  category: string | Category;
   tags?: string[];
   rating: number;
   totalEpisodes: number;

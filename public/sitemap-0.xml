@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>http://localhost:3000</loc><lastmod>2025-09-03T12:23:46.159Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>http://localhost:3000/library</loc><lastmod>2025-09-03T12:23:46.159Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>http://localhost:3000/auth/login</loc><lastmod>2025-09-03T12:23:46.159Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://story-app-chi.vercel.app/auth/login</loc><lastmod>2025-09-04T14:22:04.747Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://story-app-chi.vercel.app</loc><lastmod>2025-09-04T14:22:04.748Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://story-app-chi.vercel.app/library</loc><lastmod>2025-09-04T14:22:04.748Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>

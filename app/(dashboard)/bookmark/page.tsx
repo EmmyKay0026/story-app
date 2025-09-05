@@ -11,16 +11,20 @@ import NoIndex from "@/components/atoms/NoIndex";
 import { authorizationChecker } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
 import { useUserStore } from "@/hooks/useUserStore";
+import { StoryCardSkeleton } from "@/components/skeletons/LibrarySkeletons";
+
+// import { StoryCardSkeleton } from "@/components/molecules/StoryCardSkeleton"; // You'll import your skeleton
 
 export default function BookmarksPage() {
   const user = useUserStore((state) => state.user);
-  // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const router = useRouter();
 
   const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStoriesData = async () => {
+      setLoading(true);
       const response = await fetchStories();
 
       if ("data" in response && response.data) {
@@ -33,6 +37,7 @@ export default function BookmarksPage() {
           response.error.code
         );
       }
+      setLoading(false);
     };
 
     fetchStoriesData();
@@ -42,9 +47,7 @@ export default function BookmarksPage() {
     authorizationChecker(window.location.pathname);
   }, []);
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   const bookmarkStories = stories.filter((story) =>
     user.bookmarks.includes(story.id)
@@ -70,8 +73,88 @@ export default function BookmarksPage() {
         </div>
       </div>
 
-      {bookmarkStories.length === 0 ? (
+      {/* Loading state */}
+      {loading ? (
+        <div>        
+          <div className="bg-white dark:bg-gray-800 justify-center items-center rounded-lg p-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p>0</p>
+                </div>
+                <div className="text-sm font-bold text-gray-600 dark:text-gray-400">
+                  Bookmarked Stories
+                </div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p>0</p>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Episodes
+                </div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <p>0</p>
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Average Rating
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Replace with your own Skeleton Card component */}
+            {/* <div className="flex flex-wrap"> */}
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div key={idx} className="w-full p-4">
+                <StoryCardSkeleton variant="compact_v2" />
+              </div>
+            ))}
+            {/* </div> */}
+          </div>
+        </div>
+      ) : bookmarkStories.length === 0 ? (
+        // Empty state
         <div className="text-center py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {bookmarkStories.length}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Bookmarked Stories
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {bookmarkStories.reduce(
+                  (sum, story) => sum + story.totalEpisodes,
+                  0
+                )}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Total Episodes
+              </div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                {Math.round(
+                  (bookmarkStories.reduce(
+                    (sum, story) => sum + story.rating,
+                    0
+                  ) /
+                    bookmarkStories.length) *
+                    10
+                ) / 10}
+              </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Average Rating
+              </div>
+            </div>
+          </div>
           <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
             <Bookmark className="w-12 h-12 text-gray-400" />
           </div>
@@ -89,6 +172,7 @@ export default function BookmarksPage() {
           </Link>
         </div>
       ) : (
+        // With bookmarks
         <>
           {/* Stats */}
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
@@ -98,7 +182,7 @@ export default function BookmarksPage() {
                   {bookmarkStories.length}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Bookmark Stories
+                  Bookmarked Stories
                 </div>
               </div>
               <div>

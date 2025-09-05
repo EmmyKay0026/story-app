@@ -127,7 +127,7 @@ export const filterStories = (
 ): Story[] => {
   let filtered = [...stories];
 
-  // Search filter
+  // 🔍 Search filter
   if (searchTerm) {
     const lowerSearch = searchTerm.toLowerCase();
     filtered = filtered.filter(
@@ -140,32 +140,26 @@ export const filterStories = (
     );
   }
 
-  // Category filter
+  // 🏷 Category filter (always lowercase label compare)
   if (categories.length > 0) {
     filtered = filtered.filter((s) => {
-      // Normalize story category to a string id/label
       let storyCategory = "";
-      if (typeof s.category === "object" && s.category !== null) {
-        storyCategory = s.category.value || s.category.label || "";
-      } else if (typeof s.category === "string") {
-        storyCategory = s.category;
+
+      if (typeof s.category === "string") {
+        storyCategory = s.category.toLowerCase().trim();
+      } else if (s.category && typeof s.category === "object") {
+        storyCategory = s.category.label.toLowerCase().trim();
       }
 
-      // Normalize all to lowercase for comparison
-      return (
-        categories.some(
-          (c) => c.toLowerCase() === storyCategory.toLowerCase()
-        ) ||
-        (Array.isArray(s.tags) &&
-          s.tags.some((t) =>
-            categories.some((c) => c.toLowerCase() === t.toLowerCase())
-          ))
+      return categories.some(
+        (c) => c.toLowerCase().trim() === storyCategory
       );
     });
   }
 
   return filtered;
 };
+
 
 //Get episode details
 export const fetchEpisodeDetails = async (
@@ -198,11 +192,10 @@ export const submitReview = async (
       redirect("/auth/login");
     }
 
-    const response = await api.post(`/reviews/add`, {
+    const response = await api.post(`/reviews/${storyId}`, {
       rating: rating,
       comment: comment,
-      user_id: userId,
-      story_id: storyId,
+      user: userId,
     });
 
     if (response.status == 200 || response.status == 201) {
