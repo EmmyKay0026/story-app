@@ -102,7 +102,7 @@ const Footer = ({
             &copy; 2025 StoryVerse. All rights reserved.
           </p>
           <p className="text-gray-500 text-[14px] md:text-[1rem]">
-            Created by Amplity.
+            
           </p>
         </div>
       </div>
