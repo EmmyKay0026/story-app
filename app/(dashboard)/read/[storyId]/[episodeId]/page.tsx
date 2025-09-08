@@ -55,6 +55,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   const [userRating, setUserRating] = useState<number>(0);
   const [reviewComment, setReviewComment] = useState<string>("");
   const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);
@@ -144,6 +145,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
   const handleUnlockEpisode = async () => {
     if (!nextEpisode?.id) return;
+    setIsLoading(true);
 
     const response = await unlockEpisode(
       story.id,
@@ -154,9 +156,11 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
     if (!response) {
       alert("Not enough points to unlock this episode!");
+      setIsLoading(false);
       return;
     }
     router.push(`/read/${story.id}/${nextEpisode?.id}`);
+    setIsLoading(false);
   };
 
   const submitRating = async (rating: number) => {
@@ -455,24 +459,30 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   // alert("Unlock function temporarily disabled");
                 }}
                 // disabled={false}
-                disabled={(() => {
-                  if (!nextEpisode) return true;
+                disabled={
+                  (() => {
+                    if (!nextEpisode) return true;
 
-                  const episode = story.episodes.find(
-                    (ep) => ep.id === nextEpisode.id
-                  );
-                  if (!episode) return true;
+                    const episode = story.episodes.find(
+                      (ep) => ep.id === nextEpisode.id
+                    );
+                    if (!episode) return true;
 
-                  if (isEpisodeUnlocked(nextEpisode.id)) return false;
+                    if (isEpisodeUnlocked(nextEpisode.id)) return false;
 
-                  const cost = Number(episode.pointsCost) ?? 0;
-                  const balance = Number(user?.points) ?? 0;
+                    const cost = Number(episode.pointsCost) ?? 0;
+                    const balance = Number(user?.points) ?? 0;
 
-                  return balance < cost;
-                })()}
-                className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                    return balance < cost;
+                  })() || isLoading
+                }
+                className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors cursor-pointer disabled:cursor-not-allowed"
               >
-                Unlock Episode
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  "Unlock Episode"
+                )}
               </button>
             </div>
           </div>

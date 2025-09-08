@@ -9,7 +9,7 @@ const NavBar = () => {
   const [openMenu, setOpenMenu] = useState(false);
 
   const navigationItems = [
-    { href: "/home", label: "Home", icon: Home },
+    { href: "/", label: "Home", icon: Home },
     { href: "/library", label: "Library", icon: BookCopy },
     { href: "/bookmark", label: "Bookmark", icon: Bookmark },
     { href: "/my-reads", label: "My Reads", icon: BookOpen },

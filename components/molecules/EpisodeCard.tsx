@@ -26,6 +26,7 @@ const EpisodeCard = ({
   const router = useRouter();
   // const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleEpisodeClick = (
     episodeId: string,
@@ -44,6 +45,7 @@ const EpisodeCard = ({
 
   const handleUnlockEpisode = async (episodeCost: number) => {
     if (!selectedEpisode) return;
+    setIsLoading(true);
 
     const response = await unlockEpisode(
       story.id,
@@ -57,6 +59,8 @@ const EpisodeCard = ({
       return;
     }
     router.push(`/read/${story.id}/${selectedEpisode}`);
+
+    setIsLoading(false);
   };
 
   const getEpisodeById = (episodeId: string) => {
@@ -222,17 +226,24 @@ const EpisodeCard = ({
                     getEpisodeById(selectedEpisode)?.pointsCost || 0
                   )
                 }
-                disabled={(() => {
-                  const episode = story.episodes.find(
-                    (ep) => ep.id === selectedEpisode
-                  );
-                  return (
-                    !episode || (Number(user?.points) ?? 0) < episode.pointsCost
-                  );
-                })()}
-                className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                disabled={
+                  (() => {
+                    const episode = story.episodes.find(
+                      (ep) => ep.id === selectedEpisode
+                    );
+                    return (
+                      !episode ||
+                      (Number(user?.points) ?? 0) < Number(episode.pointsCost)
+                    );
+                  })() || isLoading
+                }
+                className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg text-center transition-colors cursor-pointer disabled:cursor-not-allowed"
               >
-                Unlock Episode
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  "Unlock Episode"
+                )}
               </button>
             </div>
           </div>

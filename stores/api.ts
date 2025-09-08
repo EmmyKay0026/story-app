@@ -4,7 +4,7 @@ import axios from "axios";
 
 const baseURL = new URL(
   process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "https://mhealthtelevet.com/mhealthapi"
+    "https://www.fanscornernow.com/mhealthapi"
 ).toString();
 
 const api = axios.create({

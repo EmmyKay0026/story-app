@@ -5,7 +5,7 @@ import { useUserStore } from "@/stores/useUserStore";
 import React, { useEffect, useState } from "react";
 import NoIndex from "../atoms/NoIndex";
 import Image from "next/image";
-import { Bookmark, BookOpen, Box, Coins, Edit3, SunMoon } from "lucide-react";
+import { Bookmark, BookOpen, Box, Coins } from "lucide-react";
 import { StoryCard } from "../molecules/StoryCard";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
 // import { redirect } from "next/dist/server/api-utils";
@@ -86,6 +86,10 @@ const ProfileClient = () => {
   const bookmarkStories =
     allStories?.filter((story) => user.bookmarks.includes(story.id)) ?? [];
   // console.log(user.bookmarks, allStories);
+
+  const handleStoryClick = (storyId: string) => {
+    router.push(`/story/${storyId}`);
+  };
 
   return (
     <>
@@ -196,6 +200,7 @@ const ProfileClient = () => {
                       story={item}
                       key={`${item.id}-${index}`}
                       variant="continue"
+                      onClick={() => handleStoryClick(item.id)}
                     />
                   ))}
                 </div>
@@ -220,7 +225,11 @@ const ProfileClient = () => {
               ) : bookmarkStories?.length > 0 ? (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {bookmarkStories.map((item, index) => (
-                    <StoryCard story={item} key={`${item.id}-${index}`} />
+                    <StoryCard
+                      story={item}
+                      key={`${item.id}-${index}`}
+                      onClick={() => handleStoryClick(item.id)}
+                    />
                   ))}
                 </div>
               ) : (

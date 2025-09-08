@@ -2,29 +2,50 @@ import { Story } from "@/types";
 
 // lib/constants.ts
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://story-app-chi.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.fanscornernow.com";
 
 // Demo data for development purposes only!
-// export const mockUser: User = {
-//   id: "string",
-//   phoneNumber: "234567890456789",
-//   points: 60,
-//   preferences: {
-//     theme: "light",
-//     fontSize: "small",
-//   },
-//   progress: [
-//     {
-//       story_id: "1",
-//       episode_id: "1-1",
-//       progress: 60,
-//       lastReadAt: new Date("2023-10-01T12:00:00Z"),
-//       isCompleted: false,
-//     },
-//   ],
-//   bookmarks: ["2"],
-//   unlockedEpisodes: ["1-2", "1-3"], // episode IDs
-// };
+export const mockUser = {
+  id: "string",
+  phoneNumber: "234567890456789",
+  points: 60,
+  preferences: {
+    theme: "light",
+    fontSize: "small",
+  },
+  progress: [
+    {
+      story_id: "1",
+      episode_id: "1-1",
+      progress: 80,
+      lastReadAt: new Date("2023-10-01T12:00:00Z"),
+      isCompleted: false,
+    },
+    {
+      story_id: "1",
+      episode_id: "1-1",
+      progress: 100,
+      lastReadAt: new Date("2023-10-01T12:00:00Z"),
+      isCompleted: false,
+    },
+    {
+      story_id: "1",
+      episode_id: "1-2",
+      progress: 90,
+      lastReadAt: new Date("2023-10-01T12:00:00Z"),
+      isCompleted: false,
+    },
+    {
+      story_id: "1",
+      episode_id: "1-3",
+      progress: 80,
+      lastReadAt: new Date("2023-10-01T12:00:00Z"),
+      isCompleted: false,
+    },
+  ],
+  bookmarks: ["2"],
+  unlockedEpisodes: ["1-2", "1-3"], // episode IDs
+};
 // export const CATEGORIES = [
 //   "Romance",
 //   "Mystery",
