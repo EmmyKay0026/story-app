@@ -127,7 +127,7 @@ export default function Login() {
                 </div>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Welcome to StoryBook
+                Welcome to Fans corner
               </h1>
               <p className="text-gray-600 dark:text-gray-300">
                 Enter your phone number to get started

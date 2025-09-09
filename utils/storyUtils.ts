@@ -41,12 +41,14 @@ export function getNextEpisode(
   story: Story,
   currentEpisodeId: string
 ): Episode | null {
+  // console.log(currentEpisodeId);
+
   const currentIndex = story.episodes.findIndex(
-    (ep) => ep.id === currentEpisodeId
+    (ep) => ep.id == currentEpisodeId
   );
   // console.log(currentIndex);
 
-  if (currentIndex === -1 || currentIndex === story.episodes.length - 1)
+  if (currentIndex == -1 || currentIndex == story.episodes.length - 1)
     return null;
   return story.episodes[currentIndex + 1];
 }
@@ -56,7 +58,7 @@ export function getPreviousEpisode(
   currentEpisodeId: string
 ): Episode | null {
   const currentIndex = story.episodes.findIndex(
-    (ep) => ep.id === currentEpisodeId
+    (ep) => ep.id == currentEpisodeId
   );
   if (currentIndex <= 0) return null;
   return story.episodes[currentIndex - 1];

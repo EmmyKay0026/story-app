@@ -14,11 +14,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Storybook App",
-    template: "%s | Storybook App",
+    default: "Fans corner",
+    template: "%s | Fans corner",
   },
   description:
-    "StoryApp is a platform where users can read engaging stories online.",
+    "Fans corner is a platform where users can read engaging stories online.",
   robots: {
     index: true,
     follow: true,
@@ -27,22 +27,17 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "StoryApp - Read Stories Online",
+    title: "Fans corner - Read Stories Online",
     description:
-      "StoryApp is a platform where users can read and enjoy stories online.",
-    siteName: "StoryApp",
+      "Fans corner is a platform where users can read and enjoy stories online.",
+    siteName: "Fans corner",
   },
   twitter: {
     card: "summary_large_image",
-    title: "StoryApp",
-    description: "Read stories online with StoryApp",
+    title: "Fans corner",
+    description: "Read stories online with Fans corner",
   },
 };
-
-// export const metadata: Metadata = {
-//   title: "Storybook App",
-//   description: "A beautiful storybook web application with modern theming",
-// };
 
 export default function RootLayout({
   children,

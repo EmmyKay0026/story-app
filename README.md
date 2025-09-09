@@ -1,4 +1,4 @@
-# 📚 StoryBook Web App
+# 📚 Fans corner Web App
 
 **An online-first, responsive web platform built with Next.js & Tailwind CSS.**
 
@@ -47,7 +47,7 @@ Users log in via phone number, browse and read stories, customize their theme, f
 2. Install dependencies
 
    ```bash
-   cd storybook-webapp
+   cd Fans corner-webapp
    npm install
    ```
 3. Configure environment variables

@@ -139,7 +139,8 @@ const EpisodeCard = ({
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold text-[18px] text-gray-900 dark:text-white">
-                      Episode {episode.order}: {episode.title}
+                      {/* Episode {episode.order}:  */}
+                      {episode.title}
                     </h4>
                     {episode.isPremium && (
                       <span className="inline-block px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 text-xs font-medium rounded">

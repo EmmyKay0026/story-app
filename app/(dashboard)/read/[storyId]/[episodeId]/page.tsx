@@ -52,6 +52,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   const [readingProgress, setReadingProgress] = useState(0);
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [showRating, setShowRating] = useState(false);
+  const [ratingIsLoading, setRatingIsLoading] = useState(false);
   const [userRating, setUserRating] = useState<number>(0);
   const [reviewComment, setReviewComment] = useState<string>("");
   const [showUnlockModal, setShowUnlockModal] = useState<boolean>(false);
@@ -164,13 +165,19 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   };
 
   const submitRating = async (rating: number) => {
+    setRatingIsLoading(true);
     setUserRating(rating);
 
     const res = await submitReview(rating, reviewComment, story.id);
 
-    if (res.success) {
+    if ("error" in res) {
+      setShowRating(false);
+    } else {
+      setUserRating(0);
+      setReviewComment("");
       setShowRating(false);
     }
+    setRatingIsLoading(false);
     // console.log(res);
   };
 
@@ -195,7 +202,8 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   {episode.title}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {story.title} • Episode {episode.order}
+                  {story.title}
+                  {/* • Episode {episode.order} */}
                 </p>
               </div>
             </div>
@@ -238,13 +246,14 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 {episode.title}
               </h1>
-              <div className="flex items-center justify-center gap-4 text-gray-600 dark:text-gray-400">
+              {/* <div className="flex items-center justify-center gap-4 text-gray-600 dark:text-gray-400">
                 <span>
-                  Episode {episode.order} of {story.totalEpisodes}
+                  Episode {episode.order} of
+                  {story.totalEpisodes}
                 </span>
                 <span>•</span>
                 <span>{formatReadTime(episode.readTime)} read</span>
-              </div>
+              </div> */}
             </header>
 
             {/* Episode Content */}
@@ -272,7 +281,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                     onClick={handleNextEpisode}
                     className=" btn-primary w-full sm:w-auto cursor-pointer"
                   >
-                    Continue to Episode {nextEpisode.order}
+                    Continue to {nextEpisode.title}
                     {/* <ChevronRight className="w-4 h-4 ml-2" /> */}
                   </button>
                 ) : (
@@ -397,10 +406,14 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   Cancel
                 </button>
                 <button
-                  onClick={() => submitRating(userRating || 5)}
+                  onClick={() => submitRating(userRating || 0)}
                   className="flex-1 cursor-pointer btn-primary"
                 >
-                  Submit Rating
+                  {ratingIsLoading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    "Submit Rating"
+                  )}
                 </button>
               </div>
             </div>

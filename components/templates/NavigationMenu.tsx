@@ -89,7 +89,7 @@ export function Navigation({ children }: NavigationProps) {
         <div className="flex items-center justify-between p-4">
           <Link href="/" className="flex items-center gap-2">
             <Book className="w-6 h-6 text-primary" />
-            <span className="font-bold text-lg">StoryBook</span>
+            <span className="font-bold text-lg">Fans corner</span>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -115,7 +115,7 @@ export function Navigation({ children }: NavigationProps) {
             className="flex items-center cursor-pointer gap-2 p-6 border-b border-gray-200 dark:border-gray-700"
           >
             <Book className="w-8 h-8 text-primary" />
-            <span className="font-bold text-xl">StoryBook</span>
+            <span className="font-bold text-xl">Fans corner</span>
           </Link>
 
           <div className="flex-1 flex flex-col justify-between py-6">
@@ -147,7 +147,7 @@ export function Navigation({ children }: NavigationProps) {
                     {user.points} Points
                   </div>
                   <Link
-                    href="tel:*2345#"
+                    href="tel:*20751#"
                     target="_blank"
                     className="text-xs text-amber-600 hover:text-amber-700 dark:text-yellow-400 dark:hover:text-yellow-300"
                   >

@@ -8,11 +8,12 @@ Disallow: /login
 Disallow: /bookmark
 Disallow: /my-reads
 Disallow: /profile
+Disallow: /story
 Disallow: /api
 Disallow: /api/*
 
 # Host
-Host: http://localhost:3000
+Host: https://www.fanscornernow.com
 
 # Sitemaps
-Sitemap: http://localhost:3000/sitemap.xml
+Sitemap: https://www.fanscornernow.com/sitemap.xml

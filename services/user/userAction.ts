@@ -98,21 +98,14 @@ export const handleUpdateUserProgress = async (
     redirect("/auth/login");
   }
 
-  // console.log(upadatedUserProgress.lastReadAt.toString(), "to string");
-  // console.log(upadatedUserProgress.lastReadAt.toDateString(), "to date string");
-  // console.log(convertDateFormat(upadatedUserProgress.lastReadAt.toString()));
-  // return;
-
   try {
     const response = await api.put(`/userprogress/${userId}`, {
-      ...upadatedUserProgress,
+      isCompleted: upadatedUserProgress.isCompleted,
+      progress: upadatedUserProgress.progress,
       episodeId: upadatedUserProgress.episode_id,
       storyId: upadatedUserProgress.story_id,
-      user_id: userId,
       lastReadAt: convertDateFormat(upadatedUserProgress.lastReadAt.toString()),
     });
-
-    // console.log(response);
 
     if (response.status == 200 || response.status == 201) {
       return response.data;
