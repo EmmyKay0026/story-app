@@ -47,8 +47,7 @@ const ReviewCard = (review: {
           ))}
         </div>
         <p className="text-sm text-gray-700 dark:text-gray-300">
-          {review.comment ||
-            "Lovely story! Highly recommend it to anyone who loves a good read. The characters are well-developed and the plot is engaging. Can't wait for the next episode!"}
+          {review.comment}
         </p>
       </div>
     </div>

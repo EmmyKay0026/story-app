@@ -18,7 +18,7 @@ const NavBar = () => {
   return (
     <>
       <div className="flex w-[100%] justify-between z-[20] text-black dark:text-white py-[10px] dark:bg-black bg-white top-0 px-[20px] md:px-[55px] items-center sticky shadow-[0px_0px_6px_8px_rgba(219,218,218,0.123)]  dark:shadow-[0px_0px_6px_8px_rgba(65,55,55,0.16)] bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)] dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)] ">
-        <div>LOGO</div>
+        <h2 className="text-[22px] lg:text-[32px]">Fans corner</h2>
 
         <ul className="hidden md:flex gap-[10px] child: items-center">
           <Link href={"/"}>
@@ -98,7 +98,7 @@ const NavBar = () => {
             </div>
           </ul>
           <h2 className=" fixed z-20 w-full bottom-0 text-transparent text-center text-[3rem] md:text-[5rem] font-bold opacity-50 my-0 mt-8 bg-clip-text bg-gradient-to-r from-faded-primary to-primary dark:from-dark-primary dark:to-primary">
-            Story App
+            Fans corner
           </h2>
         </article>
       )}

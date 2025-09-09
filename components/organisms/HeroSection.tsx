@@ -1,7 +1,7 @@
-import React from 'react'
-import Link from 'next/link'
-import Button from '../atoms/Button'
-import Cards from '../molecules/card'
+import React from "react";
+import Link from "next/link";
+import Button from "../atoms/Button";
+import Cards from "../molecules/card";
 
 const HeroSection = () => {
   return (
@@ -28,9 +28,9 @@ const HeroSection = () => {
               </span>
             </h2>
             <p className="text-sm md:text-xl text-black-900 dark:text-gray-300 mx-auto">
-              From thrilling adventures to heartwarming tales. Discover
-              stories that inspire, entertain, and transport you to
-              incredible new worlds. Start your reading journey today.
+              From thrilling adventures to heartwarming tales. Discover stories
+              that inspire, entertain, and transport you to incredible new
+              worlds. Start your reading journey today.
             </p>
             <Link href={"/library"}>
               <Button
@@ -51,7 +51,7 @@ const HeroSection = () => {
         </div>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default HeroSection
+export default HeroSection;
