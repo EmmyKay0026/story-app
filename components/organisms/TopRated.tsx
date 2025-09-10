@@ -5,6 +5,7 @@ import { ButtonNew } from "../atoms/Button";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import { FetchedResponse, Story } from "@/types";
 import HomeSkeleton from "../skeletons/HomeSkeleton";
+import { log } from "console";
 
 const TopRated = ({
   fetchedData,
@@ -21,17 +22,14 @@ const TopRated = ({
 
   useEffect(() => {
     const getTopStories = async () => {
-      const combined = [
-        ...(fetchedData.featured || []),
-        ...(fetchedData.trending || []),
-      ];
+      const combined = [...fetchedData.featured, ...fetchedData.trending];
       setTopRatedStories(
         combined.sort((a, b) => b.rating - a.rating).slice(0, 6)
       );
     };
 
     getTopStories();
-  }, []);
+  }, [fetchedData]);
 
   // try {
   //   const response = await fetchHomeData();

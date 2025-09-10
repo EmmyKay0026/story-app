@@ -22,7 +22,7 @@ const SpotlightSection = ({
     };
 
     getSpotlightSection();
-  }, []);
+  }, [featuredStories]);
   // try {
   //   const response = await fetchHomeData();
 

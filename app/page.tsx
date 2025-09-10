@@ -26,7 +26,7 @@ export default function Home() {
         const response = await fetchHomeData();
 
         if ("data" in response && response.data) {
-          setFetchedStories(response.data || []);
+          setFetchedStories(response.data);
         } else if ("error" in response && response.error) {
           console.error(
             "API error:",

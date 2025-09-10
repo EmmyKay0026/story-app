@@ -21,16 +21,15 @@ const HeroSection = () => {
         <div className="relative z-10 pt-[20%] max-w-[100dvw] px-[1rem] md:px-[3rem] flex flex-col items-center md:pt-0 md:top-0 h-[100dvh] lg:flex-row lg:justify-between pb-[2rem] ">
           <div className="flex flex-col basis-[50%] px-[1rem] lg:px-0 max-w-2xl text-center lg:text-left items-center lg:items-start justify-center">
             <h2 className="text-4xl md:text-6xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Step Into a World of
+              Stories that let your mind
               <span className="text-transparent bg-clip-text w-[150px] bg-[#45B649]">
                 {" "}
-                Stories
+                wanderrrr…
               </span>
             </h2>
             <p className="text-sm md:text-xl text-black-900 dark:text-gray-300 mx-auto">
-              From thrilling adventures to heartwarming tales. Discover stories
-              that inspire, entertain, and transport you to incredible new
-              worlds. Start your reading journey today.
+              Lose yourself in the emotions of war, romance, fantasy, sci-fi,
+              all from the comfort of your home.
             </p>
             <Link href={"/library"}>
               <Button

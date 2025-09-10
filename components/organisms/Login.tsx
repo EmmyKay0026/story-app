@@ -42,6 +42,14 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
+    const userId = localStorage.getItem("userId");
+
+    if (userId && userId !== "" && typeof userId == "string") {
+      router.push("/library");
+    }
+  }, []);
+
+  useEffect(() => {
     if (isAuthenticated) {
       router.push("/library");
     }

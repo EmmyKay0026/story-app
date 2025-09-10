@@ -18,7 +18,9 @@ const NavBar = () => {
   return (
     <>
       <div className="flex w-[100%] justify-between z-[20] text-black dark:text-white py-[10px] dark:bg-black bg-white top-0 px-[20px] md:px-[55px] items-center sticky shadow-[0px_0px_6px_8px_rgba(219,218,218,0.123)]  dark:shadow-[0px_0px_6px_8px_rgba(65,55,55,0.16)] bg-[linear-gradient(90deg,_#ebffecab_0%,_rgba(255,255,255,1)_50%,_#ebffecab_100%)] dark:bg-[linear-gradient(90deg,_#2c312cab_0%,_#313131_50%,_#2c312cab_100%)] ">
-        <h2 className="text-[22px] lg:text-[32px]">Fans corner</h2>
+        <h2 className="text-[22px] lg:text-[32px] text-primary cursor-pointer">
+          Fans corner
+        </h2>
 
         <ul className="hidden md:flex gap-[10px] child: items-center">
           <Link href={"/"}>
