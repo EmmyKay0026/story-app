@@ -34,6 +34,7 @@ export default function Login() {
       setIsLoading(false);
     };
 
+    setIsLoading(false);
     if (authId !== "") {
       setPhoneNumber(authId);
       setIsLoading(true);
@@ -42,10 +43,12 @@ export default function Login() {
   }, []);
 
   useEffect(() => {
-    const userId = localStorage.getItem("userId");
+    if (typeof window !== "undefined") {
+      const userId = localStorage.getItem("userId");
 
-    if (userId && userId !== "" && typeof userId == "string") {
-      router.push("/library");
+      if (userId && userId !== "" && typeof userId == "string") {
+        router.push("/library");
+      }
     }
   }, []);
 
@@ -70,10 +73,11 @@ export default function Login() {
       const params = new URLSearchParams(window.location.search);
       const redirectTo = params.get("to") || "/library";
       router.push(redirectTo);
+      setIsLoading(false);
     } else {
       setErrorMsg(res.message || "Login failed. Please try again.");
+      setIsLoading(false);
     }
-    setIsLoading(false);
     // router.push("/library");
   };
 

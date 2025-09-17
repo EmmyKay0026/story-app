@@ -7,6 +7,7 @@ import { getCoverImageUrl } from "@/services/story/storyActions";
 import { formatReadTime, calculateStoryProgress } from "@/utils/storyUtils";
 import { Clock, Star, BookOpen, Bookmark } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 interface StoryCardProps {
   story: Story;
@@ -25,8 +26,17 @@ export function StoryCard({
 }: StoryCardProps) {
   const user = useUserStore((state) => state.user);
   const toggleBookmark = useUserStore((state) => state.toggleBookmark);
+  const [isBookmark, setIsBookmark] = useState<boolean | undefined>(
+    (user?.bookmarks ?? []).includes(String(story.id)) || false
+  );
 
-  const isBookmark = (user?.bookmarks ?? []).includes(story.id) || false;
+  // useEffect(() => {
+  //   const isBookmarked =
+  //     (user?.bookmarks ?? []).includes(String(story.id)) || false;
+
+  //   setIsBookmark(isBookmarked);
+  // }, [user?.bookmarks, story.id]);
+
   const userProgress = Array.isArray(user?.progress)
     ? calculateStoryProgress(story, user.progress)
     : 0;
@@ -34,9 +44,14 @@ export function StoryCard({
     ? user?.progress.some((p) => p.story_id === story.id)
     : false;
 
-  const handleBookmarkClick = (e: React.MouseEvent) => {
+  const handleBookmarkClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleBookmark(story.id);
+    const res = await toggleBookmark(story.id);
+    // console.log(res);
+
+    if (typeof res === "boolean") {
+      setIsBookmark(res);
+    }
   };
 
   const cardClasses = `
@@ -122,12 +137,12 @@ export function StoryCard({
           <Bookmark
             className={`w-4 h-4 ${
               isBookmark
-                ? "fill-shaft text-shaft dark:text-white dark:fill-white"
+                ? " fill-shaft text-shaft dark:text-white dark:fill-white"
                 : "text-gray-600 dark:text-gray-300"
             }`}
           />
         </button>
-        {story.isFeatured !== "0" && (
+        {story.isFeatured == "1" && (
           <div className="absolute top-2 left-2 px-2 py-1 bg-amber-500 text-white text-xs font-medium rounded">
             Featured
           </div>

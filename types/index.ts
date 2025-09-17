@@ -69,7 +69,7 @@ export type Category = {
 };
 
 export interface Story {
-  id: string;
+  id: any;
   title: string;
   description: string;
   author: string;
@@ -101,6 +101,8 @@ export interface User {
     fontSize: "small" | "medium" | "large" | "extra-large";
   };
   progress: UserProgress[];
+  maxDailyEpisodeReads: number;
+  numberOfReadsToday: number;
   bookmarks: string[]; // story IDs
   unlockedEpisodes: string[]; // episode IDs
 }

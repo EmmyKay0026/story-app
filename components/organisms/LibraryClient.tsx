@@ -134,6 +134,10 @@ export default function LibraryClient() {
     getCategories();
   }, []);
 
+  const handleStoryClick = (storyId: string) => {
+    router.push(`/story/${storyId}`);
+  };
+
   const handleCategoryChange = (category: { label: string; value: string }) => {
     const newCategory =
       selectedCategory === category.label ? null : category.label;
@@ -273,17 +277,18 @@ export default function LibraryClient() {
             {filteredStories.length > 0 ? (
               <div className="flex flex-wrap">
                 {filteredStories.map((story) => (
-                  <Link
-                    href={`/story/${story.id}`}
+                  <div
+                    // href={`/story/${story.id}`}
                     key={story.id}
                     className="w-full sm:w-1/2 lg:w-1/2 p-4"
                   >
                     <StoryCard
                       story={story}
                       showProgress={false}
+                      onClick={() => handleStoryClick(story.id)}
                       variant="continue"
                     />
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (

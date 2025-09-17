@@ -33,6 +33,9 @@ const EpisodeCard = ({
     isPremium: boolean
     // pointsCost: number
   ) => {
+    // console.log(story.id, episodeId);
+    // return;
+
     const isUnlocked = isEpisodeUnlocked(`${story.id}-${episodeId}`);
 
     if (!isPremium || isUnlocked) {
@@ -55,7 +58,7 @@ const EpisodeCard = ({
     // console.log(response);
 
     if (!response) {
-      alert("Not enough points to unlock this episode!");
+      // alert("Not enough points to unlock this episode!");
       return;
     }
     router.push(`/read/${story.id}/${selectedEpisode}`);
@@ -88,6 +91,8 @@ const EpisodeCard = ({
           const isUnlocked = isEpisodeUnlocked(`${story.id}-${episode.id}`);
           const progress = getUserProgress(story.id, episode.id);
           const canRead = !episode.isPremium || isUnlocked;
+
+          // console.log("Progress:", episode.id);
 
           return (
             <div
@@ -230,7 +235,7 @@ const EpisodeCard = ({
                 disabled={
                   (() => {
                     const episode = story.episodes.find(
-                      (ep) => ep.id === selectedEpisode
+                      (ep) => ep.id == selectedEpisode
                     );
                     return (
                       !episode ||

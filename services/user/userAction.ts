@@ -44,8 +44,8 @@ export const handleGetMe = async (phoneNumber: string) => {
 
 // --- Authorization Checker ---
 export const authorizationChecker = async (currentPath: string) => {
+  const userId = localStorage.getItem("userId");
   try {
-    const userId = localStorage.getItem("userId");
     // let accessToken: string | null = null;
     // let tokenExpiration: number | null = null;
 
@@ -58,13 +58,15 @@ export const authorizationChecker = async (currentPath: string) => {
       useUserStore.setState({ user: res, isAuthenticated: true });
     } else {
       window.location.href = `/auth/login?to=${
-        encodeURIComponent(currentPath) || `/library`
+        encodeURIComponent(currentPath) || `/profile`
       }`;
     }
   } catch (error) {
-    window.location.href = `/auth/login?to=${
-      encodeURIComponent(currentPath) || `/`
-    }`;
+    if (!userId) {
+      window.location.href = `/auth/login?to=${
+        encodeURIComponent(currentPath) || `/`
+      }`;
+    }
   }
 };
 
@@ -117,7 +119,8 @@ export const handleUpdateUserProgress = async (
 
 export const handleUnlockEpisode = async (
   unlockedEpisodes: string[],
-  cost: number
+  cost: number,
+  updatednNumberOfReadsToday: number
 ) => {
   const userId = localStorage.getItem("userId");
   if (!userId) {
@@ -129,6 +132,7 @@ export const handleUnlockEpisode = async (
     const response = await api.put(`/user/${userId}`, {
       unlockedEpisodes: unlockedEpisodesAsString,
       points: cost,
+      numberOfReadsToday: updatednNumberOfReadsToday,
     });
     if (response.status == 200 || response.status == 201) {
       return response.data;

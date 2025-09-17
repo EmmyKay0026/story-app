@@ -1,22 +1,22 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+// import { Inter } from "next/font/google";
 import "./globals.css";
-// import { UserProvider } from "@/context/UserContext";
 import { ThemeProvider } from "next-themes";
 import { SITE_URL } from "@/constants/constant";
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
-  preload: true,
-});
+// const inter = Inter({
+//   subsets: ["latin"],
+//   display: "swap",
+//   variable: "--font-inter",
+//   preload: true,
+// });
 
 export const metadata: Metadata = {
   title: {
     default: "Fans corner",
     template: "%s | Fans corner",
   },
+
   description:
     "Fans corner is a platform where users can read engaging stories online.",
   robots: {
@@ -38,20 +38,24 @@ export const metadata: Metadata = {
     description: "Read stories online with Fans corner",
   },
 };
+metadata.icons = {
+  icon: "/globe.svg",
+  shortcut: "/globe.svg",
+  apple: "/globe.svg",
+};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // ${inter.variable}
   return (
-    <html lang="en" suppressHydrationWarning className={` ${inter.variable}`}>
+    <html lang="en" suppressHydrationWarning className={` `}>
       <body className="font-sans antialiased">
-        {/* <UserProvider> */}
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="theme-transition ">{children}</div>
         </ThemeProvider>
-        {/* </UserProvider> */}
       </body>
     </html>
   );

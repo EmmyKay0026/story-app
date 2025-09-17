@@ -1,6 +1,5 @@
 "use client";
 import { Story } from "@/types";
-
 import { useUserStore } from "@/stores/useUserStore";
 import React, { useEffect, useState } from "react";
 import NoIndex from "../atoms/NoIndex";
@@ -8,27 +7,25 @@ import Image from "next/image";
 import { Bookmark, BookOpen, Box, Coins } from "lucide-react";
 import { StoryCard } from "../molecules/StoryCard";
 import { calculateStoryProgress, isStoryCompleted } from "@/utils/storyUtils";
-// import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
-import { handleThemeChange } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
 import { convertDateToDateType } from "@/utils/dateTimeConverter";
 import { StoryCardSkeleton } from "../skeletons/LibrarySkeletons";
 import { ThemeToggle } from "../atoms/ThemeToggle";
+import { authorizationChecker } from "@/services/user/userAction";
 
 const ProfileClient = () => {
   // console.log(allStories);
 
   const user = useUserStore((state) => state.user);
   const router = useRouter();
-  // const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  // const getMe = useUserStore((state) => state.getMe);
-  // console.log(getMe);
 
-  // const router = ();
   const [activeTab, setActiveTab] = useState<"stories" | "bookmark">("stories");
-  // const [user, setUser] = useState<User | null>(null);
   const [allStories, setAllStories] = useState<Story[] | null>(null);
+
+  useEffect(() => {
+    authorizationChecker(window.location.pathname);
+  }, []);
 
   useEffect(() => {
     const getStories = async () => {
@@ -84,7 +81,8 @@ const ProfileClient = () => {
 
   const totalReads = completedStories.length + currentlyReading.length;
   const bookmarkStories =
-    allStories?.filter((story) => user.bookmarks.includes(story.id)) ?? [];
+    allStories?.filter((story) => user.bookmarks.includes(String(story.id))) ??
+    [];
   // console.log(user.bookmarks, allStories);
 
   const handleStoryClick = (storyId: string) => {

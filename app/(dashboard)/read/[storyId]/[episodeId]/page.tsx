@@ -63,9 +63,13 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   }, []);
 
   useEffect(() => {
+    // console.log(storyId, episodeId);
+
     const isUnlocked = isEpisodeUnlocked(`${storyId}-${episodeId}`);
     if (!isUnlocked) {
       setShowUnlockModal(true);
+    } else {
+      setShowUnlockModal(false);
     }
   }, [user]);
 
@@ -124,8 +128,8 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
   if (!episode || !story || !user) return null;
 
   // ✅ Navigation
-  const nextEpisode = getNextEpisode(story, episodeId);
-  const previousEpisode = getPreviousEpisode(story, episodeId);
+  const nextEpisode = getNextEpisode(story, episode.order);
+  const previousEpisode = getPreviousEpisode(story, episode.order);
 
   const handleNextEpisode = () => {
     if (nextEpisode) {
@@ -146,22 +150,27 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
   const handleUnlockEpisode = async () => {
     if (!nextEpisode?.id) return;
-    setIsLoading(true);
+    // setIsLoading(true);
 
     const response = await unlockEpisode(
       story.id,
-      nextEpisode?.id,
-      nextEpisode.pointsCost
+      episode?.id,
+      episode.pointsCost
     );
     // console.log(response);
 
     if (!response) {
-      alert("Not enough points to unlock this episode!");
       setIsLoading(false);
+      // alert("Not enough points to unlock this episode!");
       return;
     }
-    router.push(`/read/${story.id}/${nextEpisode?.id}`);
-    setIsLoading(false);
+    // setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setShowUnlockModal(false);
+    }, 900);
+    // router.push(`/read/${story.id}/${nextEpisode?.id}`);
+    // setIsLoading(false);
   };
 
   const submitRating = async (rating: number) => {
@@ -171,11 +180,15 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
     const res = await submitReview(rating, reviewComment, story.id);
 
     if ("error" in res) {
-      setShowRating(false);
+      alert("Failed to submit review. Please try again.");
+      console.error("Error submitting review:", res.error);
+
+      // setShowRating(false);
     } else {
       setUserRating(0);
       setReviewComment("");
       setShowRating(false);
+      alert("Thank you for your feedback!");
     }
     setRatingIsLoading(false);
     // console.log(res);
@@ -202,8 +215,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                   {episode.title}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {story.title}
-                  {/* • Episode {episode.order} */}
+                  {story.title} • Episode {episode.order}
                 </p>
               </div>
             </div>
@@ -246,14 +258,13 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 {episode.title}
               </h1>
-              {/* <div className="flex items-center justify-center gap-4 text-gray-600 dark:text-gray-400">
+              <div className="flex items-center justify-center gap-4 text-gray-600 dark:text-gray-400">
                 <span>
-                  Episode {episode.order} of
-                  {story.totalEpisodes}
+                  Episode {episode.order} of {story.totalEpisodes}
                 </span>
                 <span>•</span>
                 <span>{formatReadTime(episode.readTime)} read</span>
-              </div> */}
+              </div>
             </header>
 
             {/* Episode Content */}
@@ -279,10 +290,10 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 {nextEpisode ? (
                   <button
                     onClick={handleNextEpisode}
-                    className=" btn-primary w-full sm:w-auto cursor-pointer"
+                    className="inline btn-primary w-full sm:w-auto cursor-pointer"
                   >
-                    Continue to {nextEpisode.title}
-                    {/* <ChevronRight className="w-4 h-4 ml-2" /> */}
+                    Continue to Episode {nextEpisode.order}
+                    <ChevronRight className="inline w-4 h-4 ml-2" />
                   </button>
                 ) : (
                   <div className="text-center">
@@ -422,7 +433,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
       </div>
 
       {showUnlockModal && story && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
               Unlock Premium Episode
@@ -430,9 +441,9 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
             <div className="mb-6">
               {(() => {
-                const episode = story.episodes.find(
-                  (ep) => ep.id === nextEpisode?.id
-                );
+                const episode = story.episodes.find((ep) => ep.id == episodeId);
+                // console.log(episode, episodeId);
+
                 return episode ? (
                   <div>
                     <p className="text-gray-700 dark:text-gray-300 mb-4">
@@ -477,11 +488,12 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                     if (!nextEpisode) return true;
 
                     const episode = story.episodes.find(
-                      (ep) => ep.id === nextEpisode.id
+                      (ep) => ep.id == nextEpisode.id
                     );
                     if (!episode) return true;
 
-                    if (isEpisodeUnlocked(nextEpisode.id)) return false;
+                    if (isEpisodeUnlocked(`${story.id}-${nextEpisode.id}`))
+                      return false;
 
                     const cost = Number(episode.pointsCost) ?? 0;
                     const balance = Number(user?.points) ?? 0;

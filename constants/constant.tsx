@@ -43,6 +43,8 @@ export const mockUser = {
       isCompleted: false,
     },
   ],
+  maxDailyEpisodeReads: 5,
+  numberOfReadsToday: 2,
   bookmarks: ["2"],
   unlockedEpisodes: ["1-2", "1-3"], // episode IDs
 };

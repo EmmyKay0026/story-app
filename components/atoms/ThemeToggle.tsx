@@ -1,57 +1,21 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Sun, Moon } from "lucide-react";
-import { handleThemeChange } from "@/services/user/userAction";
 import { useUserStore } from "@/stores/useUserStore";
+import { usePreferenceStore } from "@/stores/usePreferenceStore";
 
 export const ThemeToggle = () => {
   const user = useUserStore((state) => state.user);
+  const theme = usePreferenceStore((state) => state.theme);
+  const toggleTheme = usePreferenceStore((state) => state.toggleTheme);
 
-  const [theme, setTheme] = useState("");
+  // const [theme, setTheme] = useState("");
 
   const themes = [
     { value: "light" as const, icon: Sun, label: "Light" },
     { value: "dark" as const, icon: Moon, label: "Dark" },
   ];
-  useEffect(() => {
-    let storedTheme;
-    if (!user) {
-      const preferences = localStorage.getItem("theme");
-
-      if (!preferences) {
-        localStorage.setItem("theme", "light");
-        return;
-      }
-      storedTheme = preferences || "light";
-      setTheme(storedTheme);
-    } else {
-      storedTheme = user.preferences?.theme;
-      setTheme(storedTheme);
-    }
-
-    // const storedTheme = UserPreferences.theme || "light";
-
-    if (storedTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, []);
-
-  const toggleTheme = async () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-
-    localStorage.setItem("theme", newTheme);
-    if (newTheme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    if (!user) return;
-    await handleThemeChange(newTheme);
-  };
 
   return (
     <div className="flex items-center w-[70px] p-0 overflow-hidden rounded-[50px] ease-in-out theme-transition shadow-[0px_0px_6px_8px_rgba(219,218,218,0.123)]  dark:shadow-[0px_0px_6px_8px_rgba(65,55,55,0.16)]">

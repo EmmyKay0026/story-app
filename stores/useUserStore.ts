@@ -43,13 +43,15 @@ interface UserState {
 }
 
 const defaultUser: User = {
-  id: "",
+  id: "1234",
   phoneNumber: null,
   points: 0,
   preferences: {
     theme: "light",
     fontSize: "medium",
   },
+  maxDailyEpisodeReads: 5,
+  numberOfReadsToday: 2,
   progress: [],
   bookmarks: [],
   unlockedEpisodes: [], // episode IDs
@@ -143,54 +145,13 @@ export const useUserStore = create<UserState>((set, get) => ({
     );
   },
 
-  // updateProgress: (storyId, episodeId, progress) => {
-  //   const { user } = get();
-  //   if (!user) return;
-
-  //   const existingProgressIndex = user.progress.findIndex(
-  //     (p) => p.storyId === storyId && p.episodeId === episodeId
-  //   );
-
-  //   const newProgress: UserProgress = {
-  //     storyId,
-  //     episodeId,
-  //     progress,
-  //     lastReadAt: new Date(),
-  //     isCompleted: progress >= 100,
-  //   };
-
-  //   let updatedProgress;
-  //   if (existingProgressIndex >= 0) {
-  //     updatedProgress = [...user.progress];
-  //     updatedProgress[existingProgressIndex] = newProgress;
-  //   } else {
-  //     updatedProgress = [...user.progress, newProgress];
-  //   }
-  //   const updatedUser = {
-  //     ...user,
-  //     progress: updatedProgress,
-  //   };
-
-  //   // TODO: send progress update to backend
-  //   setInterval(() => {
-  //     const response = handleUpdateUserProgress(newProgress);
-
-  //     if ("error" in response) {
-  //       console.error("Failed to update user progress:", response.error);
-  //     }
-  //   }, 2000);
-  //   set({
-  //     user: updatedUser,
-  //   });
-  // },
-
   toggleBookmark: async (storyId) => {
     const { user } = get();
     if (!user) return;
 
-    const isBookmark = user.bookmarks.includes(storyId);
+    const isBookmark = user.bookmarks.includes(String(storyId));
     const updatedBookmarks = isBookmark
-      ? user.bookmarks.filter((id) => id !== storyId)
+      ? user.bookmarks.filter((id) => id !== String(storyId))
       : [...user.bookmarks, storyId];
 
     const updatedUser = {
@@ -207,10 +168,11 @@ export const useUserStore = create<UserState>((set, get) => ({
     }
     if (response.success) {
       set({
-        user: response.user,
+        user: updatedUser,
       });
       return !isBookmark;
     }
+    return isBookmark;
   },
 
   unlockEpisode: async (storyId, episodeId, cost) => {
@@ -218,8 +180,24 @@ export const useUserStore = create<UserState>((set, get) => ({
     if (
       !user ||
       Number(user.points) < cost ||
-      user.unlockedEpisodes.includes(episodeId)
+      user.unlockedEpisodes.includes(`${storyId}-${episodeId}`)
     ) {
+      // console.log(`${storyId}-${episodeId}`);
+      if (user?.unlockedEpisodes.includes(`${storyId}-${episodeId}`)) {
+        return true;
+      }
+      alert("Not enough points to unlock this episode.");
+      return false;
+    }
+
+    if (
+      user?.numberOfReadsToday &&
+      user?.maxDailyEpisodeReads &&
+      user?.numberOfReadsToday >= user?.maxDailyEpisodeReads
+    ) {
+      alert(
+        "You have reached your daily limit for reading episodes. You can read more tomorrow!"
+      );
       return false;
     }
 
@@ -227,8 +205,13 @@ export const useUserStore = create<UserState>((set, get) => ({
       ...user.unlockedEpisodes,
       `${storyId}-${episodeId}`,
     ];
+    const updatednNumberOfReadsToday = (user.numberOfReadsToday || 0) + 1;
     // TODO: sync with backend
-    const response = await handleUnlockEpisode(updatedUnlockedEpisodes, cost);
+    const response = await handleUnlockEpisode(
+      updatedUnlockedEpisodes,
+      cost,
+      updatednNumberOfReadsToday
+    );
     // console.log(response);
 
     if ("error" in response) {
@@ -236,11 +219,14 @@ export const useUserStore = create<UserState>((set, get) => ({
       return false;
     }
     if (response.success) {
+      // console.log("Episode unlocked successfully");
+
       set({
         user: {
           ...user, // RESPONSE FROM BACKEND
           points: Number(user.points) - cost,
           unlockedEpisodes: updatedUnlockedEpisodes,
+          numberOfReadsToday: updatednNumberOfReadsToday,
         },
       });
     }
@@ -252,6 +238,11 @@ export const useUserStore = create<UserState>((set, get) => ({
     if (!get().user?.progress) return undefined;
 
     // console.log(get().user?.progress);
+    // console.log(
+    //   get().user?.progress.find(
+    //     (p) => p.story_id === storyId && p.episode_id === episodeId
+    //   )
+    // );
 
     return get().user?.progress.find(
       (p) => p.story_id === storyId && p.episode_id === episodeId
@@ -263,13 +254,14 @@ export const useUserStore = create<UserState>((set, get) => ({
 
   getStoryProgress: (storyId) => {
     if (!get().user?.progress) return [];
-    return get().user?.progress.filter((p) => p.story_id === storyId) || [];
+    return get().user?.progress.filter((p) => p.story_id == storyId) || [];
   },
 
   isEpisodeUnlocked: (episodeId) => {
     if (!get().user) return false;
-    // console.log(get().user?.unlockedEpisodes);
-
+    // console.log(episodeId);
+    // console.log(episodeId, get().user?.unlockedEpisodes.includes(episodeId));
+    // console.log(episodeId, get().user?.unlockedEpisodes);
     return get().user?.unlockedEpisodes.includes(episodeId) || false;
   },
 

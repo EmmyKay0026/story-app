@@ -31,7 +31,7 @@ const StoryDetailPage = () => {
   const user = useUserStore((state) => state.user);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const toggleBookmark = useUserStore((state) => state.toggleBookmark);
-  const isBookmark = (user?.bookmarks ?? []).includes(id) || false;
+  const isBookmark = (user?.bookmarks ?? []).includes(String(id)) || false;
 
   const router = useRouter();
 
@@ -39,6 +39,7 @@ const StoryDetailPage = () => {
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
   // const [bookmarkIsLoading, setBookmarkIsLoading] = useState(false);
+  // console.log(isBookmark, story?.id, user?.bookmarks);
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);

@@ -23,7 +23,8 @@ interface NavigationProps {
 
 export function Navigation({ children }: NavigationProps) {
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
+  const user = useUserStore((state) => state.user);
   const logout = useUserStore((state) => state.logout);
   const getMe = useUserStore((state) => state.getMe);
 
@@ -38,9 +39,7 @@ export function Navigation({ children }: NavigationProps) {
         if (res === null) {
           router.push("/auth/login");
         }
-        // console.log(res);
-
-        setUser(res);
+        // setUser(res);
       } else {
         router.push("/auth/login");
       }
@@ -49,9 +48,6 @@ export function Navigation({ children }: NavigationProps) {
 
     fetchUserData();
   }, [getMe, router]);
-
-  // const phoneNumber = localStorage.getItem("userId");
-  // const { resolvedTheme } = useTheme();
 
   const navigationItems = [
     { href: "/library", label: "Library", icon: BookCopy },
