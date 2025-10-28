@@ -199,13 +199,14 @@ export const submitReview = async (
     const response = await api.post(`/reviews/${storyId}`, {
       rating: rating,
       comment: comment,
-      user: userId,
+      user_id: userId,
+      story_id: storyId,
     });
 
-    if (response.status == 200 || response.status == 201) {
+    if (response.status == 200 && response.data.success) {
       return response.data;
     } else {
-      return { error: "Failed to update user data" };
+      return { error: "Failed to submit review" };
     }
   } catch (error) {
     return { error: formatError(error) };
