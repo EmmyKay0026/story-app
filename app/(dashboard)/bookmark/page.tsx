@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
-import { Story } from "@/constants/stories";
+import { Story } from "@/types";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import { StoryCard } from "@/components/molecules/StoryCard";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import Link from "next/link";
 import NoIndex from "@/components/atoms/NoIndex";
 import { authorizationChecker } from "@/services/user/userAction";
 import { fetchStories } from "@/services/story/storyActions";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import { StoryCardSkeleton } from "@/components/skeletons/LibrarySkeletons";
 
 // import { StoryCardSkeleton } from "@/components/molecules/StoryCardSkeleton"; // You'll import your skeleton
@@ -49,9 +49,9 @@ export default function BookmarksPage() {
 
   if (!user) return null;
 
-  const bookmarkStories = stories.filter((story) =>
-    user.bookmarks.includes(story.id)
-  );
+  const bookmarkStories = stories.filter((story) => {
+    return user.bookmarks.includes(String(story.id));
+  });
 
   const handleStoryClick = (storyId: string) => {
     router.push(`/story/${storyId}`);
@@ -75,7 +75,7 @@ export default function BookmarksPage() {
 
       {/* Loading state */}
       {loading ? (
-        <div>        
+        <div>
           <div className="bg-white dark:bg-gray-800 justify-center items-center rounded-lg p-6 mb-8">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
               <div>
@@ -104,7 +104,7 @@ export default function BookmarksPage() {
               </div>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Replace with your own Skeleton Card component */}
             {/* <div className="flex flex-wrap"> */}
@@ -143,7 +143,7 @@ export default function BookmarksPage() {
               <div className="text-2xl font-bold text-gray-900 dark:text-white">
                 {Math.round(
                   (bookmarkStories.reduce(
-                    (sum, story) => sum + story.rating,
+                    (sum, story) => sum + Number(story.rating),
                     0
                   ) /
                     bookmarkStories.length) *
@@ -155,7 +155,7 @@ export default function BookmarksPage() {
               </div>
             </div>
           </div>
-          <div className="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+          <div className="w-24 h-24 mx-auto mb-6 mt-8 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
             <Bookmark className="w-12 h-12 text-gray-400" />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -188,7 +188,7 @@ export default function BookmarksPage() {
               <div>
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {bookmarkStories.reduce(
-                    (sum, story) => sum + story.totalEpisodes,
+                    (sum, story) => sum + Number(story.totalEpisodes),
                     0
                   )}
                 </div>
@@ -200,7 +200,7 @@ export default function BookmarksPage() {
                 <div className="text-2xl font-bold text-gray-900 dark:text-white">
                   {Math.round(
                     (bookmarkStories.reduce(
-                      (sum, story) => sum + story.rating,
+                      (sum, story) => sum + Number(story.rating),
                       0
                     ) /
                       bookmarkStories.length) *

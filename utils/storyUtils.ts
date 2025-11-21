@@ -1,6 +1,6 @@
 // import { Story, Episode, UserProgress } from "../data/mockData";
 
-import { Story, Episode, UserProgress } from "@/constants/stories";
+import { Story, Episode, UserProgress } from "@/types";
 
 export function calculateReadTime(text: string): number {
   const wordsPerMinute = 200;
@@ -39,27 +39,32 @@ export function calculateStoryProgress(
 
 export function getNextEpisode(
   story: Story,
-  currentEpisodeId: string
+  currentEpisodeOrder: number
 ): Episode | null {
-  const currentIndex = story.episodes.findIndex(
-    (ep) => ep.id === currentEpisodeId
-  );
-  // console.log(currentIndex);
+  // console.log(Number(currentEpisodeOrder) + 1);
 
-  if (currentIndex === -1 || currentIndex === story.episodes.length - 1)
-    return null;
-  return story.episodes[currentIndex + 1];
+  const nextEpisode = story.episodes.find(
+    (ep) => ep.order == Number(currentEpisodeOrder) + 1
+  );
+  // console.log(nextEpisode);
+
+  // if (currentIndex == -1 || currentIndex == story.episodes.length - 1)
+  //   return null;
+
+  if (!nextEpisode) return null;
+  return nextEpisode;
 }
 
 export function getPreviousEpisode(
   story: Story,
-  currentEpisodeId: string
+  currentEpisodeOrder: number
 ): Episode | null {
-  const currentIndex = story.episodes.findIndex(
-    (ep) => ep.id === currentEpisodeId
+  const prevEpisode = story.episodes.find(
+    (ep) => ep.order == Number(currentEpisodeOrder) - 1
   );
-  if (currentIndex <= 0) return null;
-  return story.episodes[currentIndex - 1];
+  // if (currentIndex <= 0) return null;
+  if (!prevEpisode) return null;
+  return prevEpisode;
 }
 
 export function isStoryCompleted(

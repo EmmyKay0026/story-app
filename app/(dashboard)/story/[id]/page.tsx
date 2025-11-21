@@ -10,10 +10,10 @@ import { useRouter, useParams } from "next/navigation";
 // import { useUserStore } from "@/hooks/userStore";
 import NoIndex from "@/components/atoms/NoIndex";
 import { fetchStoryDetails } from "@/services/story/storyActions"; // ✅ import your API
-import { Story } from "@/constants/stories";
+import { Story } from "@/types";
 import { authorizationChecker } from "@/services/user/userAction";
 // import { fetchStories } from "@/services/story/storyActions";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import PageLoader from "@/components/atoms/PageLoader";
 // import Button from "@/components/atoms/Button";
 // import { useUserStore } from "@/hooks/store";
@@ -31,7 +31,7 @@ const StoryDetailPage = () => {
   const user = useUserStore((state) => state.user);
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
   const toggleBookmark = useUserStore((state) => state.toggleBookmark);
-  const isBookmark = (user?.bookmarks ?? []).includes(id) || false;
+  const isBookmark = (user?.bookmarks ?? []).includes(String(id)) || false;
 
   const router = useRouter();
 
@@ -39,6 +39,7 @@ const StoryDetailPage = () => {
   const [isEpisodesActive, setIsEpisodesActive] = useState<boolean>(true);
   const [loading, setLoading] = useState(true);
   // const [bookmarkIsLoading, setBookmarkIsLoading] = useState(false);
+  // console.log(isBookmark, story?.id, user?.bookmarks);
 
   useEffect(() => {
     authorizationChecker(window.location.pathname);

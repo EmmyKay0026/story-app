@@ -2,7 +2,9 @@ import { StoryCardSkeleton } from "./LibrarySkeletons";
 import { PlayCircle, CheckCircle } from "lucide-react";
 
 const SkeletonBox = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`} />
+  <div
+    className={`animate-pulse bg-gray-200 dark:bg-gray-700 rounded ${className}`}
+  />
 );
 
 const StatsSkeleton = () => (
@@ -18,7 +20,6 @@ const StatsSkeleton = () => (
   </div>
 );
 
-
 // import { Skeleton } from "@/components/ui/skeleton";
 // import { StoryCardSkeleton } from "@/components/StoryCardSkeleton";
 
@@ -27,7 +28,12 @@ export const MyReadsSkeleton = () => (
     {/* Stats */}
     <div className="bg-white dark:bg-gray-800 justify-center items-center rounded-lg p-6 mb-8">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-        {[ "Currently Reading", "Completed", "Episodes Read", "Reading Time" ].map((label, i) => (
+        {[
+          "Currently Reading",
+          "Completed",
+          "Episodes Read",
+          "Reading Time",
+        ].map((label, i) => (
           <div key={i}>
             <div className="text-2xl font-bold text-gray-900 dark:text-white flex justify-center">
               <SkeletonBox className="h-6 w-10" />
@@ -50,8 +56,9 @@ export const MyReadsSkeleton = () => (
         disabled
       >
         <PlayCircle className="w-4 h-4" />
-        <p className="flex">Currently Reading (<SkeletonBox className="h-4 w-4" />)</p>
-        
+        <div className="flex">
+          Currently Reading (<SkeletonBox className="h-4 w-4" />)
+        </div>
       </button>
       <button
         className={`
@@ -61,7 +68,9 @@ export const MyReadsSkeleton = () => (
         disabled
       >
         <CheckCircle className="w-4 h-4" />
-        <p className="flex">Completed (<SkeletonBox className="h-4 w-4" />)</p>
+        <div className="flex">
+          Completed (<SkeletonBox className="h-4 w-4" />)
+        </div>
       </button>
     </div>
 

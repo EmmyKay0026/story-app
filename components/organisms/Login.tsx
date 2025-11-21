@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Book, Phone, ArrowRight } from "lucide-react";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 import PageLoader from "@/components/atoms/PageLoader";
 // import { useUserStore } from "@/stores/user/userStore";
 
@@ -34,10 +34,21 @@ export default function Login() {
       setIsLoading(false);
     };
 
+    setIsLoading(false);
     if (authId !== "") {
       setPhoneNumber(authId);
       setIsLoading(true);
       autoLogin();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userId = localStorage.getItem("userId");
+
+      if (userId && userId !== "" && typeof userId == "string") {
+        router.push("/library");
+      }
     }
   }, []);
 
@@ -62,10 +73,11 @@ export default function Login() {
       const params = new URLSearchParams(window.location.search);
       const redirectTo = params.get("to") || "/library";
       router.push(redirectTo);
+      setIsLoading(false);
     } else {
       setErrorMsg(res.message || "Login failed. Please try again.");
+      setIsLoading(false);
     }
-    setIsLoading(false);
     // router.push("/library");
   };
 
@@ -127,7 +139,7 @@ export default function Login() {
                 </div>
               </div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                Welcome to StoryBook
+                Welcome to Fans corner
               </h1>
               <p className="text-gray-600 dark:text-gray-300">
                 Enter your phone number to get started

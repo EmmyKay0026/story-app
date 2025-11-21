@@ -14,8 +14,8 @@ import {
 
 // import { useUserStore } from "@/stores/user/userStore";
 import { useEffect, useState } from "react";
-import { User } from "@/constants/stories";
-import { useUserStore } from "@/hooks/useUserStore";
+import { User } from "@/types";
+import { useUserStore } from "@/stores/useUserStore";
 
 interface NavigationProps {
   children: React.ReactNode;
@@ -23,7 +23,8 @@ interface NavigationProps {
 
 export function Navigation({ children }: NavigationProps) {
   // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
+  const user = useUserStore((state) => state.user);
   const logout = useUserStore((state) => state.logout);
   const getMe = useUserStore((state) => state.getMe);
 
@@ -38,9 +39,7 @@ export function Navigation({ children }: NavigationProps) {
         if (res === null) {
           router.push("/auth/login");
         }
-        // console.log(res);
-
-        setUser(res);
+        // setUser(res);
       } else {
         router.push("/auth/login");
       }
@@ -49,9 +48,6 @@ export function Navigation({ children }: NavigationProps) {
 
     fetchUserData();
   }, [getMe, router]);
-
-  // const phoneNumber = localStorage.getItem("userId");
-  // const { resolvedTheme } = useTheme();
 
   const navigationItems = [
     { href: "/library", label: "Library", icon: BookCopy },
@@ -89,7 +85,7 @@ export function Navigation({ children }: NavigationProps) {
         <div className="flex items-center justify-between p-4">
           <Link href="/" className="flex items-center gap-2">
             <Book className="w-6 h-6 text-primary" />
-            <span className="font-bold text-lg">StoryBook</span>
+            <span className="font-bold text-lg">Fans corner</span>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -115,7 +111,7 @@ export function Navigation({ children }: NavigationProps) {
             className="flex items-center cursor-pointer gap-2 p-6 border-b border-gray-200 dark:border-gray-700"
           >
             <Book className="w-8 h-8 text-primary" />
-            <span className="font-bold text-xl">StoryBook</span>
+            <span className="font-bold text-xl">Fans corner</span>
           </Link>
 
           <div className="flex-1 flex flex-col justify-between py-6">
@@ -147,7 +143,8 @@ export function Navigation({ children }: NavigationProps) {
                     {user.points} Points
                   </div>
                   <Link
-                    href="/subscription"
+                    href="tel:*20751#"
+                    target="_blank"
                     className="text-xs text-amber-600 hover:text-amber-700 dark:text-yellow-400 dark:hover:text-yellow-300"
                   >
                     Get more points
@@ -160,12 +157,15 @@ export function Navigation({ children }: NavigationProps) {
                   <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
                     <UserIcon className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <Link
+                    href={"/profile"}
+                    className="flex-1 min-w-0 cursor-pointer"
+                  >
                     <div className="font-medium truncate">User</div>
                     <div className="text-xs text-gray-500 truncate">
                       {user.phoneNumber}
                     </div>
-                  </div>
+                  </Link>
                 </div>
 
                 <button

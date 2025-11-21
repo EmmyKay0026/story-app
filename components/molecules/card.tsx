@@ -1,7 +1,8 @@
 import React from "react";
 import CardSwap, { Card } from "./cardswap";
-import { mockStories } from "@/constants/stories";
+// import { mockStories } from "@/types/stories";
 import HeroCard from "@/components/molecules/HeroCard";
+import { mockStories } from "@/constants/constant";
 
 const Cards = ({ limit = 3 }) => {
   return (
@@ -16,10 +17,7 @@ const Cards = ({ limit = 3 }) => {
       >
         {mockStories.slice(0, limit).map((story) => (
           <Card key={story.id}>
-            <HeroCard
-              key={story.id}
-              story={story}
-            />
+            <HeroCard key={story.id} story={story} />
           </Card>
         ))}
       </CardSwap>

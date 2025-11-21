@@ -5,15 +5,15 @@ Allow: /
 # *
 User-agent: *
 Disallow: /login
-Disallow: /signup
 Disallow: /bookmark
 Disallow: /my-reads
 Disallow: /profile
+Disallow: /story
 Disallow: /api
 Disallow: /api/*
 
 # Host
-Host: https://story-app-chi.vercel.app
+Host: https://www.fanscornernow.com
 
 # Sitemaps
-Sitemap: https://story-app-chi.vercel.app/sitemap.xml
+Sitemap: https://www.fanscornernow.com/sitemap.xml

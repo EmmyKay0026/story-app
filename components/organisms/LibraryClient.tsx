@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BookCopy, Box, Search, AlertCircle } from "lucide-react";
 import { authorizationChecker } from "@/services/user/userAction";
-import { Story, ApiError } from "@/constants/stories";
+import { Story, ApiError } from "@/types";
 import { StoryCard } from "@/components/molecules/StoryCard";
 // import { Navigation } from "@/components/templates/NavigationMenu";
 import { LibrarySkeleton } from "@/components/skeletons/LibrarySkeletons";
@@ -134,8 +134,13 @@ export default function LibraryClient() {
     getCategories();
   }, []);
 
+  const handleStoryClick = (storyId: string) => {
+    router.push(`/story/${storyId}`);
+  };
+
   const handleCategoryChange = (category: { label: string; value: string }) => {
-    const newCategory = selectedCategory === category.label ? null : category.label;
+    const newCategory =
+      selectedCategory === category.label ? null : category.label;
 
     setSelectedCategory(newCategory);
 
@@ -152,10 +157,10 @@ export default function LibraryClient() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  // useEffect(() => { 
-  //   const params = new URLSearchParams(); 
-  //   // if (selectedCategory) { params.set("category", selectedCategory); } 
-  //   if (searchTerm) { params.set("q", searchTerm); } const query = params.toString(); router.push(query ? ?${query} : "?", { scroll: false }); 
+  // useEffect(() => {
+  //   const params = new URLSearchParams();
+  //   // if (selectedCategory) { params.set("category", selectedCategory); }
+  //   if (searchTerm) { params.set("q", searchTerm); } const query = params.toString(); router.push(query ? ?${query} : "?", { scroll: false });
   // }, [selectedCategory, searchTerm, router]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -170,12 +175,11 @@ export default function LibraryClient() {
       if (match) {
         handleCategoryChange(match);
       }
-    } 
+    }
     // else {
     //   handleCategoryChange(null);
     // }
   };
-
 
   const filteredStories = useMemo(
     () =>
@@ -273,17 +277,18 @@ export default function LibraryClient() {
             {filteredStories.length > 0 ? (
               <div className="flex flex-wrap">
                 {filteredStories.map((story) => (
-                  <Link
-                    href={`/story/${story.id}`}
+                  <div
+                    // href={`/story/${story.id}`}
                     key={story.id}
                     className="w-full sm:w-1/2 lg:w-1/2 p-4"
                   >
                     <StoryCard
                       story={story}
                       showProgress={false}
+                      onClick={() => handleStoryClick(story.id)}
                       variant="continue"
                     />
-                  </Link>
+                  </div>
                 ))}
               </div>
             ) : (

@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { Story } from "@/constants/stories";
+import { Story } from "@/types";
 import { formatReadTime } from "@/utils/storyUtils";
 import { Clock, Lock } from "lucide-react";
 import { getCoverImageUrl } from "@/services/story/storyActions";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/hooks/useUserStore";
+import { useUserStore } from "@/stores/useUserStore";
 // import { useUserStore } from "@/stores/user/userStore";
 
 const EpisodeCard = ({
@@ -26,12 +26,16 @@ const EpisodeCard = ({
   const router = useRouter();
   // const [showUnlockModal, setShowUnlockModal] = useState(false);
   const [selectedEpisode, setSelectedEpisode] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleEpisodeClick = (
     episodeId: string,
     isPremium: boolean
     // pointsCost: number
   ) => {
+    // console.log(story.id, episodeId);
+    // return;
+
     const isUnlocked = isEpisodeUnlocked(`${story.id}-${episodeId}`);
 
     if (!isPremium || isUnlocked) {
@@ -44,6 +48,7 @@ const EpisodeCard = ({
 
   const handleUnlockEpisode = async (episodeCost: number) => {
     if (!selectedEpisode) return;
+    setIsLoading(true);
 
     const response = await unlockEpisode(
       story.id,
@@ -53,10 +58,12 @@ const EpisodeCard = ({
     // console.log(response);
 
     if (!response) {
-      alert("Not enough points to unlock this episode!");
+      // alert("Not enough points to unlock this episode!");
       return;
     }
     router.push(`/read/${story.id}/${selectedEpisode}`);
+
+    setIsLoading(false);
   };
 
   const getEpisodeById = (episodeId: string) => {
@@ -84,6 +91,8 @@ const EpisodeCard = ({
           const isUnlocked = isEpisodeUnlocked(`${story.id}-${episode.id}`);
           const progress = getUserProgress(story.id, episode.id);
           const canRead = !episode.isPremium || isUnlocked;
+
+          // console.log("Progress:", episode.id);
 
           return (
             <div
@@ -135,7 +144,8 @@ const EpisodeCard = ({
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
                     <h4 className="font-semibold text-[18px] text-gray-900 dark:text-white">
-                      Episode {episode.order}: {episode.title}
+                      {/* Episode {episode.order}:  */}
+                      {episode.title}
                     </h4>
                     {episode.isPremium && (
                       <span className="inline-block px-2 py-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 text-xs font-medium rounded">
@@ -222,15 +232,18 @@ const EpisodeCard = ({
                     getEpisodeById(selectedEpisode)?.pointsCost || 0
                   )
                 }
-                disabled={(() => {
-                  const episode = story.episodes.find(
-                    (ep) => ep.id === selectedEpisode
-                  );
-                  return (
-                    !episode || (Number(user?.points) ?? 0) < episode.pointsCost
-                  );
-                })()}
-                className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
+                disabled={
+                  (() => {
+                    const episode = story.episodes.find(
+                      (ep) => ep.id == selectedEpisode
+                    );
+                    return (
+                      !episode ||
+                      (Number(user?.points) ?? 0) < Number(episode.pointsCost)
+                    );
+                  })() || isLoading
+                }
+                className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg text-center transition-colors cursor-pointer disabled:cursor-not-allowed"
               >
                 Unlock Page
               </button>
