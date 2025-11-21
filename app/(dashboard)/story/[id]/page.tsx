@@ -143,7 +143,7 @@ const StoryDetailPage = () => {
         <div className="max-w-4xl mx-auto">
           <article className="relative flex flex-col items-center md:items-start py-5 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-800 rounded-t-3xl">
             <h4 className="text-[20px] font-semibold mb-5 hidden md:block">
-              Episodes
+              Pages
             </h4>
             <div className="flex items-center justify-between w-full mb-5 md:hidden">
               <button
@@ -152,7 +152,7 @@ const StoryDetailPage = () => {
                   isEpisodesActive ? "bg-primary" : "border border-primary"
                 }`}
               >
-                Episodes
+                Pages
               </button>
               <button
                 onClick={() => handleToggleTab("details")}

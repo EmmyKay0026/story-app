@@ -206,7 +206,7 @@ export default function Login() {
               <ul className="text-xs text-primary dark:text-white space-y-1">
                 <li>• Enter any phone number to econtinue</li>
                 <li>• You&apos;ll start with 100 points</li>
-                <li>• Premium episodes cost 6-12 points</li>
+                <li>• Premium Pages cost 6-12 points</li>
                 <li>• All preferences are saved locally</li>
               </ul>
             </div>

@@ -166,7 +166,7 @@ export function StoryCard({
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               <BookOpen className="w-3 h-3" />
-              <span>{story.totalEpisodes} Ep</span>
+              <span>{story.totalEpisodes} Pgs</span>
             </div>
             <div className="md:flex hidden items-center gap-1">
               <Clock className="w-3 h-3" />

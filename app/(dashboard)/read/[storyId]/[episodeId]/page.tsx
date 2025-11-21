@@ -227,7 +227,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
               </h1>
               <div className="flex items-center justify-center gap-4 text-gray-600 dark:text-gray-400">
                 <span>
-                  Episode {episode.order} of {story.totalEpisodes}
+                  Page {episode.order} of {story.totalEpisodes}
                 </span>
                 <span>•</span>
                 <span>{formatReadTime(episode.readTime)} read</span>
@@ -250,7 +250,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                 onClick={() => setShowRating(true)}
                 className="inline-flex items-center cursor-pointer gap-2 px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full mb-6"
               >
-                Review this episode
+                Review this Page
               </div>
 
               <div className="space-y-4 ">
@@ -259,7 +259,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                     onClick={handleNextEpisode}
                     className=" btn-primary w-full sm:w-auto cursor-pointer"
                   >
-                    Continue to Episode {nextEpisode.order}
+                    Continue to Page {nextEpisode.order}
                     {/* <ChevronRight className="w-4 h-4 ml-2" /> */}
                   </button>
                 ) : (
@@ -283,7 +283,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
                       className="btn-ghost flex items-center gap-1 cursor-pointer"
                     >
                       <ChevronLeft className="w-4 h-4 " />
-                      Previous Episode
+                      Previous Page
                     </button>
                   )}
                   <button
@@ -342,7 +342,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4 text-center">
-                How was this episode?
+                How was this Page?
               </h3>
 
               <p className="text-gray-600 dark:text-gray-400 text-center mb-6">
@@ -399,7 +399,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Unlock Premium Episode
+              Unlock Premium Pages
             </h3>
 
             <div className="mb-6">
@@ -462,7 +462,7 @@ export default function EpisodeReader({ params }: EpisodeReaderProps) {
 
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >
-                Unlock Episode
+                Unlock Pages
               </button>
             </div>
           </div>

@@ -175,7 +175,7 @@ const EpisodeCard = ({
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full p-6">
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              Unlock Premium Episode
+              Unlock Premium Page
             </h3>
 
             <div className="mb-6">
@@ -232,7 +232,7 @@ const EpisodeCard = ({
                 })()}
                 className="flex-1 py-2 px-4 bg-primary hover:big-blue-700 disabled:bg-faded-primary text-white rounded-lg transition-colors disabled:cursor-not-allowed"
               >
-                Unlock Episode
+                Unlock Page
               </button>
             </div>
           </div>

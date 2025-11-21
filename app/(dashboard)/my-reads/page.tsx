@@ -195,7 +195,7 @@ export default function MyReadsPage() {
                     {user.progress.length}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    Episodes Read
+                    Pages Read
                   </div>
                 </div>
                 <div>
