@@ -26,7 +26,7 @@ const StoryStats = ({
             {story.totalEpisodes}
           </span>
         </div>
-        <p className="text-xs text-gray-600 dark:text-gray-400">Episodes</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">Pages</p>
       </div>
       <div className="text-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
         <div className="flex items-center justify-center gap-1 mb-1">

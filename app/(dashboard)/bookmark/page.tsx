@@ -91,7 +91,7 @@ export default function BookmarksPage() {
                   <p>0</p>
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Total Episodes
+                  Total Pages
                 </div>
               </div>
               <div>
@@ -136,7 +136,7 @@ export default function BookmarksPage() {
                 )}
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                Total Episodes
+                Total Pages
               </div>
             </div>
             <div>
@@ -193,7 +193,7 @@ export default function BookmarksPage() {
                   )}
                 </div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                  Total Episodes
+                  Total Pages
                 </div>
               </div>
               <div>
